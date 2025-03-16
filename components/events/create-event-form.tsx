@@ -1,14 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
-import { PlusCircle, Trash2 } from "lucide-react"
-import { ProgramItem, EventType, EventTemplate } from "@/types/event"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { PlusCircle, Trash2 } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Event, EventTemplate, EventType } from "@/types/schema/Event.schema";
+import { ProgramItem } from "@/types/schema/Program.schema";
+import { Speaker } from "@/types/schema/Speaker.schema";
 
 const eventTemplates: EventTemplate[] = [
   {
@@ -21,8 +24,8 @@ const eventTemplates: EventTemplate[] = [
       primary: "#FF92A5",
       secondary: "#FFF0F3",
       accent: "#FFB7C5",
-      background: "#FFFFFF"
-    }
+      background: "#FFFFFF",
+    },
   },
   {
     id: "wedding-modern",
@@ -34,8 +37,8 @@ const eventTemplates: EventTemplate[] = [
       primary: "#2C3E50",
       secondary: "#ECF0F1",
       accent: "#BDC3C7",
-      background: "#FFFFFF"
-    }
+      background: "#FFFFFF",
+    },
   },
   {
     id: "birthday-fun",
@@ -47,8 +50,8 @@ const eventTemplates: EventTemplate[] = [
       primary: "#FF6B6B",
       secondary: "#4ECDC4",
       accent: "#FFE66D",
-      background: "#FFFFFF"
-    }
+      background: "#FFFFFF",
+    },
   },
   {
     id: "birthday-elegant",
@@ -60,8 +63,8 @@ const eventTemplates: EventTemplate[] = [
       primary: "#845EC2",
       secondary: "#D65DB1",
       accent: "#FF9671",
-      background: "#FFFFFF"
-    }
+      background: "#FFFFFF",
+    },
   },
   {
     id: "seminar-professional",
@@ -73,8 +76,8 @@ const eventTemplates: EventTemplate[] = [
       primary: "#2C3E50",
       secondary: "#34495E",
       accent: "#3498DB",
-      background: "#FFFFFF"
-    }
+      background: "#FFFFFF",
+    },
   },
   {
     id: "seminar-tech",
@@ -86,23 +89,23 @@ const eventTemplates: EventTemplate[] = [
       primary: "#6C5CE7",
       secondary: "#A3CB38",
       accent: "#FDA7DF",
-      background: "#FFFFFF"
-    }
-  }
-]
+      background: "#FFFFFF",
+    },
+  },
+];
 
 export function CreateEventForm() {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [date, setDate] = useState("")
-  const [time, setTime] = useState("")
-  const [location, setLocation] = useState("")
-  const [mediaType, setMediaType] = useState<"video" | "image">("image")
-  const [mediaUrl, setMediaUrl] = useState("")
-  const [maxAttendees, setMaxAttendees] = useState<number>(100)
-  const [program, setProgram] = useState<ProgramItem[]>([])
-  const [eventType, setEventType] = useState<EventType>("wedding")
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("")
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [mediaType, setMediaType] = useState<"video" | "image">("image");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [maxAttendees, setMaxAttendees] = useState<number>(100);
+  const [program, setProgram] = useState<ProgramItem[]>([]);
+  const [eventType, setEventType] = useState<EventType>("wedding");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
 
   const handleAddProgramItem = () => {
     setProgram([
@@ -116,31 +119,31 @@ export function CreateEventForm() {
           bio: "",
         },
       },
-    ])
-  }
+    ]);
+  };
 
   const handleUpdateProgramItem = (index: number, field: keyof ProgramItem | keyof Speaker, value: string) => {
-    const updatedProgram = [...program]
+    const updatedProgram = [...program];
     if (field === "name" || field === "bio") {
       updatedProgram[index].speaker = {
         ...updatedProgram[index].speaker,
         [field]: value,
-      }
+      };
     } else {
       updatedProgram[index] = {
         ...updatedProgram[index],
         [field]: value,
-      }
+      };
     }
-    setProgram(updatedProgram)
-  }
+    setProgram(updatedProgram);
+  };
 
   const handleRemoveProgramItem = (index: number) => {
-    setProgram(program.filter((_, i) => i !== index))
-  }
+    setProgram(program.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // Handle form submission here
     const eventData = {
       title,
@@ -156,11 +159,11 @@ export function CreateEventForm() {
         url: mediaUrl,
       },
       program,
-    }
-    console.log(eventData)
-  }
+    };
+    console.log(eventData);
+  };
 
-  const filteredTemplates = eventTemplates.filter(template => template.type === eventType)
+  const filteredTemplates = eventTemplates.filter((template) => template.type === eventType);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -171,11 +174,10 @@ export function CreateEventForm() {
             id="eventType"
             value={eventType}
             onChange={(e) => {
-              setEventType(e.target.value as EventType)
-              setSelectedTemplate("")
+              setEventType(e.target.value as EventType);
+              setSelectedTemplate("");
             }}
-            className="w-full p-2 border rounded-md mt-1"
-          >
+            className="w-full p-2 border rounded-md mt-1">
             <option value="wedding">Wedding</option>
             <option value="birthday">Birthday</option>
             <option value="seminar">Seminar</option>
@@ -188,19 +190,9 @@ export function CreateEventForm() {
             {filteredTemplates.map((template) => (
               <div
                 key={template.id}
-                className={cn(
-                  "relative cursor-pointer rounded-lg overflow-hidden transition-all",
-                  selectedTemplate === template.id
-                    ? "ring-2 ring-primary"
-                    : "hover:ring-2 hover:ring-primary/50"
-                )}
-                onClick={() => setSelectedTemplate(template.id)}
-              >
-                <img
-                  src={template.preview}
-                  alt={template.name}
-                  className="w-full h-48 object-cover"
-                />
+                className={cn("relative cursor-pointer rounded-lg overflow-hidden transition-all", selectedTemplate === template.id ? "ring-2 ring-primary" : "hover:ring-2 hover:ring-primary/50")}
+                onClick={() => setSelectedTemplate(template.id)}>
+                <img src={template.preview} alt={template.name} className="w-full h-48 object-cover" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
                   <h3 className="font-semibold">{template.name}</h3>
                   <p className="text-sm text-gray-200">{template.description}</p>
@@ -212,71 +204,33 @@ export function CreateEventForm() {
 
         <div>
           <Label htmlFor="title">Event Title</Label>
-          <Input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter event title"
-            required
-          />
+          <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter event title" required />
         </div>
 
         <div>
           <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter event description"
-            required
-          />
+          <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Enter event description" required />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="date">Date</Label>
-            <Input
-              id="date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
+            <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
           </div>
           <div>
             <Label htmlFor="time">Time</Label>
-            <Input
-              id="time"
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              required
-            />
+            <Input id="time" type="time" value={time} onChange={(e) => setTime(e.target.value)} required />
           </div>
         </div>
 
         <div>
           <Label htmlFor="location">Location</Label>
-          <Input
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Enter event location"
-            required
-          />
+          <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Enter event location" required />
         </div>
 
         <div>
           <Label htmlFor="maxAttendees">Maximum Attendees</Label>
-          <Input
-            id="maxAttendees"
-            type="number"
-            min="1"
-            value={maxAttendees}
-            onChange={(e) => setMaxAttendees(parseInt(e.target.value))}
-            placeholder="Enter maximum number of attendees"
-            required
-          />
+          <Input id="maxAttendees" type="number" min="1" value={maxAttendees} onChange={(e) => setMaxAttendees(parseInt(e.target.value))} placeholder="Enter maximum number of attendees" required />
         </div>
 
         <div className="space-y-4">
@@ -284,24 +238,14 @@ export function CreateEventForm() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="mediaType">Type</Label>
-              <select
-                id="mediaType"
-                value={mediaType}
-                onChange={(e) => setMediaType(e.target.value as "video" | "image")}
-                className="w-full p-2 border rounded-md"
-              >
+              <select id="mediaType" value={mediaType} onChange={(e) => setMediaType(e.target.value as "video" | "image")} className="w-full p-2 border rounded-md">
                 <option value="image">Image</option>
                 <option value="video">Video</option>
               </select>
             </div>
             <div>
               <Label htmlFor="mediaUrl">URL</Label>
-              <Input
-                id="mediaUrl"
-                value={mediaUrl}
-                onChange={(e) => setMediaUrl(e.target.value)}
-                placeholder="Enter media URL"
-              />
+              <Input id="mediaUrl" value={mediaUrl} onChange={(e) => setMediaUrl(e.target.value)} placeholder="Enter media URL" />
             </div>
           </div>
         </div>
@@ -320,52 +264,27 @@ export function CreateEventForm() {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <h4 className="font-medium">Program Item {index + 1}</h4>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveProgramItem(index)}
-                  >
+                  <Button type="button" variant="ghost" size="sm" onClick={() => handleRemoveProgramItem(index)}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
                 <div className="space-y-4">
                   <div>
                     <Label>Title</Label>
-                    <Input
-                      value={item.title}
-                      onChange={(e) => handleUpdateProgramItem(index, "title", e.target.value)}
-                      placeholder="Enter session title"
-                    />
+                    <Input value={item.title} onChange={(e) => handleUpdateProgramItem(index, "title", e.target.value)} placeholder="Enter session title" />
                   </div>
                   <div>
                     <Label>Description</Label>
-                    <Textarea
-                      value={item.description}
-                      onChange={(e) => handleUpdateProgramItem(index, "description", e.target.value)}
-                      placeholder="Enter session description"
-                    />
+                    <Textarea value={item.description} onChange={(e) => handleUpdateProgramItem(index, "description", e.target.value)} placeholder="Enter session description" />
                   </div>
                   <div>
                     <Label>Date & Time</Label>
-                    <Input
-                      type="datetime-local"
-                      value={item.dateTime}
-                      onChange={(e) => handleUpdateProgramItem(index, "dateTime", e.target.value)}
-                    />
+                    <Input type="datetime-local" value={item.dateTime} onChange={(e) => handleUpdateProgramItem(index, "dateTime", e.target.value)} />
                   </div>
                   <div className="space-y-4">
                     <Label>Speaker</Label>
-                    <Input
-                      value={item.speaker.name}
-                      onChange={(e) => handleUpdateProgramItem(index, "name", e.target.value)}
-                      placeholder="Speaker name"
-                    />
-                    <Textarea
-                      value={item.speaker.bio}
-                      onChange={(e) => handleUpdateProgramItem(index, "bio", e.target.value)}
-                      placeholder="Speaker bio"
-                    />
+                    <Input value={item.speaker.name} onChange={(e) => handleUpdateProgramItem(index, "name", e.target.value)} placeholder="Speaker name" />
+                    <Textarea value={item.speaker.bio} onChange={(e) => handleUpdateProgramItem(index, "bio", e.target.value)} placeholder="Speaker bio" />
                   </div>
                 </div>
               </div>
@@ -378,5 +297,5 @@ export function CreateEventForm() {
         Create Event
       </Button>
     </form>
-  )
+  );
 }

@@ -1,38 +1,36 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar, Users, QrCode } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { QRCodeCanvas } from "qrcode.react"
-import { Event } from "@/types/event"
-import { useRouter } from "next/navigation"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, Users, QrCode } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { QRCodeCanvas } from "qrcode.react";
+
+import { useRouter } from "next/navigation";
+import { Event } from "@/types/schema/Event.schema";
 
 interface EventCardProps {
-  event: Event
+  event: Event;
 }
 
 export function EventCard({ event }: EventCardProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   const getEventStyles = (type: string) => {
     switch (type) {
-      case 'wedding':
-        return 'bg-gradient-to-br from-pink-50 to-white dark:from-pink-900/20 dark:to-background'
-      case 'birthday':
-        return 'bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-background'
-      case 'seminar':
-        return 'bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/20 dark:to-background'
+      case "wedding":
+        return "bg-gradient-to-br from-pink-50 to-white dark:from-pink-900/20 dark:to-background";
+      case "birthday":
+        return "bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-background";
+      case "seminar":
+        return "bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/20 dark:to-background";
       default:
-        return ''
+        return "";
     }
-  }
+  };
 
   return (
-    <Card 
-      className={`group cursor-pointer transition-all hover:shadow-lg ${getEventStyles(event.type)}`} 
-      onClick={() => router.push(`/events/${event.id}`)}
-    >
+    <Card className={`group cursor-pointer transition-all hover:shadow-lg ${getEventStyles(event.type)}`} onClick={() => router.push(`/events/${event.id}`)}>
       {event.media?.type === "image" && (
         <div className="aspect-video w-full overflow-hidden">
           <img
@@ -58,7 +56,9 @@ export function EventCard({ event }: EventCardProps) {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Users className="mr-2 h-4 w-4" />
-            <span>{event.attendees} / {event.maxAttendees} attendees</span>
+            <span>
+              {event.attendees} / {event.maxAttendees} attendees
+            </span>
           </div>
           <Dialog>
             <DialogTrigger asChild>
@@ -66,9 +66,8 @@ export function EventCard({ event }: EventCardProps) {
                 variant="outline"
                 size="icon"
                 onClick={(e) => {
-                  e.stopPropagation() // Prevent card click when clicking QR button
-                }}
-              >
+                  e.stopPropagation(); // Prevent card click when clicking QR button
+                }}>
                 <QrCode className="h-4 w-4" />
               </Button>
             </DialogTrigger>
@@ -77,16 +76,12 @@ export function EventCard({ event }: EventCardProps) {
                 <DialogTitle>Event QR Code</DialogTitle>
               </DialogHeader>
               <div className="flex justify-center p-4">
-                <QRCodeCanvas
-                  value={`https://yourdomain.com/events/${event.id}`}
-                  size={256}
-                  level="H"
-                />
+                <QRCodeCanvas value={`https://yourdomain.com/events/${event.id}`} size={256} level="H" />
               </div>
             </DialogContent>
           </Dialog>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Navbar } from "@/components/navbar"
-import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, MapPin, Clock, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Event } from "@/types/event"
+import { useEffect, useState } from "react";
+import { Navbar } from "@/components/navbar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Calendar, MapPin, Clock, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Event } from "@/types/schema/Event.schema";
 
 interface EventDisplayProps {
-  id: string
+  id: string;
 }
 
 export function EventDisplay({ id }: EventDisplayProps) {
-  const [event, setEvent] = useState<Event | null>(null)
+  const [event, setEvent] = useState<Event | null>(null);
 
   useEffect(() => {
     // Simulate fetching event data
@@ -60,34 +60,29 @@ export function EventDisplay({ id }: EventDisplayProps) {
         },
       ],
       maxAttendees: 200,
-    }
+    };
 
-    setEvent(mockEvent)
-  }, [id])
+    setEvent(mockEvent);
+  }, [id]);
 
   if (!event) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen flex flex-col bg-cover bg-center bg-fixed"
-      style={{ 
+      style={{
         backgroundImage: `url(${event.media?.url})`,
-        backgroundColor: 'rgba(0, 0, 0, 0.85)',
-        backgroundBlendMode: 'overlay'
-      }}
-    >
+        backgroundColor: "rgba(0, 0, 0, 0.85)",
+        backgroundBlendMode: "overlay",
+      }}>
       <Navbar />
       <main className="flex-1 container mx-auto py-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white drop-shadow-lg">
-              {event.title}
-            </h1>
-            <p className="text-xl text-gray-200 mb-8 drop-shadow-md">
-              {event.description}
-            </p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white drop-shadow-lg">{event.title}</h1>
+            <p className="text-xl text-gray-200 mb-8 drop-shadow-md">{event.description}</p>
           </div>
 
           <Card className="bg-black/60 backdrop-blur-sm border-gray-800">
@@ -97,9 +92,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
                   <Calendar className="mr-3 h-5 w-5 text-primary" />
                   <div>
                     <p className="font-medium">Date</p>
-                    <p className="text-gray-400">
-                      {new Date(event.date).toLocaleDateString()}
-                    </p>
+                    <p className="text-gray-400">{new Date(event.date).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <div className="flex items-center text-gray-200">
@@ -124,22 +117,16 @@ export function EventDisplay({ id }: EventDisplayProps) {
                   {event.program.map((item, index) => (
                     <Card key={index} className="bg-black/40 border-gray-800">
                       <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-white">
-                          {item.title}
-                        </h3>
+                        <h3 className="text-xl font-semibold mb-2 text-white">{item.title}</h3>
                         <p className="text-gray-300 mb-4">{item.description}</p>
                         <div className="flex items-center justify-between text-gray-300">
                           <div className="flex items-center">
                             <Clock className="mr-2 h-4 w-4" />
-                            <span className="text-sm">
-                              {new Date(item.dateTime).toLocaleTimeString()}
-                            </span>
+                            <span className="text-sm">{new Date(item.dateTime).toLocaleTimeString()}</span>
                           </div>
                           <div className="text-sm">
                             <span className="font-medium">{item.speaker.name}</span>
-                            {item.speaker.bio && (
-                              <span className="text-gray-400"> - {item.speaker.bio}</span>
-                            )}
+                            {item.speaker.bio && <span className="text-gray-400"> - {item.speaker.bio}</span>}
                           </div>
                         </div>
                       </CardContent>
@@ -151,7 +138,9 @@ export function EventDisplay({ id }: EventDisplayProps) {
               <div className="flex items-center justify-between text-gray-200">
                 <div className="flex items-center">
                   <Users className="mr-2 h-5 w-5" />
-                  <span>{event.attendees} / {event.maxAttendees} attendees</span>
+                  <span>
+                    {event.attendees} / {event.maxAttendees} attendees
+                  </span>
                 </div>
                 <Button variant="outline" className="bg-white/10 hover:bg-white/20 border-gray-600">
                   Join Event
@@ -162,5 +151,5 @@ export function EventDisplay({ id }: EventDisplayProps) {
         </div>
       </main>
     </div>
-  )
+  );
 }

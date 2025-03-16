@@ -1,15 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Navbar } from "@/components/navbar"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
-import { Event } from "@/types/event"
-import { EventCard } from "@/components/events/event-card"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Navbar } from "@/components/navbar";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+
+import { EventCard } from "@/components/events/event-card";
+import { Event } from "@/types/schema/Event.schema";
 
 export default function DashboardPage() {
-  const router = useRouter()
+  const router = useRouter();
   const [events] = useState<Event[]>([
     {
       id: "1",
@@ -22,7 +23,7 @@ export default function DashboardPage() {
       maxAttendees: 200,
       media: {
         type: "image",
-        url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=2400&q=80"
+        url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=2400&q=80",
       },
       program: [
         {
@@ -35,6 +36,8 @@ export default function DashboardPage() {
           },
         },
       ],
+      type: "wedding",
+      templateId: "",
     },
     {
       id: "2",
@@ -47,7 +50,7 @@ export default function DashboardPage() {
       maxAttendees: 100,
       media: {
         type: "image",
-        url: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=2400&q=80"
+        url: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=2400&q=80",
       },
       program: [
         {
@@ -60,8 +63,10 @@ export default function DashboardPage() {
           },
         },
       ],
+      type: "wedding",
+      templateId: "",
     },
-  ])
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -81,5 +86,5 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
