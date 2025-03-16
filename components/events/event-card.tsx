@@ -42,15 +42,14 @@ export function EventCard({ event }: EventCardProps) {
       )}
       <CardHeader>
         <CardTitle>{event.title}</CardTitle>
-        <CardDescription>
-          <div className="space-y-2">
-            <div className="flex items-center text-sm">
-              <Calendar className="mr-2 h-4 w-4" />
-              {new Date(event.date).toLocaleDateString()}
-            </div>
-            <p className="line-clamp-2 text-sm text-muted-foreground">{event.description}</p>
+
+        <div className="space-y-2">
+          <div className="flex items-center text-sm">
+            <Calendar className="mr-2 h-4 w-4" />
+            {new Date(event.date).toLocaleDateString()}
           </div>
-        </CardDescription>
+          <p className="line-clamp-2 text-sm text-muted-foreground">{event.description}</p>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex justify-between items-center">

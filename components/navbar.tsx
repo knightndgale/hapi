@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ModeToggle } from "@/components/mode-toggle"
-import { CalendarDays } from "lucide-react"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
+import { CalendarDays } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -13,7 +13,7 @@ export function Navbar() {
           <CalendarDays className="h-6 w-6" />
           <span className="font-bold">EventHub</span>
         </Link>
-        <div className="ml-auto flex items-center space-x-4">
+        <section className="ml-auto flex items-center space-x-4">
           <Link href="/login">
             <Button variant="ghost">Login</Button>
           </Link>
@@ -21,8 +21,8 @@ export function Navbar() {
             <Button>Sign Up</Button>
           </Link>
           <ModeToggle />
-        </div>
+        </section>
       </div>
     </nav>
-  )
+  );
 }
