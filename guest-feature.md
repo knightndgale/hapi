@@ -8,3 +8,12 @@ The guest should have a link or a qr image that the user can share to the guest.
 The guest who scans the qr or goes to the link will see a page with a simple information
 of the event and their name together with a way to respond into their invitation.
 If they agree to join the invitation the guest should see all the information for the event.
+
+Guest will be able to add images of 3 during the wedding through a QR code
+
+- 5mb limit
+- image type should be selfie, groupie and picture newly wed
+
+Guest will be able to add images through the RSVP
+
+- Should be shown during the post ceremony while they put their new images through the QR code
