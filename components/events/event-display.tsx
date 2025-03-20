@@ -5,6 +5,8 @@ import { Navbar } from "@/components/navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, MapPin, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+import Link from "next/link";
 import { Event } from "@/types/schema/Event.schema";
 
 interface EventDisplayProps {
@@ -80,9 +82,16 @@ export function EventDisplay({ id }: EventDisplayProps) {
       <Navbar />
       <main className="flex-1 container mx-auto py-8">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center py-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white drop-shadow-lg">{event.title}</h1>
-            <p className="text-xl text-gray-200 mb-8 drop-shadow-md">{event.description}</p>
+          <div className="flex justify-between items-center mb-8">
+            <div className="text-white">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg">{event.title}</h1>
+              <p className="text-xl text-gray-200 mb-8 drop-shadow-md">{event.description}</p>
+            </div>
+            <Link href={`/events/${event.id}/guests`}>
+              <Button variant="outline" className="bg-white/10 hover:bg-white/20 border-gray-600">
+                Manage Guests
+              </Button>
+            </Link>
           </div>
 
           <Card className="bg-black/60 backdrop-blur-sm border-gray-800">
@@ -142,9 +151,6 @@ export function EventDisplay({ id }: EventDisplayProps) {
                     {event.attendees} / {event.maxAttendees} attendees
                   </span>
                 </div>
-                <Button variant="outline" className="bg-white/10 hover:bg-white/20 border-gray-600">
-                  Join Event
-                </Button>
               </div>
             </CardContent>
           </Card>

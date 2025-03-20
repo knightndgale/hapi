@@ -1,0 +1,17 @@
+import { z } from "zod";
+
+export const GuestResponseSchema = z.enum(["pending", "accepted", "declined"]);
+
+export const GuestSchema = z.object({
+  id: z.string(),
+  eventId: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email().optional(),
+  response: GuestResponseSchema,
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export type GuestResponse = z.infer<typeof GuestResponseSchema>;
+export type Guest = z.infer<typeof GuestSchema>;
