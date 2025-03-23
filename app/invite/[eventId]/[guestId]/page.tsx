@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Event, EventType, RSVP } from "@/types/schema/Event.schema";
+import { Event } from "@/types/schema/Event.schema";
 import { BACKGROUND_IMAGES, THEME_COLORS, DEFAULT_MESSAGES } from "@/constants/invitation";
-import { Calendar, Clock, MapPin, Upload, X } from "lucide-react";
+import { Calendar, Clock, MapPin, Upload, X, CalendarCheck } from "lucide-react";
 import { PhotoUpload } from "@/components/invitation/photo-upload";
-
+import formatDate from "@/helpers/formatDate";
+import isRSVPDeadlinePassed from "@/helpers/isRSVPDeadlinePassed";
 interface GuestData {
   firstName: string;
   lastName: string;
@@ -59,7 +60,7 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
         "We joyfully invite you to share in the celebration of our love and commitment as we exchange vows and begin our new life together. Your presence would make our special day complete.",
       accept_text: "Joyfully Accept",
       decline_text: "Respectfully Decline",
-      // logo: "https://example.com/logo.png",
+      deadline: "2024-05-15",
       title_as_image: "https://i.ibb.co/r2wYRn2j/Kindly-Respond-removebg-preview-1.png",
     },
   };
@@ -145,6 +146,17 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
               <span className="truncate">{eventData.location}</span>
             </div>
           </div>
+
+          {messages.deadline && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-2 text-gray-700">
+                <CalendarCheck className="w-5 h-5" />
+                <span className="font-medium">RSVP Deadline:</span>
+                <span className={isRSVPDeadlinePassed(messages.deadline) ? "text-red-500" : "text-gray-600"}>{formatDate(messages.deadline)}</span>
+              </div>
+              {isRSVPDeadlinePassed(messages.deadline) && <p className="mt-2 text-sm text-red-500">The RSVP deadline has passed. Please contact the hosts for more information.</p>}
+            </div>
+          )}
         </div>
 
         <form className="space-y-6">
@@ -207,7 +219,8 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = theme.primary;
               }}
-              onClick={() => handleSubmit("accept")}>
+              onClick={() => handleSubmit("accept")}
+              disabled={Boolean(messages.deadline && isRSVPDeadlinePassed(messages.deadline))}>
               {messages.accept_text}
             </Button>
             <Button
@@ -223,7 +236,8 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = `${theme.primary}cc`;
               }}
-              onClick={() => handleSubmit("decline")}>
+              onClick={() => handleSubmit("decline")}
+              disabled={Boolean(messages.deadline && isRSVPDeadlinePassed(messages.deadline))}>
               {messages.decline_text}
             </Button>
           </div>

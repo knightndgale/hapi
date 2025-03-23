@@ -16,6 +16,7 @@ const RSVPSchema = z.object({
   accept_text: z.string(),
   decline_text: z.string(),
   backgroundImage: z.string().url().optional(),
+  deadline: z.string().optional(),
 });
 
 export const EventSchema = z.object({

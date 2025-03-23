@@ -1,0 +1,17 @@
+---
+description: 
+globs: *.tsc,*.ts,*.test.ts
+alwaysApply: false
+---
+
+# Your rule content
+Helpers should be extracted to a folder.
+folder is in ./helpers.
+example of helpers, date formatter, calculations, etc...
+make use of dayjs for the date formatter. install it if missing.
+Implement testing and put it into the folder ./__tests__
+do the testing every time we add functions and if it does not have any testing counterpart.
+
+
+- You can @ files here
+- You can use markdown but dont have to

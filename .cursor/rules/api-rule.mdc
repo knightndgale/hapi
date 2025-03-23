@@ -1,0 +1,15 @@
+---
+description: 
+globs: *.tsc,*.ts
+alwaysApply: false
+---
+
+# Your rule content
+
+Do not implement api fetching.
+Use only dummy data to mock the pages you created.
+But put a placeholder function for the api that I will adding later on.
+
+
+- You can @ files here
+- You can use markdown but dont have to
