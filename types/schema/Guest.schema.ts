@@ -9,8 +9,10 @@ export const GuestSchema = z.object({
   lastName: z.string(),
   email: z.string().email().optional(),
   response: GuestResponseSchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  guestType: z.enum(["regular", "entourage", "sponsor"]),
+  phoneNumber: z.string().optional(),
+  dietaryRequirements: z.string().optional(),
+  message: z.string().optional(),
 });
 
 export type GuestResponse = z.infer<typeof GuestResponseSchema>;
