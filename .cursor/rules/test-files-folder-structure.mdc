@@ -1,7 +1,7 @@
 ---
 description: 
-globs: *.tsc,*.ts,*.test.ts
-alwaysApply: false
+globs: 
+alwaysApply: true
 ---
 
 # Your rule content

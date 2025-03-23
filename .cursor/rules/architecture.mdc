@@ -1,0 +1,79 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ # Invite Page Architecture Rules
+
+## Component Structure
+- Server components should be in `app/invite/[eventId]/[guestId]/page.tsx`
+- Client components should be in `app/invite/components/`
+- Context should be in `app/invite/context/`
+- Server actions should be in `app/invite/actions.ts`
+
+## Component Responsibilities
+
+### Server Component (`page.tsx`)
+- Should only handle routing and suspense
+- Should not contain any client-side logic
+- Should use client components for data fetching and rendering
+- Must wrap client components in Suspense
+
+### Client Data Fetcher (`invitation-data-fetcher.tsx`)
+- Must be marked with "use client"
+- Should handle all data fetching using context actions
+- Must manage loading, error, and success states
+- Should include proper cleanup in useEffect
+- Must include proper ARIA roles for accessibility
+- Should handle component unmounting
+
+### Context (`invite-context.tsx`)
+- Must provide all server actions
+- Should not contain any UI components
+- Must be used for all server-side operations
+- Should be wrapped around all invite routes
+
+## Testing Requirements
+- Tests should be in `__tests__/pages/invite/[eventId]/[guestId]/`
+- Must test loading states
+- Must test error states
+- Must test different guest types
+- Must test different event types
+- Must include proper ARIA role testing
+
+## Accessibility Requirements
+- Loading states must include role="status"
+- Error states must include role="alert"
+- All interactive elements must be keyboard accessible
+- All images must have alt text
+- All form elements must have labels
+
+## Performance Requirements
+- Use proper cleanup in useEffect
+- Implement proper error boundaries
+- Use proper suspense boundaries
+- Implement proper loading states
+- Use proper error states
+
+## File Structure
+```
+app/invite/
+├── [eventId]/
+│   └── [guestId]/
+│       └── page.tsx
+├── components/
+│   ├── invitation-data-fetcher.tsx
+│   └── invitation-page-wrapper.tsx
+├── context/
+│   └── invite-context.tsx
+
+action/
+└── event.ts
+└── guest.ts
+```
+
+## Dependencies
+- Server components should not import client components directly
+- Client components should not import server components
+- Context should not import UI components
+- Actions should not import UI components 

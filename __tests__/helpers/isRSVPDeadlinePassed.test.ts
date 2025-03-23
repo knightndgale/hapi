@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import isRSVPDeadlinePassed from "../../helpers/isRSVPDeadlinePassed";
+import isRSVPDeadlinePassed from "@/helpers/isRSVPDeadlinePassed";
 
 describe("isRSVPDeadlinePassed", () => {
   beforeEach(() => {
