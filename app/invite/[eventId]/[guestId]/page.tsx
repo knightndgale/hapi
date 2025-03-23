@@ -201,10 +201,10 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
               {isRSVPDeadlinePassed(messages.deadline) && <p className="mt-2 text-sm text-red-500">The RSVP deadline has passed. Please contact the hosts for more information.</p>}
             </div>
           )}
-          <div className="flex gap-4 ">
+          <div className="flex flex-col sm:flex-row gap-4 w-full">
             <Button
               type="button"
-              className="flex-1"
+              className="flex-1 px-2 py-3 text-sm sm:text-base min-h-[48px]"
               style={{
                 backgroundColor: theme.primary,
                 color: "white",
@@ -221,7 +221,7 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
             </Button>
             <Button
               type="button"
-              className="flex-1"
+              className="flex-1 px-2 py-3 text-sm sm:text-base min-h-[48px]"
               style={{
                 backgroundColor: `${theme.primary}cc`,
                 color: "white",
