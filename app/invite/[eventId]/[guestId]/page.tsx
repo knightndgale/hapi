@@ -30,7 +30,7 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
     id: params.eventId,
     title: "Sample Event",
     description: "Sample Description",
-    date: "2024-06-15",
+    date: "2025-06-15",
     time: "2:00 pm",
     location: "Sample Location",
     type: "wedding",
@@ -60,7 +60,7 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
         "We joyfully invite you to share in the celebration of our love and commitment as we exchange vows and begin our new life together. Your presence would make our special day complete.",
       accept_text: "Joyfully Accept",
       decline_text: "Respectfully Decline",
-      deadline: "2024-05-15",
+      deadline: "2025-05-15",
       title_as_image: "https://i.ibb.co/r2wYRn2j/Kindly-Respond-removebg-preview-1.png",
     },
   };
@@ -71,8 +71,6 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
     guestType: "regular",
   };
 
-  const [eventData, setEventData] = useState<Event>(dummyEventData);
-  const [guestData, setGuestData] = useState<GuestData>(dummyGuestData);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dietaryRequirements, setDietaryRequirements] = useState("");
   const [message, setMessage] = useState("");
@@ -88,7 +86,7 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
       eventId: params.eventId,
       guestId: params.guestId,
       response,
-      phoneNumber: guestData?.guestType !== "regular" ? phoneNumber : undefined,
+      phoneNumber: dummyGuestData?.guestType !== "regular" ? phoneNumber : undefined,
       dietaryRequirements,
       message,
       images: uploadedImages,
@@ -101,15 +99,15 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
     return <div>Loading...</div>;
   }
 
-  const theme = THEME_COLORS[eventData.type];
-  const messages = eventData.rsvp || DEFAULT_MESSAGES[eventData.type];
-  const isPhoneRequired = guestData.guestType === "entourage" || guestData.guestType === "sponsor";
+  const theme = THEME_COLORS[dummyEventData.type];
+  const messages = dummyEventData.rsvp || DEFAULT_MESSAGES[dummyEventData.type];
+  const isPhoneRequired = dummyGuestData.guestType === "entourage" || dummyGuestData.guestType === "sponsor";
 
   return (
     <div
       className="min-h-screen flex items-center justify-center p-8"
       style={{
-        backgroundImage: `url('${BACKGROUND_IMAGES[eventData.type]}')`,
+        backgroundImage: `url('${BACKGROUND_IMAGES[dummyEventData.type]}')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -129,34 +127,23 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
             <h1 className="text-3xl font-bold text-black">{messages.title}</h1>
           )}
           <p className="text-xl text-black">
-            Dear {guestData.firstName} {guestData.lastName},
+            Dear {dummyGuestData.firstName} {dummyGuestData.lastName},
           </p>
           <p className="text-lg text-black mt-4">{messages.invitation}</p>
           <div className="flex flex-wrap justify-center gap-4 text-black">
             <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[300px]">
               <Calendar className="w-5 h-5 flex-shrink-0" />
-              <span className="truncate">{eventData.date}</span>
+              <span className="truncate">{dummyEventData.date}</span>
             </div>
             <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[300px]">
               <Clock className="w-5 h-5 flex-shrink-0" />
-              <span className="truncate">{eventData.time}</span>
+              <span className="truncate">{dummyEventData.time}</span>
             </div>
             <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[300px]">
               <MapPin className="w-5 h-5 flex-shrink-0" />
-              <span className="truncate">{eventData.location}</span>
+              <span className="truncate">{dummyEventData.location}</span>
             </div>
           </div>
-
-          {messages.deadline && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="flex items-center gap-2 text-gray-700">
-                <CalendarCheck className="w-5 h-5" />
-                <span className="font-medium">RSVP Deadline:</span>
-                <span className={isRSVPDeadlinePassed(messages.deadline) ? "text-red-500" : "text-gray-600"}>{formatDate(messages.deadline)}</span>
-              </div>
-              {isRSVPDeadlinePassed(messages.deadline) && <p className="mt-2 text-sm text-red-500">The RSVP deadline has passed. Please contact the hosts for more information.</p>}
-            </div>
-          )}
         </div>
 
         <form className="space-y-6">
@@ -190,7 +177,7 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
             />
           </div>
 
-          {eventData.type === "wedding" && <PhotoUpload onImagesChange={handleImagesChange} />}
+          {dummyEventData.type === "wedding" && <PhotoUpload onImagesChange={handleImagesChange} />}
 
           <div className="space-y-2">
             <Label htmlFor="message" className="text-black font-medium">
@@ -204,8 +191,17 @@ export default function InvitationPage({ params }: { params: { eventId: string; 
               className="h-24 bg-white border-gray-300 focus:border-gray-400 text-black placeholder:text-black/70"
             />
           </div>
-
-          <div className="flex gap-4 pt-4">
+          {messages.deadline && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-2 text-gray-700">
+                <CalendarCheck className="w-5 h-5" />
+                <span className="font-medium">RSVP Deadline:</span>
+                <span className={isRSVPDeadlinePassed(messages.deadline) ? "text-red-500" : "text-gray-600"}>{formatDate(messages.deadline)}</span>
+              </div>
+              {isRSVPDeadlinePassed(messages.deadline) && <p className="mt-2 text-sm text-red-500">The RSVP deadline has passed. Please contact the hosts for more information.</p>}
+            </div>
+          )}
+          <div className="flex gap-4 ">
             <Button
               type="button"
               className="flex-1"

@@ -76,13 +76,13 @@ export function PhotoUpload({ onImagesChange }: PhotoUploadProps) {
           <Input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" id="image-upload" />
           <Label htmlFor="image-upload" className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
             <Upload className="text-black w-4 h-4" />
-            <span className="text-sm text-black">Share Your Special Moments</span>
+            <span className="text-sm text-black">Upload Pre-Wedding Memories</span>
           </Label>
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-500">{images.length}/3 images (max 5MB each)</span>
             <span className="text-xs text-gray-500 italic">These photos will be displayed during the event!</span>
           </div>
-          <p className="text-sm text-gray-600">Share your favorite photos with the newlyweds - we&apos;d love to see moments of joy and friendship you&apos;ve shared together! 🎉</p>
+          <p className="text-sm text-gray-600">Upload images of cherished moments with the bride or groom before the wedding. We&apos;d love to see old pictures of you with them! 📸</p>
         </div>
         {error && <p className="text-sm text-red-500">{error}</p>}
         {images.length > 0 && (
