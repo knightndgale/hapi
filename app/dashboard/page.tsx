@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-
 import { EventCard } from "@/components/events/event-card";
 import { Event } from "@/types/schema/Event.schema";
+import { EventFilters, EventStatus, EventType } from "./components/event-filters";
+import { DateRange } from "react-day-picker";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -36,8 +37,9 @@ export default function DashboardPage() {
           },
         },
       ],
-      type: "wedding",
+      type: "conference",
       templateId: "",
+      status: "published",
     },
     {
       id: "2",
@@ -63,10 +65,48 @@ export default function DashboardPage() {
           },
         },
       ],
-      type: "wedding",
+      type: "conference",
       templateId: "",
+      status: "draft",
     },
   ]);
+
+  const [filters, setFilters] = useState<{
+    type: EventType;
+    status: EventStatus;
+    dateRange: DateRange | undefined;
+  }>({
+    type: "all",
+    status: "all",
+    dateRange: undefined,
+  });
+
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) => {
+      // Filter by type
+      if (filters.type !== "all" && event.type !== filters.type) {
+        return false;
+      }
+
+      // Filter by status
+      if (filters.status !== "all" && event.status !== filters.status) {
+        return false;
+      }
+
+      // Filter by date range
+      if (filters.dateRange) {
+        const eventDate = new Date(event.date);
+        if (filters.dateRange.from && eventDate < filters.dateRange.from) {
+          return false;
+        }
+        if (filters.dateRange.to && eventDate > filters.dateRange.to) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [events, filters]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -79,8 +119,10 @@ export default function DashboardPage() {
           </Button>
         </div>
 
+        <EventFilters onFilterChange={setFilters} />
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>

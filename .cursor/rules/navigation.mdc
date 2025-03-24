@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+Navbar should be included into the pages unless determined to be excluded. Use the layout.tsx to add the navbar and if instructed please exlucde it.
+- You can @ files here
+- You can use markdown but dont have to

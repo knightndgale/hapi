@@ -40,7 +40,8 @@ const mockEventData: Event = {
     decline_text: "Decline",
     deadline: "2025-05-15",
   },
-} satisfies Event;
+  status: "published",
+};
 
 const mockGuestData = {
   id: "test-guest-1",
