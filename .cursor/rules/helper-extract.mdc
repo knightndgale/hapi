@@ -1,7 +1,7 @@
 ---
-description: 
+description: Helper should be extracted for cleaner code
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Your rule content

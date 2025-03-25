@@ -62,6 +62,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
         },
       ],
       maxAttendees: 200,
+      status: "published",
     };
 
     setEvent(mockEvent);
@@ -73,6 +74,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
 
   return (
     <div
+      data-testid="event-page"
       className="min-h-screen flex flex-col bg-cover bg-center bg-fixed"
       style={{
         backgroundImage: `url(${event.media?.url})`,

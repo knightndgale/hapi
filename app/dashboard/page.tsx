@@ -114,7 +114,7 @@ export default function DashboardPage() {
       <main className="flex-1 container mx-auto py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">My Events</h1>
-          <Button onClick={() => router.push("/dashboard/create")}>
+          <Button onClick={() => router.push("/events/create")}>
             <Plus className="mr-2 h-4 w-4" /> Create Event
           </Button>
         </div>

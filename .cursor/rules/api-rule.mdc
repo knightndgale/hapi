@@ -1,7 +1,7 @@
 ---
-description: 
+description: Apri should not be include
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Your rule content

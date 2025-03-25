@@ -1,7 +1,7 @@
 ---
-description: 
+description: Architecture should be kept for better testing
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
  # Invite Page Architecture Rules
 

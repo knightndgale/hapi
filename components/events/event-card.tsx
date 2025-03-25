@@ -30,7 +30,7 @@ export function EventCard({ event }: EventCardProps) {
   };
 
   return (
-    <Card className={`group cursor-pointer transition-all hover:shadow-lg ${getEventStyles(event.type)}`} onClick={() => router.push(`/events/${event.id}`)}>
+    <Card data-testid="event-card" className={`group cursor-pointer transition-all hover:shadow-lg ${getEventStyles(event.type)}`} onClick={() => router.push(`/events/${event.id}`)}>
       {event.media?.type === "image" && (
         <div className="aspect-video w-full overflow-hidden">
           <img

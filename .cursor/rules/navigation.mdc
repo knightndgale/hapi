@@ -1,7 +1,7 @@
 ---
-description: 
+description: Navigation should always be included unless defined to not to.
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Your rule content
