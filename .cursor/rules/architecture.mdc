@@ -3,13 +3,13 @@ description: Architecture should be kept for better testing
 globs: 
 alwaysApply: false
 ---
- # Invite Page Architecture Rules
+# Feature Architecture Rules
 
 ## Component Structure
-- Server components should be in `app/invite/[eventId]/[guestId]/page.tsx`
-- Client components should be in `app/invite/components/`
-- Context should be in `app/invite/context/`
-- Server actions should be in `app/invite/actions.ts`
+- Server components should be in `app/[feature]/[dynamic-routes]/page.tsx`
+- Client components should be in `app/[feature]/components/`
+- Context should be in `app/[feature]/context/`
+- Server actions should be in `app/[feature]/actions.ts`
 
 ## Component Responsibilities
 
@@ -19,7 +19,7 @@ alwaysApply: false
 - Should use client components for data fetching and rendering
 - Must wrap client components in Suspense
 
-### Client Data Fetcher (`invitation-data-fetcher.tsx`)
+### Client Data Fetcher Component
 - Must be marked with "use client"
 - Should handle all data fetching using context actions
 - Must manage loading, error, and success states
@@ -27,18 +27,27 @@ alwaysApply: false
 - Must include proper ARIA roles for accessibility
 - Should handle component unmounting
 
-### Context (`invite-context.tsx`)
-- Must provide all server actions
+### Context (`[feature]-context.tsx`)
+- Must provide all server actions through props
 - Should not contain any UI components
 - Must be used for all server-side operations
-- Should be wrapped around all invite routes
+- Should be wrapped around all feature routes
+- Must implement proper TypeScript interfaces
+- Must handle loading, error, and success states
+- Must implement proper cleanup in useEffect
+
+### Layout (`layout.tsx`)
+- Must import and use feature Provider
+- Must pass server actions to Provider
+- Should include navigation unless explicitly excluded
+- Should handle any feature-wide UI elements
 
 ## Testing Requirements
-- Tests should be in `__tests__/pages/invite/[eventId]/[guestId]/`
+- Tests should be in `__tests__/pages/[feature]/`
 - Must test loading states
 - Must test error states
-- Must test different guest types
-- Must test different event types
+- Must test all data fetching scenarios
+- Must test all user interactions
 - Must include proper ARIA role testing
 
 ## Accessibility Requirements
@@ -55,25 +64,35 @@ alwaysApply: false
 - Implement proper loading states
 - Use proper error states
 
-## File Structure
+## File Structure Example
 ```
-app/invite/
-├── [eventId]/
-│   └── [guestId]/
-│       └── page.tsx
+app/[feature]/
+├── [dynamic-routes]/
+│   └── page.tsx
 ├── components/
-│   ├── invitation-data-fetcher.tsx
-│   └── invitation-page-wrapper.tsx
+│   ├── feature-content.tsx
+│   └── feature-data-fetcher.tsx
 ├── context/
-│   └── invite-context.tsx
+│   └── feature-context.tsx
+├── actions.ts
+└── layout.tsx
 
-action/
-└── event.ts
-└── guest.ts
+__tests__/
+└── pages/
+    └── [feature]/
+        └── page.test.tsx
 ```
 
 ## Dependencies
 - Server components should not import client components directly
 - Client components should not import server components
 - Context should not import UI components
-- Actions should not import UI components 
+- Actions should not import UI components
+- Layout should handle Provider setup and navigation
+
+## State Management
+- Use context for feature-wide state
+- Implement proper loading states
+- Handle error states gracefully
+- Clean up subscriptions and async operations
+- Use proper TypeScript types for all state

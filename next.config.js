@@ -4,7 +4,7 @@ const nextConfig = {
     serverActions: true,
   },
   images: {
-    domains: ["example.com", "images.unsplash.com", "i.ibb.co"],
+    domains: ["example.com", "images.unsplash.com", "i.ibb.co", "picsum.photos"],
   },
 };
 

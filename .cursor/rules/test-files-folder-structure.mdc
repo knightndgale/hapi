@@ -3,10 +3,9 @@ description: Testing directory guide
 globs: 
 alwaysApply: false
 ---
+# Test files folder structure
 
-# Your rule content
-helpers test should be added into the ./__tests__/helpers
-components test should be added into the ./__tests__/components
-pages test should be added into the ./__tests__/pages
-- You can @ files here
-- You can use markdown but dont have to
+- helpers test should be added into the ./__tests__/helpers
+- components test should be added into the ./__tests__/components
+- pages test should be added into the ./__tests__/pages
+

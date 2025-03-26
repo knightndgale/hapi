@@ -3,13 +3,10 @@ description: Apri should not be include
 globs: 
 alwaysApply: false
 ---
+# API Rule and Action Rule
 
-# Your rule content
-
-Do not implement api fetching.
-Use only dummy data to mock the pages you created.
-But put a placeholder function for the api that I will adding later on.
+- Do not implement api fetching.
+- Use only dummy data to mock the pages you created. put a placeholder function for the api that I will adding later on.
+- API Function call should be added into the folder called ./actions and name the file according to it's collection name. Like the [event.action.ts](mdc:actions/event.action.ts) or [guest.action.ts](mdc:actions/guest.action.ts)
 
 
-- You can @ files here
-- You can use markdown but dont have to

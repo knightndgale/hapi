@@ -1,18 +1,16 @@
 ---
-description: Testing guide 
+description: Testing guide
 globs: 
 alwaysApply: false
 ---
 
-#Testing rules
-When testing, code that causes React state updates should be wrapped into act(...):
+# Testing rules 
 
+- When testing, code that causes React state updates should be wrapped into act(...):
+```
 act(() => {
   /* fire events that update state */
 });
 /* assert on the output */
+```
 
-This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-
-- You can @ files here
-- You can use markdown but dont have to
