@@ -38,6 +38,7 @@ const mockEventData: Event = {
     deadline: "2025-05-15",
     title_as_image: "https://i.ibb.co/r2wYRn2j/Kindly-Respond-removebg-preview-1.png",
   },
+  status: "published",
 };
 
 export async function getEventData(eventId: string): Promise<Event> {
