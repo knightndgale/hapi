@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Package Installation
+- Always make sure that packages are updated and is using the stable version.
+- Request for an update if necessary to improve security
