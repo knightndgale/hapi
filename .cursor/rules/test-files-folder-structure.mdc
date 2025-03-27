@@ -9,10 +9,14 @@ alwaysApply: true
   ```
   __tests__/
   ├── helpers/      # Helper function tests
-  ├── components/   # Component tests
+  ├── components/   # Component tests for ./components
   ├── pages/        # Page tests
+      └──pages/*/components/    # Page components
   └── utils/        # Utility function tests
   ```
+
+## Test packages
+- All test files should use vitest from the [package.json](mdc:package.json)
 
 ## Naming Conventions
 - Test files: `[component-name].test.tsx` or `[function-name].test.ts`
