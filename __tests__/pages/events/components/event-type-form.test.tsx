@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, prettyDOM } from "@testing-library/react";
 import { vi } from "vitest";
 import { EventTypeForm } from "@/app/events/components/event-type-form";
 import { EventType } from "@/types/schema/Event.schema";
@@ -28,18 +28,19 @@ describe("EventTypeForm", () => {
   });
 
   // it("submits form with selected event type", async () => {
-  //   render(<EventTypeForm onSubmit={mockOnSubmit} />);
+  //   const { container } = render(<EventTypeForm onSubmit={mockOnSubmit} />);
+  //   console.log(prettyDOM(container));
 
   //   await act(async () => {
   //     // Select Meeting event type
-  //     fireEvent.click(screen.getByText("Meeting"));
+  //     fireEvent.click(screen.getByText("Wedding"));
   //     // Submit form
   //     fireEvent.click(screen.getByText("Next"));
   //   });
 
   //   expect(mockOnSubmit).toHaveBeenCalledWith(
   //     expect.objectContaining({
-  //       type: "meeting",
+  //       type: "Wedding",
   //     })
   //   );
   // });

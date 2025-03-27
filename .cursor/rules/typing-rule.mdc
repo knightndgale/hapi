@@ -1,11 +1,28 @@
 ---
-description: Typings rule
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-# Typing Rule
+# Typing Rules
 
-- Always refer to the folder ./types/schema, do not automatically create typing.
-- When creating a new collection or a set of basic type instead of creating a new type in the page put it into the schema as a zod schema and infer it to get the typing
-- When you need to extend a typing while populating a directus collection which entails that some collection id can be transformed into their own collection schema then create a new extended schema example for users collection that has a role collection attached but in id format then the extended schema should be name ExtendedUserRole schema.
-- Naming convention for typing should be like this for schema [collection_name].schema.ts.
+## Schema Management
+- Always refer to the `./types/schema` directory for type definitions
+- Do not create new types directly in page files
+- Use Zod schemas for collection types and basic types
+- Infer types from Zod schemas rather than declaring them manually
+
+## Extended Types
+- When extending types for populated Directus collections:
+  - Create extended schemas for collections with related data
+  - Name format: `Extended[CollectionName][Relation]Schema`
+  - Example: `ExtendedUserRoleSchema` for users with role relations
+
+## Naming Conventions
+- Schema files: `[collection_name].schema.ts`
+- Type files should match their collection names
+- Keep types close to their related schemas
+
+## Restrictions
+- Do not modify existing enums without explicit instructions
+- All new types must be documented
+- Avoid any/unknown types unless absolutely necessary 

@@ -1,11 +1,26 @@
 ---
-description: Testing directory guide
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-# Test files folder structure
+## Directory Structure
+- All test files must be placed in appropriate `__tests__` directories
+- Follow this structure:
+  ```
+  __tests__/
+  ├── helpers/      # Helper function tests
+  ├── components/   # Component tests
+  ├── pages/        # Page tests
+  └── utils/        # Utility function tests
+  ```
 
-- helpers test should be added into the ./__tests__/helpers
-- components test should be added into the ./__tests__/components
-- pages test should be added into the ./__tests__/pages
+## Naming Conventions
+- Test files: `[component-name].test.tsx` or `[function-name].test.ts`
+- Test suites should match their implementation file names
+- Test directories should mirror the source code structure
 
+## Best Practices
+- Keep test files close to their implementation
+- Group related tests in describe blocks
+- Use meaningful test descriptions
+- Include both positive and negative test cases

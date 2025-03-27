@@ -8,19 +8,20 @@ import { Button } from "@/components/ui/button";
 import { EventTypeForm, EventTypeFormData } from "@/app/events/components/event-type-form";
 import { RSVPForm } from "@/app/events/components/rsvp-form";
 import { EventCustomizationForm, EventCustomizationFormData } from "@/app/events/components/event-customization-form";
-import { BasicEventForm, BasicEventFormData } from "@/app/events/components/basic-event-form";
+import { BasicEventForm } from "@/app/events/components/basic-event-form";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { RSVP } from "@/types/schema/Event.schema";
+import type { FormData as BasicEventFormData } from "@/app/events/components/basic-event-form";
 
 const steps = [
   {
-    id: "basic",
-    title: "Basic Information",
-  },
-  {
     id: "type",
     title: "Event Type",
+  },
+  {
+    id: "basic",
+    title: "Basic Information",
   },
   {
     id: "rsvp",
@@ -36,8 +37,8 @@ export default function CreateEventPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
-    basic: {} as BasicEventFormData,
     type: {} as EventTypeFormData,
+    basic: {} as BasicEventFormData,
     rsvp: {} as RSVP,
     customize: {} as EventCustomizationFormData,
   });
@@ -68,22 +69,22 @@ export default function CreateEventPage() {
     switch (currentStep) {
       case 0:
         return (
-          <BasicEventForm
-            onSubmit={(data) => {
-              setFormData((prev) => ({ ...prev, basic: data }));
-              handleNext();
-            }}
-            defaultValues={formData.basic}
-          />
-        );
-      case 1:
-        return (
           <EventTypeForm
             onSubmit={(data) => {
               setFormData((prev) => ({ ...prev, type: data }));
               handleNext();
             }}
             defaultValues={formData.type}
+          />
+        );
+      case 1:
+        return (
+          <BasicEventForm
+            onSubmit={(data) => {
+              setFormData((prev) => ({ ...prev, basic: data }));
+              handleNext();
+            }}
+            defaultValues={formData.basic}
           />
         );
       case 2:

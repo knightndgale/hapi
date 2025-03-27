@@ -1,12 +1,31 @@
 ---
-description: Apri should not be include
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-# API Rule and Action Rule
+# API and Data Fetching Guidelines
 
-- Do not implement api fetching.
-- Use only dummy data to mock the pages you created. put a placeholder function for the api that I will adding later on.
-- API Function call should be added into the folder called ./actions and name the file according to it's collection name. Like the [event.action.ts](mdc:actions/event.action.ts) or [guest.action.ts](mdc:actions/guest.action.ts)
+## Implementation Rules
+- Do not implement direct API fetching in components
+- Use mock data for initial development
+- Implement placeholder functions for future API integration
 
+## File Organization
+- All API-related functions must be in the `./actions` directory
+- File namincollion.ts`
+  - Example: `event.action.ts`
+  - Example: `guest.action.ts`
+
+## Mock Data
+- Create realistic mock data structures
+- Match expected API response formats
+- Document expected API behavior in comments
+- Include type definitions for mock data
+
+## Best Practices
+- Use TypeScript interfaces for API responses
+- Implement proper error handling
+- Include loading states
+- Document API endpoints and parameters
+- Use environment variables for API configuration
 

@@ -23,8 +23,8 @@ vi.mock("@/app/events/components/basic-event-form", () => ({
 vi.mock("@/app/events/components/event-type-form", () => ({
   EventTypeForm: ({ onSubmit }: { onSubmit: (data: any) => void }) => (
     <div>
-      <h2>Event Type</h2>
-      <button onClick={() => onSubmit({ type: "party" })}>Next</button>
+      <h2>Choose Your Event Type</h2>
+      <button onClick={() => onSubmit({ type: "wedding" })}>Next</button>
     </div>
   ),
 }));
@@ -66,20 +66,20 @@ describe("CreateEventPage", () => {
     render(<CreateEventPage />);
 
     expect(screen.getByText("Create Event")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Basic Information" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Choose Your Event Type" })).toBeInTheDocument();
     expect(screen.getByText("Back to Events")).toBeInTheDocument();
   });
 
   it("navigates through all steps", async () => {
     render(<CreateEventPage />);
 
-    // Step 1: Basic Information
+    // Step 1: Event Type
     await act(async () => {
       fireEvent.click(screen.getByText("Next"));
     });
-    expect(screen.getByRole("heading", { name: "Event Type" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Basic Information" })).toBeInTheDocument();
 
-    // Step 2: Event Type
+    // Step 2: Basic Information
     await act(async () => {
       fireEvent.click(screen.getByText("Next"));
     });
@@ -90,64 +90,29 @@ describe("CreateEventPage", () => {
       fireEvent.click(screen.getByText("Next"));
     });
     expect(screen.getByRole("heading", { name: "Customize" })).toBeInTheDocument();
-
-    // TODO implement a back button testing
   });
 
   it("allows navigation back to previous steps", async () => {
     render(<CreateEventPage />);
 
-    // Navigate to Event Type
+    // Navigate to Basic Information
     await act(async () => {
       fireEvent.click(screen.getByText("Next"));
-    });
-    expect(screen.getByRole("heading", { name: "Event Type" })).toBeInTheDocument();
-
-    // Go back to Basic Information
-    await act(async () => {
-      fireEvent.click(screen.getByText("Back"));
     });
     expect(screen.getByRole("heading", { name: "Basic Information" })).toBeInTheDocument();
-  });
-
-  it("preserves form data between steps", async () => {
-    render(<CreateEventPage />);
-
-    // Fill Basic Information
-    await act(async () => {
-      fireEvent.click(screen.getByText("Next"));
-    });
-
-    // Fill Event Type
-    await act(async () => {
-      fireEvent.click(screen.getByText("Next"));
-    });
 
     // Go back to Event Type
     await act(async () => {
       fireEvent.click(screen.getByText("Back"));
     });
-
-    // Verify Event Type is still shown
-    expect(screen.getByRole("heading", { name: "Event Type" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Choose Your Event Type" })).toBeInTheDocument();
   });
-
-  // it("redirects to dashboard on back button click from first step", async () => {
-  //   render(<CreateEventPage />);
-
-  //   await act(async () => {
-  //     fireEvent.click(screen.getByText("Back to Events"));
-  //   });
-
-  //   expect(mockPush).toHaveBeenCalledWith("/dashboard");
-  // });
 
   it("shows step indicators correctly", () => {
     render(<CreateEventPage />);
 
-    const steps = ["Basic Information", "Event Type", "RSVP Form", "Customize"];
+    const steps = ["Event Type", "Basic Information", "RSVP Form", "Customize"];
     steps.forEach((step) => {
-      // Use getAllByText to handle multiple elements with the same text
       expect(screen.getAllByText(step).length).toBeGreaterThan(0);
     });
   });

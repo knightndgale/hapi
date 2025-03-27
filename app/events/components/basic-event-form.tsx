@@ -28,7 +28,7 @@ const formSchema = z.object({
   program: z.array(ProgramItemSchema),
 });
 
-type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>;
 
 interface BasicEventFormProps {
   onSubmit: (data: FormData) => void;

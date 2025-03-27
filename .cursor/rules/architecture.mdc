@@ -1,7 +1,7 @@
 ---
-description: Architecture should be kept for better testing
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # Feature Architecture Rules
 
