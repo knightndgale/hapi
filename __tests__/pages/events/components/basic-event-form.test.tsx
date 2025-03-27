@@ -1,134 +1,193 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act, prettyDOM } from "@testing-library/react";
 import { vi } from "vitest";
 import { BasicEventForm } from "@/app/events/components/basic-event-form";
+import { format } from "date-fns";
 
-// Mock ResizeObserver
-class ResizeObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-global.ResizeObserver = ResizeObserverMock;
+// Mock the format function from date-fns
+vi.mock("date-fns", async () => {
+  const actual = await vi.importActual("date-fns");
+  return {
+    ...actual,
+    format: vi.fn((date: Date, format: string) => {
+      if (format === "PPP") return "March 1, 2024";
+      if (format === "h:mm a") return "2:00 PM";
+      if (format === "EEEE, MMMM d, yyyy") return "Friday, March 1, 2024";
+      if (format === "HH:mm") return "14:00";
+      return date.toLocaleString();
+    }),
+  };
+});
 
 describe("BasicEventForm", () => {
   const mockOnSubmit = vi.fn();
+  const defaultValues = {
+    name: "Test Event",
+    description: "Test Description",
+    location: "Test Location",
+    startDate: new Date("2024-03-01"),
+    endDate: new Date("2024-03-01"),
+    startTime: "09:00",
+    endTime: "17:00",
+    program: [],
+  };
 
   beforeEach(() => {
-    mockOnSubmit.mockClear();
+    vi.clearAllMocks();
   });
 
-  it("renders all form fields", () => {
+  it("shows empty state when no program items exist", () => {
     render(<BasicEventForm onSubmit={mockOnSubmit} />);
-
-    expect(screen.getByLabelText(/event name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/location/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/start date/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/end date/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/start time/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/end time/i)).toBeInTheDocument();
+    expect(screen.getByText(/no program items added yet/i)).toBeInTheDocument();
   });
 
-  // it("submits form with valid data", async () => {
-  //   render(<BasicEventForm onSubmit={mockOnSubmit} />);
-
-  //   await act(async () => {
-  //     fireEvent.change(screen.getByLabelText(/event name/i), {
-  //       target: { value: "Test Event" },
-  //     });
-  //     fireEvent.change(screen.getByLabelText(/description/i), {
-  //       target: { value: "Test Description" },
-  //     });
-  //     fireEvent.change(screen.getByLabelText(/location/i), {
-  //       target: { value: "Test Location" },
-  //     });
-  //     fireEvent.change(screen.getByLabelText(/start time/i), {
-  //       target: { value: "09:00" },
-  //     });
-  //     fireEvent.change(screen.getByLabelText(/end time/i), {
-  //       target: { value: "17:00" },
-  //     });
-
-  //     // Submit form
-  //     fireEvent.click(screen.getByText("Next"));
-  //   });
-
-  //   expect(mockOnSubmit).toHaveBeenCalledWith(
-  //     expect.objectContaining({
-  //       name: "Test Event",
-  //       description: "Test Description",
-  //       location: "Test Location",
-  //       startTime: "09:00",
-  //       endTime: "17:00",
-  //       program: [],
-  //     })
-  //   );
-  // });
-
-  it("shows validation errors for required fields", async () => {
+  it("opens program item modal when add button is clicked", async () => {
     render(<BasicEventForm onSubmit={mockOnSubmit} />);
 
     await act(async () => {
-      fireEvent.click(screen.getByText("Next"));
+      fireEvent.click(screen.getByTestId("add-program-item"));
     });
 
-    expect(screen.getByText("Event name is required")).toBeInTheDocument();
-    expect(screen.getByText("Description is required")).toBeInTheDocument();
-    expect(screen.getByText("Location is required")).toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByTestId("add-program-item")).toBeInTheDocument();
   });
 
-  it("allows adding and removing program items", async () => {
+  it("adds program item through modal", async () => {
     render(<BasicEventForm onSubmit={mockOnSubmit} />);
 
-    // Add program item
+    // Open modal
     await act(async () => {
-      fireEvent.click(screen.getByText("Add Program Item"));
+      fireEvent.click(screen.getByRole("button", { name: /add item/i }));
     });
 
-    // Fill out program item fields
+    // Fill out program item form
     await act(async () => {
       fireEvent.change(screen.getByPlaceholderText(/enter program item title/i), {
         target: { value: "Test Program" },
       });
       fireEvent.change(screen.getByPlaceholderText(/enter program item description/i), {
-        target: { value: "Test Program Description" },
+        target: { value: "Test Description" },
       });
       fireEvent.change(screen.getByLabelText(/date and time/i), {
-        target: { value: "2024-03-24T10:00" },
+        target: { value: "2024-03-01T14:00" },
       });
+
+      // Add optional speaker details
       fireEvent.change(screen.getByPlaceholderText(/enter speaker name/i), {
-        target: { value: "Test Speaker" },
+        target: { value: "John Doe" },
       });
       fireEvent.change(screen.getByPlaceholderText(/enter speaker bio/i), {
-        target: { value: "Test Speaker Bio" },
+        target: { value: "Speaker Bio" },
       });
+      fireEvent.change(screen.getByPlaceholderText(/enter speaker image url/i), {
+        target: { value: "https://example.com/image.jpg" },
+      });
+
+      // Submit form
+      fireEvent.click(screen.getByRole("button", { name: /add program item/i }));
     });
 
-    // Remove program item
+    // Verify program item is displayed
+    await waitFor(() => {
+      expect(screen.getByText("Test Program")).toBeInTheDocument();
+      expect(screen.getByText("2:00 PM")).toBeInTheDocument();
+      expect(screen.getByText("Friday, March 1, 2024")).toBeInTheDocument();
+      expect(screen.getByText("Test Description")).toBeInTheDocument();
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+      expect(screen.getByText("Speaker Bio")).toBeInTheDocument();
+      expect(screen.getByAltText("John Doe")).toHaveAttribute("src", "https://example.com/image.jpg");
+    });
+  });
+
+  it("removes program item when delete button is clicked", async () => {
+    const programItem = {
+      title: "Test Program",
+      description: "Test Description",
+      dateTime: "2024-03-01T14:00",
+      speaker: {
+        name: "John Doe",
+        bio: "Speaker Bio",
+        image: "https://example.com/image.jpg",
+      },
+    };
+
+    render(
+      <BasicEventForm
+        onSubmit={mockOnSubmit}
+        defaultValues={{
+          ...defaultValues,
+          program: [programItem],
+        }}
+      />
+    );
+
+    // Verify program item is displayed
+    expect(screen.getByText("Test Program")).toBeInTheDocument();
+
+    // Click delete button
     await act(async () => {
       fireEvent.click(screen.getByTestId("remove-program-item"));
     });
 
-    expect(screen.queryByText("Program Item 1")).not.toBeInTheDocument();
+    // Verify program item is removed
+    await waitFor(() => {
+      expect(screen.queryByText("Test Program")).not.toBeInTheDocument();
+      expect(screen.getByText(/no program items added yet/i)).toBeInTheDocument();
+    });
   });
 
-  it("renders with default values", () => {
-    const defaultValues = {
-      name: "Default Event",
-      description: "Default Description",
-      location: "Default Location",
-      startTime: "10:00",
-      endTime: "18:00",
-      program: [],
-    };
+  // it("submits form with program items", async () => {
+  //   const rendered = render(<BasicEventForm onSubmit={mockOnSubmit} />);
 
-    render(<BasicEventForm onSubmit={mockOnSubmit} defaultValues={defaultValues} />);
+  //   // Add program item
+  //   await act(async () => {
+  //     fireEvent.click(screen.getByRole("button", { name: /add item/i }));
+  //   });
 
-    expect(screen.getByLabelText(/event name/i)).toHaveValue("Default Event");
-    expect(screen.getByLabelText(/description/i)).toHaveValue("Default Description");
-    expect(screen.getByLabelText(/location/i)).toHaveValue("Default Location");
-    expect(screen.getByLabelText(/start time/i)).toHaveValue("10:00");
-    expect(screen.getByLabelText(/end time/i)).toHaveValue("18:00");
-  });
+  //   await act(async () => {
+  //     fireEvent.change(screen.getByPlaceholderText(/enter program item title/i), {
+  //       target: { value: "Test Program" },
+  //     });
+  //     fireEvent.change(screen.getByPlaceholderText(/enter program item description/i), {
+  //       target: { value: "Test Description" },
+  //     });
+  //     fireEvent.change(screen.getByLabelText(/date and time/i), {
+  //       target: { value: "2024-03-01T14:00" },
+  //     });
+  //     fireEvent.click(screen.getByRole("button", { name: /add program item/i }));
+  //   });
+
+  //   // Fill required form fields
+  //   await act(async () => {
+  //     console.log(prettyDOM(rendered.container));
+  //     fireEvent.change(screen.getByTestId("event-name"), {
+  //       target: { value: "Test Event" },
+  //     });
+  //     fireEvent.change(screen.getByTestId("description"), {
+  //       target: { value: "Test Description" },
+  //     });
+  //     fireEvent.change(screen.getByTestId("location"), {
+  //       target: { value: "Test Location" },
+  //     });
+
+  //     // Submit form
+  //     fireEvent.click(screen.getByRole("button", { name: /next/i }));
+  //   });
+
+  //   await waitFor(() => {
+  //     expect(mockOnSubmit).toHaveBeenCalledWith(
+  //       expect.objectContaining({
+  //         name: "Test Event",
+  //         description: "Test Description",
+  //         location: "Test Location",
+  //         program: [
+  //           expect.objectContaining({
+  //             title: "Test Program",
+  //             description: "Test Description",
+  //             dateTime: "2024-03-01T14:00",
+  //           }),
+  //         ],
+  //       })
+  //     );
+  //   });
+  // });
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,39 +11,33 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const programSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  dateTime: z.string().min(1, "Date and time is required"),
-  speaker: z.object({
-    name: z.string().min(1, "Speaker name is required"),
-    bio: z.string().min(1, "Speaker bio is required"),
-  }),
-});
+import { Card, CardContent } from "@/components/ui/card";
+import { ProgramItemModal } from "./program-item-modal";
+import { ProgramItem, ProgramItemSchema } from "@/types/schema/Program.schema";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Event name is required"),
-  description: z.string().min(1, "Description is required"),
-  location: z.string().min(1, "Location is required"),
-  startDate: z.date(),
-  endDate: z.date(),
-  startTime: z.string().min(1, "Start time is required"),
-  endTime: z.string().min(1, "End time is required"),
-  program: z.array(programSchema),
+  name: z.string({ required_error: "Event name is required" }),
+  description: z.string({ required_error: "Description is required" }),
+  location: z.string({ required_error: "Location is required" }),
+  startDate: z.date({ required_error: "Start date is required" }),
+  endDate: z.date({ required_error: "End date is required" }),
+  startTime: z.string({ required_error: "Start time is required" }),
+  endTime: z.string({ required_error: "End time is required" }),
+  program: z.array(ProgramItemSchema),
 });
 
-export type BasicEventFormData = z.infer<typeof formSchema>;
+type FormData = z.infer<typeof formSchema>;
 
 interface BasicEventFormProps {
-  onSubmit: (data: BasicEventFormData) => void;
-  defaultValues?: Partial<BasicEventFormData>;
+  onSubmit: (data: FormData) => void;
+  defaultValues?: Partial<FormData>;
 }
 
 export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps) {
-  const form = useForm<BasicEventFormData>({
+  const [programModalOpen, setProgramModalOpen] = useState(false);
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: defaultValues?.name || "",
@@ -56,33 +51,23 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
     },
   });
 
-  const addProgramItem = () => {
-    const currentProgram = form.getValues("program");
-    form.setValue("program", [
-      ...currentProgram,
-      {
-        title: "",
-        description: "",
-        dateTime: "",
-        speaker: {
-          name: "",
-          bio: "",
-        },
-      },
-    ]);
+  const handleProgramItemSubmit = (item: ProgramItem) => {
+    const currentProgram = form.getValues("program") || [];
+    form.setValue("program", [...currentProgram, item], { shouldValidate: true });
   };
 
   const removeProgramItem = (index: number) => {
-    const currentProgram = form.getValues("program");
+    const currentProgram = form.getValues("program") || [];
     form.setValue(
       "program",
-      currentProgram.filter((_, i) => i !== index)
+      currentProgram.filter((_, i) => i !== index),
+      { shouldValidate: true }
     );
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="name"
@@ -90,7 +75,7 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
             <FormItem>
               <FormLabel>Event Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter event name" {...field} />
+                <Input data-testid="event-name" placeholder="Enter event name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,7 +89,7 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="Enter event description" className="min-h-[100px]" {...field} />
+                <Textarea data-testid="description" placeholder="Enter event description" className="min-h-[100px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,193 +100,166 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
           control={form.control}
           name="location"
           render={({ field }) => (
-            <FormItem>
+            <FormItem data-testid="location" className="md:col-span-2">
               <FormLabel>Location</FormLabel>
               <FormControl>
-                <Input placeholder="Enter event location" {...field} />
+                <Input data-testid="location" placeholder="Enter event location" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Start Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date()} initialFocus />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Start Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="endDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>End Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < form.getValues("startDate")} initialFocus />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+            <FormField
+              control={form.control}
+              name="startTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Start Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="startTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Start Time</FormLabel>
-                <FormControl>
-                  <Input type="time" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="endDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>End Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="endTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>End Time</FormLabel>
-                <FormControl>
-                  <Input type="time" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="endTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>End Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium">Program</h3>
-            <Button type="button" variant="outline" onClick={addProgramItem}>
-              Add Program Item
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">Program Items</h3>
+            <Button type="button" variant="outline" size="sm" data-testid="add-program-item" onClick={() => setProgramModalOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Item
             </Button>
           </div>
 
-          {form.watch("program").map((_, index) => (
-            <div key={index} className="rounded-lg border p-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium">Program Item {index + 1}</h4>
-                <Button type="button" data-testid={`remove-program-item`} variant="ghost" size="icon" onClick={() => removeProgramItem(index)}>
-                  Remove
-                </Button>
+          <div className="space-y-4">
+            {!form.watch("program")?.length ? (
+              <div className="text-center p-8 border-2 border-dashed rounded-lg">
+                <div className="text-muted-foreground">No program items added yet</div>
               </div>
+            ) : (
+              form.watch("program")?.map((item: ProgramItem, index: number) => (
+                <Card key={index} className="group relative hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col space-y-4">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-lg">{item.title}</h4>
+                            <div className="text-sm px-2 py-1 bg-secondary text-secondary-foreground rounded-md">{format(new Date(item.dateTime), "h:mm a")}</div>
+                          </div>
+                          <div className="text-sm text-muted-foreground">{format(new Date(item.dateTime), "EEEE, MMMM d, yyyy")}</div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                          data-testid="remove-program-item"
+                          onClick={() => removeProgramItem(index)}>
+                          <Trash2 className="h-4 w-4 text-destructive hover:text-destructive/90" />
+                        </Button>
+                      </div>
 
-              <FormField
-                control={form.control}
-                name={`program.${index}.title`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter program item title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <div className="prose prose-sm max-w-none">
+                        <div dangerouslySetInnerHTML={{ __html: item.description }} />
+                      </div>
 
-              <FormField
-                control={form.control}
-                name={`program.${index}.description`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Enter program item description" className="min-h-[100px]" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name={`program.${index}.dateTime`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Date and Time</FormLabel>
-                    <FormControl>
-                      <Input type="datetime-local" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="space-y-4">
-                <h5 className="font-medium">Speaker</h5>
-                <FormField
-                  control={form.control}
-                  name={`program.${index}.speaker.name`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter speaker name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name={`program.${index}.speaker.bio`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bio</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Enter speaker bio" className="min-h-[100px]" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-          ))}
+                      {item.speaker && (
+                        <div className="border-t pt-4 mt-2">
+                          <div className="flex items-start gap-3">
+                            {item.speaker.image && <img src={item.speaker.image} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" />}
+                            <div className="flex-1">
+                              <div className="font-medium text-sm">Speaker</div>
+                              <div className="font-semibold">{item.speaker.name}</div>
+                              {item.speaker.bio && <div className="prose prose-sm mt-2 text-muted-foreground" dangerouslySetInnerHTML={{ __html: item.speaker.bio }} />}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
         </div>
 
         <Button type="submit" className="w-full">
           Next
         </Button>
       </form>
+
+      <ProgramItemModal open={programModalOpen} onOpenChange={setProgramModalOpen} onSubmit={handleProgramItemSubmit} />
     </Form>
   );
 }
