@@ -1,0 +1,37 @@
+# Name of the workflow that runs when PRs are made to staging or main branches
+name: CI Pipeline to staging/production environment
+
+# Defines when this workflow will run
+on:
+  pull_request:
+    branches:
+      - staging # Runs on PRs targeting staging branch
+      - main # Runs on PRs targeting main branch
+
+# Define the jobs to run
+jobs:
+  test:
+    runs-on: ubuntu-latest # Use Ubuntu as the operating system
+    name: Setup, test, and build project
+    env:
+      PORT: 3000 # Set environment variable for the application port
+
+    # Define the sequence of steps to execute
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout
+        uses: actions/checkout@v3 # Use GitHub's checkout action
+
+      # Step 2: Install project dependencies
+      - name: Install dependencies
+        run: npm ci # Clean install of dependencies
+
+      # Step 3: Run the test suite
+      - name: Test application
+        run: npm test # Execute test command
+
+      # Step 4: Build the application if a build script exists
+      - name: Build application
+        run: |
+          echo "Run command to build the application if present"
+          npm run build --if-present    # Build only if script exists

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
 import { Event } from "@/types/schema/Event.schema";
+import formatDate from "@/helpers/formatDate";
 
 interface EventDisplayProps {
   id: string;
@@ -22,16 +23,15 @@ export function EventDisplay({ id }: EventDisplayProps) {
       id,
       title: "Tech Conference 2024",
       description: "Join us for an exciting day of technology talks and networking.",
-      date: "2024-04-15",
-      time: "09:00",
+      startDate: new Date("2024-04-15"),
+      endDate: new Date("2024-04-15"),
+      startTime: "09:00",
+      endTime: "09:00",
       location: "Convention Center",
       type: "seminar",
       templateId: "seminar-professional",
       attendees: 120,
-      media: {
-        type: "image",
-        url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
-      },
+      pageBanner: "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
       program: [
         {
           title: "Opening Keynote",
@@ -63,6 +63,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
       ],
       maxAttendees: 200,
       status: "published",
+      sections: [],
     };
 
     setEvent(mockEvent);
@@ -77,7 +78,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
       data-testid="event-page"
       className="min-h-screen flex flex-col bg-cover bg-center bg-fixed"
       style={{
-        backgroundImage: `url(${event.media?.url})`,
+        backgroundImage: `url(${event.pageBanner})`,
         backgroundColor: "rgba(0, 0, 0, 0.85)",
         backgroundBlendMode: "overlay",
       }}>
@@ -103,14 +104,14 @@ export function EventDisplay({ id }: EventDisplayProps) {
                   <Calendar className="mr-3 h-5 w-5 text-primary" />
                   <div>
                     <p className="font-medium">Date</p>
-                    <p className="text-gray-400">{new Date(event.date).toLocaleDateString()}</p>
+                    <p className="text-gray-400">{formatDate(String(event.startDate))}</p>
                   </div>
                 </div>
                 <div className="flex items-center text-gray-200">
                   <Clock className="mr-3 h-5 w-5 text-primary" />
                   <div>
                     <p className="font-medium">Time</p>
-                    <p className="text-gray-400">{event.time}</p>
+                    <p className="text-gray-400">{event.startTime}</p>
                   </div>
                 </div>
                 <div className="flex items-center text-gray-200">
@@ -133,11 +134,11 @@ export function EventDisplay({ id }: EventDisplayProps) {
                         <div className="flex items-center justify-between text-gray-300">
                           <div className="flex items-center">
                             <Clock className="mr-2 h-4 w-4" />
-                            <span className="text-sm">{new Date(item.dateTime).toLocaleTimeString()}</span>
+                            <span className="text-sm">{item.dateTime}</span>
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium">{item.speaker.name}</span>
-                            {item.speaker.bio && <span className="text-gray-400"> - {item.speaker.bio}</span>}
+                            <span className="font-medium">{item.speaker?.name}</span>
+                            {item.speaker?.bio && <span className="text-gray-400"> - {item.speaker.bio}</span>}
                           </div>
                         </div>
                       </CardContent>

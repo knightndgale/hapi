@@ -46,15 +46,14 @@ const generateDummyEvents = (): Event[] => {
     id: `event-${i + 1}`,
     title: `Event ${i + 1}`,
     description: `Description for Event ${i + 1}. This is a sample event description.`,
-    date: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-    time: "14:00",
+    startDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000),
+    endDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000),
+    startTime: "14:00",
+    endTime: "14:00",
     location: locations[Math.floor(Math.random() * locations.length)],
     type: types[Math.floor(Math.random() * types.length)],
     templateId: `template-${(i % 5) + 1}`,
-    media: {
-      type: "image",
-      url: `https://picsum.photos/seed/${i + 1}/400/300`,
-    },
+    sections: [],
     program: [
       {
         title: "Welcome Session",

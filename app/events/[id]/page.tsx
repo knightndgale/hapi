@@ -21,8 +21,10 @@ const dummyEvent: Event = {
   id: "1",
   title: "John & Jane's Wedding",
   description: "Join us in celebrating our special day!",
-  date: "2024-12-31",
-  time: "18:00",
+  startDate: new Date("2024-12-31"),
+  endDate: new Date("2024-12-31"),
+  startTime: "18:00",
+  endTime: "18:00",
   location: "Grand Ballroom, Luxury Hotel",
   type: "wedding",
   templateId: "template-1",
@@ -215,11 +217,11 @@ export default function EventPage({ params }: { params: { id: string } }) {
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-5 w-5 text-muted-foreground" />
-                    <span>{format(new Date(event.date), "MMMM d, yyyy")}</span>
+                    <span>{format(new Date(event.startDate), "MMMM d, yyyy")}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Clock className="h-5 w-5 text-muted-foreground" />
-                    <span>{format(new Date(`2000-01-01T${event.time}`), "h:mm a")}</span>
+                    <span>{format(new Date(`2000-01-01T${event.startTime}`), "h:mm a")}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <MapPin className="h-5 w-5 text-muted-foreground" />

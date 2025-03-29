@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Eye, Edit, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import formatDate from "@/helpers/formatDate";
 
 interface EventListViewProps {
   events: Event[];
@@ -32,7 +33,7 @@ export function EventListView({ events }: EventListViewProps) {
             <TableRow key={event.id}>
               <TableCell className="font-medium">{event.title}</TableCell>
               <TableCell className="capitalize">{event.type}</TableCell>
-              <TableCell>{event.date}</TableCell>
+              <TableCell>{formatDate(String(event.startDate))}</TableCell>
               <TableCell>{event.location}</TableCell>
               <TableCell className="capitalize">{event.status}</TableCell>
               <TableCell>

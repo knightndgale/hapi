@@ -102,13 +102,13 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP }: Invitatio
             <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[300px]">
               <Calendar className="w-5 h-5 flex-shrink-0" />
               <span className="truncate" data-testid="test-date">
-                {eventData.date}
+                {formatDate(String(eventData.startDate))}
               </span>
             </div>
             <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[300px]">
               <Clock className="w-5 h-5 flex-shrink-0" />
               <span className="truncate" data-testid="test-time">
-                {eventData.time}
+                {eventData.startTime}
               </span>
             </div>
             <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[300px]">

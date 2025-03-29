@@ -79,7 +79,7 @@ export function DashboardContent() {
             <Link href={`/events/${event.id}`} key={event.id}>
               <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
                 <CardHeader className="relative h-48 p-0">
-                  <Image src={event.media?.url || "/placeholder-event.jpg"} alt={event.title} fill className="object-cover rounded-t-lg" />
+                  <Image src={event.pageBanner || "/placeholder-event.jpg"} alt={event.title} fill className="object-cover rounded-t-lg" />
                   <Badge className={`${statusColors[event.status]} absolute top-4 right-4`}>{event.status}</Badge>
                 </CardHeader>
                 <CardContent className="p-4">
@@ -87,7 +87,7 @@ export function DashboardContent() {
                   <div className="space-y-2 text-sm text-gray-500">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      <span>{format(new Date(event.date), "PPP")}</span>
+                      <span>{format(new Date(event.startDate), "PPP")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
@@ -126,7 +126,7 @@ export function DashboardContent() {
                   <TableCell>
                     <Badge className={statusColors[event.status]}>{event.status}</Badge>
                   </TableCell>
-                  <TableCell>{format(new Date(event.date), "PPP")}</TableCell>
+                  <TableCell>{format(new Date(event.startDate), "PPP")}</TableCell>
                   <TableCell>{event.location}</TableCell>
                   <TableCell>
                     {event.attendees} / {event.maxAttendees}

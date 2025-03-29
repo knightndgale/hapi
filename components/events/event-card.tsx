@@ -8,6 +8,7 @@ import { QRCodeCanvas } from "qrcode.react";
 
 import { useRouter } from "next/navigation";
 import { Event } from "@/types/schema/Event.schema";
+import formatDate from "@/helpers/formatDate";
 
 interface EventCardProps {
   event: Event;
@@ -31,10 +32,10 @@ export function EventCard({ event }: EventCardProps) {
 
   return (
     <Card data-testid="event-card" className={`group cursor-pointer transition-all hover:shadow-lg ${getEventStyles(event.type)}`} onClick={() => router.push(`/events/${event.id}`)}>
-      {event.media?.type === "image" && (
+      {event.pageBanner && (
         <div className="aspect-video w-full overflow-hidden">
           <img
-            src={event.media.url || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=2400&q=80"}
+            src={event.pageBanner || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=2400&q=80"}
             alt={event.title}
             className="w-full h-full object-cover transition-transform group-hover:scale-105"
           />
@@ -46,7 +47,7 @@ export function EventCard({ event }: EventCardProps) {
         <div className="space-y-2">
           <div className="flex items-center text-sm">
             <Calendar className="mr-2 h-4 w-4" />
-            {new Date(event.date).toLocaleDateString()}
+            {formatDate(String(event.startDate))}
           </div>
           <p className="line-clamp-2 text-sm text-muted-foreground">{event.description}</p>
         </div>
