@@ -201,8 +201,8 @@ export default function EventPage({ params }: { params: { id: string } }) {
         </div>
 
         <div className="container mx-auto py-8 px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
               <Card className="bg-white/90 backdrop-blur-sm">
                 <CardHeader className="text-lg font-semibold">Event Details</CardHeader>
                 <CardContent className="space-y-4">
@@ -229,30 +229,47 @@ export default function EventPage({ params }: { params: { id: string } }) {
 
               {event.program.length > 0 && (
                 <Card className="bg-white/90 backdrop-blur-sm">
-                  <CardHeader className="text-lg font-semibold">Program</CardHeader>
+                  <CardHeader className="text-lg font-semibold flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    <span>Program Schedule</span>
+                  </CardHeader>
                   <CardContent>
-                    <div className="space-y-6">
-                      {event.program.map((item, index) => (
-                        <div key={index} className="flex gap-4">
-                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            {index === 0 && <Church className="h-6 w-6 text-primary" />}
-                            {index === 1 && <Utensils className="h-6 w-6 text-primary" />}
-                            {index === 2 && <Music className="h-6 w-6 text-primary" />}
-                            {index === 3 && <Heart className="h-6 w-6 text-primary" />}
-                          </div>
-                          <div className="flex-grow border-l-2 border-primary pl-4">
-                            <h3 className="font-medium text-lg">{item.title}</h3>
-                            <p className="text-sm text-muted-foreground">{format(new Date(item.dateTime), "h:mm a")}</p>
-                            <p className="text-sm mt-1">{item.description}</p>
-                            {item.speaker && (
-                              <div className="mt-2">
-                                <p className="text-sm font-medium">{item.speaker.name}</p>
-                                {item.speaker.bio && <p className="text-sm text-muted-foreground">{item.speaker.bio}</p>}
+                    <div className="relative">
+                      {/* Timeline line */}
+                      <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-primary/20" />
+
+                      <div className="space-y-8">
+                        {event.program.map((item, index) => (
+                          <div key={index} className="relative flex gap-6">
+                            {/* Timeline dot */}
+                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center relative z-10">
+                              {index === 0 && <Church className="h-6 w-6 text-primary" />}
+                              {index === 1 && <Utensils className="h-6 w-6 text-primary" />}
+                              {index === 2 && <Music className="h-6 w-6 text-primary" />}
+                              {index === 3 && <Heart className="h-6 w-6 text-primary" />}
+                            </div>
+
+                            <div className="flex-grow bg-white/50 rounded-lg p-4 shadow-sm">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                <h3 className="font-semibold text-lg text-primary">{item.title}</h3>
+                                <p className="text-sm font-medium text-muted-foreground">{format(new Date(item.dateTime), "h:mm a")}</p>
                               </div>
-                            )}
+
+                              <p className="text-sm mt-2 text-muted-foreground">{item.description}</p>
+
+                              {item.speaker && (
+                                <div className="mt-3 pt-3 border-t border-primary/10">
+                                  <p className="text-sm font-medium flex items-center gap-2">
+                                    <span className="text-primary">Speaker:</span>
+                                    {item.speaker.name}
+                                  </p>
+                                  {item.speaker.bio && <p className="text-sm text-muted-foreground mt-1">{item.speaker.bio}</p>}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -286,11 +303,11 @@ export default function EventPage({ params }: { params: { id: string } }) {
           </div>
 
           {/* Custom Sections */}
-          {event.sections.map((section) => (
-            <div key={section.id} className="mt-8">
-              {renderSection(section)}
-            </div>
-          ))}
+          <div className="mt-8 space-y-8">
+            {event.sections.map((section) => (
+              <div key={section.id}>{renderSection(section)}</div>
+            ))}
+          </div>
         </div>
       </div>
     </>
