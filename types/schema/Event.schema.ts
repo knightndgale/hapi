@@ -32,12 +32,14 @@ export const SectionSchema = z.object({
 });
 
 export const EventSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
-  date: z.string(),
-  time: z.string(),
-  location: z.string(),
+  id: z.string().optional(),
+  title: z.string({ message: "Title is required" }).min(1, "Title is required"),
+  description: z.string({ message: "Description is required" }).min(1, "Description is required"),
+  location: z.string({ message: "Location is required" }).min(1, "Location is required"),
+  startDate: z.date({ message: "Start date is required" }),
+  endDate: z.date({ message: "End date is required" }),
+  startTime: z.string({ message: "Start time is required" }),
+  endTime: z.string({ message: "End time is required" }),
   type: EventTypeSchema,
   templateId: z.string(),
   attendees: z.number(),

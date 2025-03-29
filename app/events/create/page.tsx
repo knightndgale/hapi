@@ -11,8 +11,7 @@ import { EventCustomizationForm, EventCustomizationFormData } from "@/app/events
 import { BasicEventForm } from "@/app/events/components/basic-event-form";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/navbar";
-import { RSVP } from "@/types/schema/Event.schema";
-import type { FormData as BasicEventFormData } from "@/app/events/components/basic-event-form";
+import { RSVP, Event } from "@/types/schema/Event.schema";
 
 const steps = [
   {
@@ -38,7 +37,7 @@ export default function CreateEventPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     type: {} as EventTypeFormData,
-    basic: {} as BasicEventFormData,
+    basic: {} as Event,
     rsvp: {} as RSVP,
     customize: {} as EventCustomizationFormData,
   });

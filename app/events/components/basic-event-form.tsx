@@ -16,38 +16,26 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProgramItemModal } from "./program-item-modal";
 import { ProgramItem, ProgramItemSchema } from "@/types/schema/Program.schema";
-
-const formSchema = z.object({
-  name: z.string({ required_error: "Event name is required" }),
-  description: z.string({ required_error: "Description is required" }),
-  location: z.string({ required_error: "Location is required" }),
-  startDate: z.date({ required_error: "Start date is required" }),
-  endDate: z.date({ required_error: "End date is required" }),
-  startTime: z.string({ required_error: "Start time is required" }),
-  endTime: z.string({ required_error: "End time is required" }),
-  program: z.array(ProgramItemSchema),
-});
-
-export type FormData = z.infer<typeof formSchema>;
+import { Event, EventSchema } from "@/types/schema/Event.schema";
 
 interface BasicEventFormProps {
-  onSubmit: (data: FormData) => void;
-  defaultValues?: Partial<FormData>;
+  onSubmit: (data: Event) => void;
+  defaultValues: Event;
 }
 
 export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps) {
   const [programModalOpen, setProgramModalOpen] = useState(false);
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<Event>({
+    resolver: zodResolver(EventSchema),
     defaultValues: {
-      name: defaultValues?.name || "",
-      description: defaultValues?.description || "",
-      location: defaultValues?.location || "",
-      startDate: defaultValues?.startDate || new Date(),
-      endDate: defaultValues?.endDate || new Date(),
-      startTime: defaultValues?.startTime || "09:00",
-      endTime: defaultValues?.endTime || "17:00",
-      program: defaultValues?.program || [],
+      title: defaultValues?.title,
+      description: defaultValues?.description,
+      location: defaultValues?.location,
+      startDate: defaultValues?.startDate,
+      endDate: defaultValues?.endDate,
+      startTime: defaultValues?.startTime,
+      endTime: defaultValues?.endTime,
+      program: defaultValues?.program,
     },
   });
 
@@ -70,12 +58,12 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="name"
+          name="title"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Event Name</FormLabel>
               <FormControl>
-                <Input data-testid="event-name" placeholder="Enter event name" {...field} />
+                <Input data-testid="event-title" placeholder="Enter event title" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -100,7 +88,7 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
           control={form.control}
           name="location"
           render={({ field }) => (
-            <FormItem data-testid="location" className="md:col-span-2">
+            <FormItem className="md:col-span-2">
               <FormLabel>Location</FormLabel>
               <FormControl>
                 <Input data-testid="location" placeholder="Enter event location" {...field} />
@@ -214,10 +202,16 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
                       <div className="flex items-start justify-between">
                         <div className="space-y-1 flex-1">
                           <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-lg">{item.title}</h4>
-                            <div className="text-sm px-2 py-1 bg-secondary text-secondary-foreground rounded-md">{format(new Date(item.dateTime), "h:mm a")}</div>
+                            <h4 className="font-semibold text-lg" data-testid="program-title">
+                              {item.title}
+                            </h4>
+                            <div className="text-sm px-2 py-1 bg-secondary text-secondary-foreground rounded-md" data-testid="program-date-time">
+                              {format(new Date(item.dateTime), "h:mm a")}
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">{format(new Date(item.dateTime), "EEEE, MMMM d, yyyy")}</div>
+                          <div className="text-sm text-muted-foreground" data-testid="program-date">
+                            {format(new Date(item.dateTime), "EEEE, MMMM d, yyyy")}
+                          </div>
                         </div>
                         <Button
                           type="button"
@@ -231,17 +225,21 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
                       </div>
 
                       <div className="prose prose-sm max-w-none">
-                        <div dangerouslySetInnerHTML={{ __html: item.description }} />
+                        <div data-testid="program-description" dangerouslySetInnerHTML={{ __html: item.description }} />
                       </div>
 
                       {item.speaker && (
                         <div className="border-t pt-4 mt-2">
                           <div className="flex items-start gap-3">
-                            {item.speaker.image && <img src={item.speaker.image} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" />}
+                            {item.speaker.image && <img src={item.speaker.image} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" data-testid="program-speaker-image" />}
                             <div className="flex-1">
                               <div className="font-medium text-sm">Speaker</div>
-                              <div className="font-semibold">{item.speaker.name}</div>
-                              {item.speaker.bio && <div className="prose prose-sm mt-2 text-muted-foreground" dangerouslySetInnerHTML={{ __html: item.speaker.bio }} />}
+                              <div className="font-semibold" data-testid="program-speaker-name">
+                                {item.speaker.name}
+                              </div>
+                              {item.speaker.bio && (
+                                <div className="prose prose-sm mt-2 text-muted-foreground" data-testid="program-speaker-bio" dangerouslySetInnerHTML={{ __html: item.speaker.bio }} />
+                              )}
                             </div>
                           </div>
                         </div>
