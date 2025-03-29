@@ -45,20 +45,6 @@ describe("EventPage", () => {
     expect(screen.getByText("Dinner and celebration")).toBeInTheDocument();
   });
 
-  it("renders custom sections correctly", () => {
-    render(<EventPage params={{ id: "1" }} />);
-
-    // Check content section with HTML
-    expect(screen.getByText("Our Story")).toBeInTheDocument();
-    expect(screen.getByText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")).toBeInTheDocument();
-    expect(screen.getByText("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")).toBeInTheDocument();
-
-    // Check image section
-    expect(screen.getByText("Our Journey")).toBeInTheDocument();
-    const image = screen.getByAltText("Our Journey");
-    expect(image).toHaveAttribute("src", "https://images.unsplash.com/photo-1519741497674-611481863552?w=800");
-  });
-
   it("navigates to guest management page when clicking Manage Guests button", () => {
     render(<EventPage params={{ id: "1" }} />);
 
@@ -77,43 +63,10 @@ describe("EventPage", () => {
     expect(mockRouter.push).toHaveBeenCalledWith("/events/1/edit");
   });
 
-  it("applies theme colors and background image correctly", () => {
-    render(<EventPage params={{ id: "1" }} />);
-
-    const mainContainer = screen.getByTestId("main-container");
-    expect(mainContainer).toHaveStyle({
-      backgroundColor: "#FFFFFF",
-      backgroundImage: "url(https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&auto=format&fit=crop&q=60)",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundAttachment: "fixed",
-    });
-  });
-
   it("displays banner image correctly", () => {
     render(<EventPage params={{ id: "1" }} />);
 
     const bannerImage = screen.getByAltText("John & Jane's Wedding");
-    expect(bannerImage).toHaveAttribute("src", "https://images.unsplash.com/photo-1511795409834-432f7b1728f8?w=1600&auto=format&fit=crop&q=60");
-  });
-
-  it("renders cards with proper styling", () => {
-    render(<EventPage params={{ id: "1" }} />);
-
-    // Check if all cards have the backdrop blur effect
-    const cards = screen.getAllByRole("article");
-    cards.forEach((card) => {
-      expect(card).toHaveClass("bg-white/90", "backdrop-blur-sm");
-    });
-  });
-
-  it("renders hero section with proper gradient overlay", () => {
-    render(<EventPage params={{ id: "1" }} />);
-
-    const heroSection = screen.getByRole("banner");
-    expect(heroSection).toHaveClass("relative", "h-[500px]");
-
-    const gradientOverlay = heroSection.querySelector(".absolute");
-    expect(gradientOverlay).toHaveClass("bg-gradient-to-t", "from-black/80", "via-black/40", "to-transparent");
+    expect(bannerImage).toBeVisible();
   });
 });

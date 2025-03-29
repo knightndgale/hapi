@@ -190,7 +190,14 @@ export default function EventPage({ params }: { params: { id: string } }) {
         }}
         data-testid="main-container">
         <div className="relative h-[500px] w-full">
-          <Image src={event.pageBanner || "https://images.unsplash.com/photo-1511795409834-432f7b1728f8?w=1600&auto=format&fit=crop&q=60"} alt={event.title} fill className="object-cover" priority />
+          <Image
+            role="banner"
+            src={event.pageBanner || "https://images.unsplash.com/photo-1511795409834-432f7b1728f8?w=1600&auto=format&fit=crop&q=60"}
+            alt={event.title}
+            fill
+            className="object-cover"
+            priority
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
             <div className="container mx-auto">

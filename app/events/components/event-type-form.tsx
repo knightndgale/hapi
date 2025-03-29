@@ -18,7 +18,7 @@ export type EventTypeFormData = z.infer<typeof formSchema>;
 
 interface EventTypeFormProps {
   onSubmit: (data: EventTypeFormData) => void;
-  defaultValues?: Partial<EventTypeFormData>;
+  defaultValues: EventTypeFormData;
 }
 
 const eventTypes = [
@@ -49,7 +49,7 @@ export function EventTypeForm({ onSubmit, defaultValues }: EventTypeFormProps) {
   const form = useForm<EventTypeFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: defaultValues?.type,
+      type: defaultValues?.type || undefined,
     },
   });
 

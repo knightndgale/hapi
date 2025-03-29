@@ -48,11 +48,11 @@ describe("EventCard", () => {
     ],
     attendees: 10,
     maxAttendees: 20,
+    sections: [],
   };
 
   it("renders event information correctly", () => {
-    const renderer = render(<EventCard event={mockEvent} />);
-    console.log(prettyDOM(renderer.container));
+    render(<EventCard event={mockEvent} />);
     expect(screen.getByTestId("event-card")).toBeInTheDocument();
     expect(screen.getByText(mockEvent.description)).toBeInTheDocument();
     expect(screen.getByText(mockEvent.title)).toBeInTheDocument();

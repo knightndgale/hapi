@@ -3,7 +3,7 @@ import { MediaSchema } from "./MediaSchema";
 import { ProgramItemSchema } from "./Program.schema";
 import { ThemeSchema } from "./Theme.schema";
 
-export const EventTypeSchema = z.enum(["wedding", "birthday", "seminar"]);
+export const EventTypeSchema = z.enum(["wedding", "birthday", "seminar"], { message: "Please select an event type" });
 
 export type EventType = z.infer<typeof EventTypeSchema>;
 
@@ -14,11 +14,11 @@ export type EventStatus = z.infer<typeof EventStatusSchema>;
 export const RSVPSchema = z.object({
   logo: z.string().url().optional(),
   title_as_image: z.string().url().optional(),
-  title: z.string(),
-  subtitle: z.string(),
-  invitation: z.string(),
-  accept_text: z.string(),
-  decline_text: z.string(),
+  title: z.string({ message: "Title is required" }),
+  subtitle: z.string({ message: "Subtitle is required" }),
+  invitation: z.string({ message: "Invitation message is required" }),
+  accept_text: z.string({ message: "Accept text is required" }),
+  decline_text: z.string({ message: "Decline text is required" }),
   backgroundImage: z.string().url().optional(),
   deadline: z.string().optional(),
 });

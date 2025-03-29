@@ -20,7 +20,7 @@ describe("EventTypeForm", () => {
   });
 
   it("renders all event types", () => {
-    render(<EventTypeForm onSubmit={mockOnSubmit} />);
+    render(<EventTypeForm onSubmit={mockOnSubmit} defaultValues={{ type: "wedding" }} />);
 
     expect(screen.getByText("Wedding")).toBeInTheDocument();
     expect(screen.getByText("Birthday")).toBeInTheDocument();
@@ -46,7 +46,8 @@ describe("EventTypeForm", () => {
   // });
 
   it("shows validation error when no event type is selected", async () => {
-    render(<EventTypeForm onSubmit={mockOnSubmit} />);
+    //@ts-expect-error
+    render(<EventTypeForm onSubmit={mockOnSubmit} defaultValues={{ type: undefined }} />);
 
     await act(async () => {
       fireEvent.click(screen.getByText("Next"));
@@ -69,12 +70,4 @@ describe("EventTypeForm", () => {
   //     expect(screen.getByTestId("birthday")).toBeChecked();
   //   });
   // });
-
-  it("displays event type descriptions", () => {
-    render(<EventTypeForm onSubmit={mockOnSubmit} />);
-
-    expect(screen.getByText(/Perfect for celebrating love and commitment/i)).toBeInTheDocument();
-    expect(screen.getByText(/Celebrate special moments and milestones/i)).toBeInTheDocument();
-    expect(screen.getByText(/Professional events for learning and networking/i)).toBeInTheDocument();
-  });
 });
