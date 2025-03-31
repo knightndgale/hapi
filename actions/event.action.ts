@@ -123,6 +123,7 @@ const generateDummyEvents = (): Event[] => {
       },
     ],
     attendees: Math.floor(Math.random() * 100),
+    pageBanner: `https://picsum.photos/seed/${i + 1}/400/300`,
     maxAttendees: 200,
     status: statuses[Math.floor(Math.random() * statuses.length)],
     rsvp: {

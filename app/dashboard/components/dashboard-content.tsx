@@ -75,11 +75,11 @@ export function DashboardContent() {
       {/* Events Display */}
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event: Event) => (
+          {events.map((event: Event, index: number) => (
             <Link href={`/events/${event.id}`} key={event.id}>
               <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
                 <CardHeader className="relative h-48 p-0">
-                  <Image src={event.pageBanner || "/placeholder-event.jpg"} alt={event.title} fill className="object-cover rounded-t-lg" />
+                  <Image src={event.pageBanner || `https://picsum.photos/seed/${event.id}/400/300`} alt={event.title} fill className="object-cover rounded-t-lg" />
                   <Badge className={`${statusColors[event.status]} absolute top-4 right-4`}>{event.status}</Badge>
                 </CardHeader>
                 <CardContent className="p-4">

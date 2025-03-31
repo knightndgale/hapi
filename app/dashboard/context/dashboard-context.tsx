@@ -36,52 +36,6 @@ interface DashboardProviderProps {
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
-// Generate 100 dummy events
-const generateDummyEvents = (): Event[] => {
-  const types: EventType[] = ["wedding", "birthday", "seminar"];
-  const statuses: EventStatus[] = ["draft", "published", "archived"];
-  const locations = ["New York", "London", "Tokyo", "Paris", "Berlin", "Sydney"];
-
-  return Array.from({ length: 100 }, (_, i) => ({
-    id: `event-${i + 1}`,
-    title: `Event ${i + 1}`,
-    description: `Description for Event ${i + 1}. This is a sample event description.`,
-    startDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000),
-    endDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000),
-    startTime: "14:00",
-    endTime: "14:00",
-    location: locations[Math.floor(Math.random() * locations.length)],
-    type: types[Math.floor(Math.random() * types.length)],
-    templateId: `template-${(i % 5) + 1}`,
-    sections: [],
-    program: [
-      {
-        title: "Welcome Session",
-        description: "Opening remarks and welcome speech",
-        dateTime: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-        speaker: {
-          name: "John Doe",
-          image: `https://i.pravatar.cc/150?u=${i}`,
-          bio: "Event host and coordinator",
-        },
-      },
-    ],
-    attendees: Math.floor(Math.random() * 100),
-    maxAttendees: 200,
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-    rsvp: {
-      title: `RSVP for Event ${i + 1}`,
-      subtitle: "We'd love to see you there!",
-      invitation: "You are cordially invited to join us...",
-      accept_text: "Yes, I'll be there",
-      decline_text: "Sorry, I can't make it",
-      deadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-  }));
-};
-
-const dummyEvents = generateDummyEvents();
-
 export function DashboardProvider({ children, actions: { getEvents } }: DashboardProviderProps) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
