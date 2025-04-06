@@ -26,10 +26,6 @@ const steps = [
     id: "rsvp",
     title: "RSVP Form",
   },
-  {
-    id: "customize",
-    title: "Customize",
-  },
 ];
 
 export default function CreateEventPage() {
@@ -39,7 +35,6 @@ export default function CreateEventPage() {
     type: {} as EventTypeFormData,
     basic: {} as Event,
     rsvp: {} as RSVP,
-    customize: {} as EventCustomizationFormData,
   });
 
   const handleNext = () => {
@@ -54,11 +49,11 @@ export default function CreateEventPage() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (data: Event) => {
     try {
       // TODO: Implement event creation logic
-      console.log("Form data:", formData);
-      router.push("/events");
+      console.log("Form data:", data);
+      // router.push("/events");
     } catch (error) {
       console.error("Error creating event:", error);
     }
@@ -80,7 +75,7 @@ export default function CreateEventPage() {
         return (
           <BasicEventForm
             onSubmit={(data) => {
-              setFormData((prev) => ({ ...prev, basic: data }));
+              setFormData((prev) => ({ ...prev, basic: { ...prev.basic, ...data } }));
               handleNext();
             }}
             defaultValues={formData.basic}
@@ -90,22 +85,17 @@ export default function CreateEventPage() {
         return (
           <RSVPForm
             onSubmit={(data) => {
-              setFormData((prev) => ({ ...prev, rsvp: data }));
-              handleNext();
+              handleSubmit({
+                ...formData.basic,
+                ...formData.type,
+                rsvp: data,
+              });
             }}
+            type={formData.type.type}
             defaultValues={formData.rsvp}
           />
         );
-      case 3:
-        return (
-          <EventCustomizationForm
-            onSubmit={(data) => {
-              setFormData((prev) => ({ ...prev, customize: data }));
-              handleSubmit();
-            }}
-            defaultValues={formData.customize}
-          />
-        );
+
       default:
         return null;
     }

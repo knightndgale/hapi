@@ -11,22 +11,38 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { CalendarIcon, Plus, Trash2 } from "lucide-react";
+import { CalendarIcon, Plus, Trash2, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProgramItemModal } from "./program-item-modal";
 import { ProgramItem, ProgramItemSchema } from "@/types/schema/Program.schema";
 import { Event, EventSchema } from "@/types/schema/Event.schema";
+import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+
+const BasicFormEventSchema = EventSchema.pick({
+  title: true,
+  description: true,
+  location: true,
+  startDate: true,
+  endDate: true,
+  startTime: true,
+  endTime: true,
+  program: true,
+  pageBanner: true,
+  maxAttendees: true,
+}).partial({ pageBanner: true });
+
+type BasicFormEvent = z.infer<typeof BasicFormEventSchema>;
 
 interface BasicEventFormProps {
-  onSubmit: (data: Event) => void;
+  onSubmit: (data: BasicFormEvent) => void;
   defaultValues: Event;
 }
 
 export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps) {
   const [programModalOpen, setProgramModalOpen] = useState(false);
-  const form = useForm<Event>({
-    resolver: zodResolver(EventSchema),
+  const form = useForm<BasicFormEvent>({
+    resolver: zodResolver(BasicFormEventSchema),
     defaultValues: {
       title: defaultValues?.title,
       description: defaultValues?.description,
@@ -35,7 +51,9 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
       endDate: defaultValues?.endDate,
       startTime: defaultValues?.startTime,
       endTime: defaultValues?.endTime,
-      program: defaultValues?.program,
+      program: defaultValues?.program || [],
+      pageBanner: defaultValues?.pageBanner || undefined,
+      maxAttendees: defaultValues?.maxAttendees || 0,
     },
   });
 
@@ -92,6 +110,87 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
               <FormLabel>Location</FormLabel>
               <FormControl>
                 <Input data-testid="location" placeholder="Enter event location" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="pageBanner"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Banner</FormLabel>
+              <div className="space-y-4">
+                {field.value ? (
+                  <div className="relative group">
+                    <img src={field.value} alt="Event banner" className="w-full h-48 object-cover rounded-lg" />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => field.onChange(undefined)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-4">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button type="button" variant="outline" className="flex-1">
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload Image
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Upload Banner Image</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                // TODO: Implement file upload logic
+                                const reader = new FileReader();
+                                reader.onload = (event) => {
+                                  field.onChange(event.target?.result as string);
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Input data-testid="page-banner" placeholder="Enter image URL" value={field.value || ""} onChange={(e) => field.onChange(e.target.value)} />
+                  </div>
+                )}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="maxAttendees"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Maximum Attendees</FormLabel>
+              <FormControl>
+                <Input
+                  data-testid="max-attendees"
+                  type="number"
+                  placeholder="Enter maximum number of attendees"
+                  {...field}
+                  value={field.value || ""}
+                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -7,16 +7,22 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { RSVP, RSVPSchema } from "@/types/schema/Event.schema";
+import { EventType, RSVP, RSVPSchema } from "@/types/schema/Event.schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon } from "lucide-react";
+import { ButtonText } from "@/constants/rsvp-form";
 
 interface RSVPFormProps {
   onSubmit: (data: RSVP) => void;
   defaultValues: RSVP;
+  type: EventType;
 }
 
-export function RSVPForm({ onSubmit, defaultValues }: RSVPFormProps) {
+export function RSVPForm({ onSubmit, defaultValues, type }: RSVPFormProps) {
+  const getButtonTextByEvent = (type: EventType) => {
+    return ButtonText[type] || ButtonText.default;
+  };
+
   const form = useForm<RSVP>({
     resolver: zodResolver(RSVPSchema),
     defaultValues: {
@@ -196,8 +202,8 @@ export function RSVPForm({ onSubmit, defaultValues }: RSVPFormProps) {
           </CardContent>
         </Card>
 
-        <Button type="submit" className="w-full">
-          Next
+        <Button type="submit" className="w-full" data-testid="event-submit-button">
+          {getButtonTextByEvent(type)}
         </Button>
       </form>
     </Form>

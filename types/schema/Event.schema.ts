@@ -50,7 +50,7 @@ export const EventSchema = z.object({
   pageBanner: z.string().url().optional(),
   sections: z.array(SectionSchema).default([]),
   theme: ThemeSchema.optional(),
-  program: z.array(ProgramItemSchema),
+  program: z.array(ProgramItemSchema).default([]),
 });
 
 export type Event = z.infer<typeof EventSchema>;

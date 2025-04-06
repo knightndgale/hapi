@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Event, EventType, Section } from "@/types/schema/Event.schema";
-import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart } from "lucide-react";
+import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart, User } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Navbar } from "@/components/navbar";
@@ -237,42 +237,52 @@ export default function EventPage({ params }: { params: { id: string } }) {
               </Card>
 
               {event.program.length > 0 && (
-                <Card className="bg-white/90 backdrop-blur-sm">
-                  <CardHeader className="text-lg font-semibold flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-primary" />
+                <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+                  <CardHeader className="text-xl font-semibold flex items-center gap-3 pb-2">
+                    <Calendar className="h-6 w-6 text-primary" />
                     <span>Program Schedule</span>
                   </CardHeader>
                   <CardContent>
                     <div className="relative">
                       {/* Timeline line */}
-                      <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-primary/20" />
+                      {/* <div className="absolute left-7 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10" /> */}
 
-                      <div className="space-y-8">
+                      <div className="space-y-10">
                         {event.program.map((item, index) => (
-                          <div key={index} className="relative flex gap-6">
+                          <div key={index} className="relative flex gap-6 group">
                             {/* Timeline dot */}
-                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center relative z-10">
-                              {index === 0 && <Church className="h-6 w-6 text-primary" />}
-                              {index === 1 && <Utensils className="h-6 w-6 text-primary" />}
-                              {index === 2 && <Music className="h-6 w-6 text-primary" />}
-                              {index === 3 && <Heart className="h-6 w-6 text-primary" />}
+                            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center relative z-10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
+                              {index === 0 && <Church className="h-7 w-7 text-primary" />}
+                              {index === 1 && <Utensils className="h-7 w-7 text-primary" />}
+                              {index === 2 && <Music className="h-7 w-7 text-primary" />}
+                              {index === 3 && <Heart className="h-7 w-7 text-primary" />}
                             </div>
 
-                            <div className="flex-grow bg-white/50 rounded-lg p-4 shadow-sm">
-                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                                <h3 className="font-semibold text-lg text-primary">{item.title}</h3>
-                                <p className="text-sm font-medium text-muted-foreground">{format(new Date(item.dateTime), "h:mm a")}</p>
+                            <div className="flex-grow bg-white/60 rounded-xl p-6 shadow-sm transition-all duration-300 group-hover:bg-white/80 group-hover:shadow-md">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <h3 className="font-semibold text-xl text-primary">{item.title}</h3>
+                                <div className="flex items-center gap-2 bg-primary/5 px-3 py-1 rounded-full">
+                                  <Clock className="h-4 w-4 text-primary" />
+                                  <p className="text-sm font-medium text-primary">{format(new Date(item.dateTime), "h:mm a")}</p>
+                                </div>
                               </div>
 
-                              <p className="text-sm mt-2 text-muted-foreground">{item.description}</p>
+                              <p className="text-base mt-3 text-muted-foreground leading-relaxed">{item.description}</p>
 
                               {item.speaker && (
-                                <div className="mt-3 pt-3 border-t border-primary/10">
-                                  <p className="text-sm font-medium flex items-center gap-2">
-                                    <span className="text-primary">Speaker:</span>
-                                    {item.speaker.name}
-                                  </p>
-                                  {item.speaker.bio && <p className="text-sm text-muted-foreground mt-1">{item.speaker.bio}</p>}
+                                <div className="mt-4 pt-4 border-t border-primary/10">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                      <User className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium flex items-center gap-2">
+                                        <span className="text-primary">Speaker:</span>
+                                        {item.speaker.name}
+                                      </p>
+                                      {item.speaker.bio && <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{item.speaker.bio}</p>}
+                                    </div>
+                                  </div>
                                 </div>
                               )}
                             </div>

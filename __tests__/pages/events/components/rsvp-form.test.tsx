@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act, prettyDOM } from "@testing-library/react";
 import { vi } from "vitest";
 import { RSVPForm } from "@/app/events/components/rsvp-form";
+import { ButtonText } from "@/constants/rsvp-form";
 
 // Mock ResizeObserver
 class ResizeObserverMock {
@@ -29,7 +30,7 @@ describe("RSVPForm", () => {
   });
 
   it("renders form fields correctly", () => {
-    render(<RSVPForm onSubmit={mockOnSubmit} defaultValues={{ title: "", subtitle: "", invitation: "", accept_text: "", decline_text: "", deadline: "" }} />);
+    render(<RSVPForm type="wedding" onSubmit={mockOnSubmit} defaultValues={{ title: "", subtitle: "", invitation: "", accept_text: "", decline_text: "", deadline: "" }} />);
     expect(screen.getByTestId("title")).toBeInTheDocument();
     expect(screen.getByTestId("subtitle")).toBeInTheDocument();
     expect(screen.getByTestId("invitation")).toBeInTheDocument();
@@ -56,7 +57,7 @@ describe("RSVPForm", () => {
       backgroundImage: "default-bg.jpg",
     };
 
-    render(<RSVPForm onSubmit={mockOnSubmit} defaultValues={defaultValues} />);
+    render(<RSVPForm type="wedding" onSubmit={mockOnSubmit} defaultValues={defaultValues} />);
 
     expect(screen.getByTestId("title-input")).toHaveValue("Default Title");
     expect(screen.getByTestId("subtitle-input")).toHaveValue("Default Subtitle");
@@ -66,11 +67,17 @@ describe("RSVPForm", () => {
   });
 
   it("shows validation errors for required fields", async () => {
-    // @ts-ignore
-    render(<RSVPForm onSubmit={mockOnSubmit} defaultValues={{ title: undefined, subtitle: undefined, invitation: undefined, accept_text: undefined, decline_text: undefined, deadline: undefined }} />);
+    render(
+      <RSVPForm
+        type="wedding"
+        onSubmit={mockOnSubmit}
+        // @ts-ignore
+        defaultValues={{ title: undefined, subtitle: undefined, invitation: undefined, accept_text: undefined, decline_text: undefined, deadline: undefined }}
+      />
+    );
 
     await act(async () => {
-      fireEvent.click(screen.getByText("Next"));
+      fireEvent.click(screen.getByTestId("event-submit-button"));
     });
 
     expect(screen.getByText("Title is required")).toBeInTheDocument();
@@ -78,5 +85,32 @@ describe("RSVPForm", () => {
     expect(screen.getByText("Invitation message is required")).toBeInTheDocument();
     expect(screen.getByText("Accept text is required")).toBeInTheDocument();
     expect(screen.getByText("Decline text is required")).toBeInTheDocument();
+  });
+
+  describe("getButtonTextByEvent", () => {
+    it("returns correct text for wedding events", () => {
+      render(<RSVPForm type="wedding" onSubmit={mockOnSubmit} defaultValues={{ title: "", subtitle: "", invitation: "", accept_text: "", decline_text: "", deadline: "" }} />);
+
+      expect(screen.getByRole("button", { name: "Let's get this wedding started! 💍🎉" })).toBeInTheDocument();
+    });
+
+    it("returns correct text for birthday events", () => {
+      render(<RSVPForm type="birthday" onSubmit={mockOnSubmit} defaultValues={{ title: "", subtitle: "", invitation: "", accept_text: "", decline_text: "", deadline: "" }} />);
+
+      expect(screen.getByRole("button", { name: "Let's get the birthday party started! 🎂🎈" })).toBeInTheDocument();
+    });
+
+    it("returns correct text for seminar events", () => {
+      render(<RSVPForm type="seminar" onSubmit={mockOnSubmit} defaultValues={{ title: "", subtitle: "", invitation: "", accept_text: "", decline_text: "", deadline: "" }} />);
+
+      expect(screen.getByRole("button", { name: "Create Your Seminar 📚" })).toBeInTheDocument();
+    });
+
+    it("returns default text for unknown event types", () => {
+      // @ts-ignore - Testing invalid type case
+      render(<RSVPForm type="unknown" onSubmit={mockOnSubmit} defaultValues={{ title: "", subtitle: "", invitation: "", accept_text: "", decline_text: "", deadline: "" }} />);
+
+      expect(screen.getByRole("button", { name: ButtonText.default })).toBeInTheDocument();
+    });
   });
 });

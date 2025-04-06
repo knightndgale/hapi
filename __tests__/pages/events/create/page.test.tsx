@@ -85,11 +85,7 @@ describe("CreateEventPage", () => {
     });
     expect(screen.getByRole("heading", { name: "RSVP Form" })).toBeInTheDocument();
 
-    // Step 3: RSVP Form
-    await act(async () => {
-      fireEvent.click(screen.getByText("Next"));
-    });
-    expect(screen.getByRole("heading", { name: "Customize" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "RSVP Form" })).toBeInTheDocument();
   });
 
   it("allows navigation back to previous steps", async () => {
@@ -111,7 +107,7 @@ describe("CreateEventPage", () => {
   it("shows step indicators correctly", () => {
     render(<CreateEventPage />);
 
-    const steps = ["Event Type", "Basic Information", "RSVP Form", "Customize"];
+    const steps = ["Event Type", "Basic Information", "RSVP Form"];
     steps.forEach((step) => {
       expect(screen.getAllByText(step).length).toBeGreaterThan(0);
     });
