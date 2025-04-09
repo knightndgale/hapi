@@ -41,6 +41,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
             name: "John Doe",
             bio: "CEO of Tech Corp",
           },
+          icon: "church",
         },
         {
           title: "Future of Technology",
@@ -50,6 +51,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
             name: "Jane Smith",
             bio: "Tech Analyst",
           },
+          icon: "book",
         },
         {
           title: "AI in Business",
@@ -59,6 +61,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
             name: "Mike Johnson",
             bio: "AI Research Lead",
           },
+          icon: "book",
         },
       ],
       maxAttendees: 200,

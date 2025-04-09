@@ -8,7 +8,10 @@ describe("EventDisplay", () => {
     id: "1",
     title: "Test Event",
     description: "Test Description",
-    date: "2024-03-25",
+    startDate: new Date("2024-03-25"),
+    endDate: new Date("2024-03-25"),
+    startTime: "10:00",
+    endTime: "10:00",
     location: "Test Location",
     type: "wedding",
     program: [
@@ -21,9 +24,10 @@ describe("EventDisplay", () => {
           image: "Test Image",
           bio: "Test Bio",
         },
+        icon: "church",
       },
     ],
-    time: "10:00",
+    sections: [],
     templateId: "1",
     status: "published",
     attendees: 10,
@@ -31,7 +35,7 @@ describe("EventDisplay", () => {
   };
 
   it("renders event details correctly", () => {
-    render(<EventDisplay id={mockEvent.id} />);
+    render(<EventDisplay id="1" />);
 
     expect(screen.getByTestId("event-page")).toBeInTheDocument();
   });

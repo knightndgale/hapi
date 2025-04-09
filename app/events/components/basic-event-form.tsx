@@ -144,7 +144,7 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
                           Upload Image
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent aria-describedby="banner-upload-description">
                         <DialogHeader>
                           <DialogTitle>Upload Banner Image</DialogTitle>
                         </DialogHeader>
@@ -301,14 +301,14 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
                       <div className="flex items-start justify-between">
                         <div className="space-y-1 flex-1">
                           <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-lg" data-testid="program-title">
+                            <h4 className="font-semibold text-lg" data-testid="program-title-display">
                               {item.title}
                             </h4>
-                            <div className="text-sm px-2 py-1 bg-secondary text-secondary-foreground rounded-md" data-testid="program-date-time">
+                            <div className="text-sm px-2 py-1 bg-secondary text-secondary-foreground rounded-md" data-testid="program-date-time-display">
                               {format(new Date(item.dateTime), "h:mm a")}
                             </div>
                           </div>
-                          <div className="text-sm text-muted-foreground" data-testid="program-date">
+                          <div className="text-sm text-muted-foreground" data-testid="program-date-display">
                             {format(new Date(item.dateTime), "EEEE, MMMM d, yyyy")}
                           </div>
                         </div>
@@ -324,20 +324,20 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
                       </div>
 
                       <div className="prose prose-sm max-w-none">
-                        <div data-testid="program-description" dangerouslySetInnerHTML={{ __html: item.description }} />
+                        <div data-testid="program-description-display" dangerouslySetInnerHTML={{ __html: item.description }} />
                       </div>
 
                       {item.speaker && (
                         <div className="border-t pt-4 mt-2">
                           <div className="flex items-start gap-3">
-                            {item.speaker.image && <img src={item.speaker.image} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" data-testid="program-speaker-image" />}
+                            {item.speaker.image && <img src={item.speaker.image} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" data-testid="program-speaker-image-display" />}
                             <div className="flex-1">
                               <div className="font-medium text-sm">Speaker</div>
-                              <div className="font-semibold" data-testid="program-speaker-name">
+                              <div className="font-semibold" data-testid="program-speaker-name-display">
                                 {item.speaker.name}
                               </div>
                               {item.speaker.bio && (
-                                <div className="prose prose-sm mt-2 text-muted-foreground" data-testid="program-speaker-bio" dangerouslySetInnerHTML={{ __html: item.speaker.bio }} />
+                                <div className="prose prose-sm mt-2 text-muted-foreground" data-testid="program-speaker-bio-display" dangerouslySetInnerHTML={{ __html: item.speaker.bio }} />
                               )}
                             </div>
                           </div>
@@ -351,7 +351,7 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
           </div>
         </div>
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" data-testid="next-button">
           Next
         </Button>
       </form>

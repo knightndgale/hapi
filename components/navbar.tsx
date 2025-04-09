@@ -11,7 +11,7 @@ export function Navbar() {
       <div className="flex h-16 items-center px-4 container mx-auto">
         <Link href="/" className="flex items-center space-x-2">
           <CalendarDays className="h-6 w-6" />
-          <span className="font-bold">EventHub</span>
+          <span className="font-bold">Hapí</span>
         </Link>
         <section className="ml-auto flex items-center space-x-4">
           <Link href="/login">

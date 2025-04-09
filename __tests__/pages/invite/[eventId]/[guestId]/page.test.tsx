@@ -9,20 +9,20 @@ const mockEventData: Event = {
   id: "test-event-1",
   title: "Test Wedding",
   description: "A beautiful test wedding",
-  date: "2025-06-15",
-  time: "2:00 pm",
   location: "Test Location",
   type: "wedding" as const,
   templateId: "template-1",
-  media: {
-    type: "image",
-    url: "",
-  },
+  startDate: new Date("2024-06-15"),
+  endDate: new Date("2024-06-15"),
+  startTime: "14:00:00",
+  endTime: "16:00:00",
+  sections: [],
   program: [
     {
       title: "Welcome",
       description: "Welcome ceremony",
       dateTime: "2024-06-15T14:00:00Z",
+      icon: "church",
       speaker: {
         name: "Host",
         bio: "Event Host",

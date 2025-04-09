@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Event, EventType, Section } from "@/types/schema/Event.schema";
-import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart, User } from "lucide-react";
+import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart, User, Star, Trophy, Cake, Glasses, Mic, Book } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Navbar } from "@/components/navbar";
 
 import { motion } from "framer-motion";
 import { fadeIn, slideIn } from "@/lib/animations";
+import React from "react";
 
 // Dummy data following the updated schema
 const dummyEvent: Event = {
@@ -118,21 +119,25 @@ const dummyEvent: Event = {
         name: "Reverend Smith",
         bio: "Our beloved pastor",
       },
+      icon: "church",
     },
     {
       title: "Cocktail Hour",
       description: "Drinks and appetizers",
       dateTime: "2024-12-31T19:00",
+      icon: "glasses",
     },
     {
       title: "Reception",
       description: "Dinner and celebration",
       dateTime: "2024-12-31T20:00",
+      icon: "book",
     },
     {
       title: "First Dance",
       description: "Our special moment",
       dateTime: "2024-12-31T21:00",
+      icon: "book",
     },
   ],
   theme: {
@@ -142,6 +147,22 @@ const dummyEvent: Event = {
     background: "#FFFFFF",
   },
 };
+
+const programIcons = {
+  church: Church,
+  utensils: Utensils,
+  music: Music,
+  heart: Heart,
+  camera: Camera,
+  gift: Gift,
+  star: Star,
+  trophy: Trophy,
+  cake: Cake,
+  glasses: Glasses,
+  mic: Mic,
+  book: Book,
+  calendar: Calendar,
+} as const;
 
 function renderSection(section: Section) {
   switch (section.type) {
@@ -200,6 +221,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative h-[500px] w-full">
           <Image
             role="banner"
+            data-testid="event-banner"
             src={event.pageBanner || "https://images.unsplash.com/photo-1511795409834-432f7b1728f8?w=1600&auto=format&fit=crop&q=60"}
             alt={event.title}
             fill
@@ -252,13 +274,14 @@ export default function EventPage({ params }: { params: { id: string } }) {
                     <CardContent>
                       <div className="space-y-10">
                         {event.program.map((item, index) => (
-                          <motion.div key={index} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 * index }} className="relative flex gap-6 group">
+                          <div key={index} className="relative flex gap-6 group">
                             {/* Timeline dot */}
                             <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center relative z-10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
-                              {index === 0 && <Church className="h-7 w-7 text-primary" />}
-                              {index === 1 && <Utensils className="h-7 w-7 text-primary" />}
-                              {index === 2 && <Music className="h-7 w-7 text-primary" />}
-                              {index === 3 && <Heart className="h-7 w-7 text-primary" />}
+                              {item.icon && programIcons[item.icon as keyof typeof programIcons] ? (
+                                React.createElement(programIcons[item.icon as keyof typeof programIcons], { className: "h-7 w-7 text-primary" })
+                              ) : (
+                                <Calendar className="h-7 w-7 text-primary" />
+                              )}
                             </div>
 
                             <div className="flex-grow bg-white/60 rounded-xl p-6 shadow-sm transition-all duration-300 group-hover:bg-white/80 group-hover:shadow-md">
@@ -289,7 +312,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
                                 </div>
                               )}
                             </div>
-                          </motion.div>
+                          </div>
                         ))}
                       </div>
                     </CardContent>

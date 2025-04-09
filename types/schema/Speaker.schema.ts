@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const SpeakerSchema = z.object({
-  name: z.string(),
+  name: z.string().optional(),
   bio: z.string().optional(),
   image: z.string().optional(),
 });
