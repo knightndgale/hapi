@@ -1,5 +1,4 @@
 "use client";
-import { Navbar } from "@/components/navbar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default function FAQPage() {
@@ -29,7 +28,6 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen flex flex-col" data-testid="faq-page">
-      <Navbar />
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-4xl font-bold mb-8">Frequently Asked Questions</h1>
         <Accordion type="single" collapsible className="w-full">

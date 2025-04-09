@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Hapí - Manage Your Events",
-  description: "Create and manage events with QR code check-in",
+  description: "Create and manage events with QR code check-in"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

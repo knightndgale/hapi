@@ -26,13 +26,6 @@ describe("Privacy Policy Page", () => {
     expect(screen.getByText(/privacy@hapi.com/)).toBeInTheDocument();
   });
 
-  it("renders the navigation bar", () => {
-    render(<PrivacyPage />);
-
-    // Check if the navigation bar is rendered
-    expect(screen.getByRole("navigation")).toBeInTheDocument();
-  });
-
   it("renders the last updated date", () => {
     render(<PrivacyPage />);
 

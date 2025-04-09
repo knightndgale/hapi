@@ -3,15 +3,14 @@
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Event, EventType, Section } from "@/types/schema/Event.schema";
+import { Event, Section } from "@/types/schema/Event.schema";
 import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart, User, Star, Trophy, Cake, Glasses, Mic, Book } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { Navbar } from "@/components/navbar";
 
 import { motion } from "framer-motion";
 import { fadeIn, slideIn } from "@/lib/animations";
-import React from "react";
+import React, { use } from "react";
 
 // Dummy data following the updated schema
 const dummyEvent: Event = {
@@ -202,13 +201,13 @@ function renderSection(section: Section) {
   }
 }
 
-export default function EventPage({ params }: { params: { id: string } }) {
+export default function EventPage({ params }: { params: Promise<{ id: string }> }) {
+  const id = use(params);
   const router = useRouter();
   const event = dummyEvent;
 
   return (
     <>
-      <Navbar />
       <div
         className="min-h-screen bg-fixed"
         style={{
@@ -325,10 +324,10 @@ export default function EventPage({ params }: { params: { id: string } }) {
               <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
                 <CardHeader className="text-lg font-semibold">Quick Actions</CardHeader>
                 <CardContent className="space-y-4">
-                  <Button className="w-full" onClick={() => router.push(`/events/${params.id}/guests`)}>
+                  <Button className="w-full" onClick={() => router.push(`/events/${id}/guests`)}>
                     Manage Guests
                   </Button>
-                  <Button variant="outline" className="w-full" onClick={() => router.push(`/events/${params.id}/edit`)}>
+                  <Button variant="outline" className="w-full" onClick={() => router.push(`/events/${id}/edit`)}>
                     Edit Event
                   </Button>
                 </CardContent>

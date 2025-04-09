@@ -7,10 +7,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EventTypeForm, EventTypeFormData } from "@/app/events/components/event-type-form";
 import { RSVPForm } from "@/app/events/components/rsvp-form";
-import { EventCustomizationForm, EventCustomizationFormData } from "@/app/events/components/event-customization-form";
 import { BasicEventForm } from "@/app/events/components/basic-event-form";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
-import { Navbar } from "@/components/navbar";
 import { RSVP, Event } from "@/types/schema/Event.schema";
 
 const steps = [
@@ -103,7 +101,6 @@ export default function CreateEventPage() {
 
   return (
     <>
-      <Navbar />
       <div className="container mx-auto py-8">
         <div className="mb-8">
           <Link href="/dashboard" className="mb-4 inline-flex items-center text-sm text-muted-foreground hover:text-primary">

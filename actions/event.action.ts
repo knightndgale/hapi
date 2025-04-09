@@ -135,6 +135,7 @@ const generateDummyEvents = (): Event[] => {
       accept_text: "Yes, I'll be there",
       decline_text: "Sorry, I can't make it",
       deadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
+      logo: `https://picsum.photos/seed/${i + 1}/100/100`,
     },
   }));
 };

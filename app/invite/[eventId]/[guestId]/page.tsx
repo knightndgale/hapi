@@ -3,13 +3,14 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { InvitationDataFetcher } from "../../components/invitation-data-fetcher";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     eventId: string;
     guestId: string;
-  };
+  }>;
 }
 
-export default function InvitationPage({ params }: PageProps) {
+export default async function InvitationPage(props: PageProps) {
+  const params = await props.params;
   const { eventId, guestId } = params;
 
   return (
