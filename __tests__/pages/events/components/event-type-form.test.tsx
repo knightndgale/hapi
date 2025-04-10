@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act, prettyDOM } from "@testing-library/react";
 import { vi } from "vitest";
-import { EventTypeForm } from "@/app/events/components/event-type-form";
+import { EventTypeForm } from "@/app/events/component/event-type-form";
 import { EventType } from "@/types/schema/Event.schema";
 
 // Mock ResizeObserver

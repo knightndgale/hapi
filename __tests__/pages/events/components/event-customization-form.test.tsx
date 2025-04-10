@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { vi } from "vitest";
-import { EventCustomizationForm } from "@/app/events/components/event-customization-form";
+import { EventCustomizationForm } from "@/app/events/component/event-customization-form";
 
 // Mock ResizeObserver
 class ResizeObserverMock {

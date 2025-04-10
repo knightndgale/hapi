@@ -351,7 +351,7 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
           </div>
         </div>
 
-        <Button type="submit" className="w-full" data-testid="next-button">
+        <Button type="submit" className="w-full" data-testid="basic-event-form-submit">
           Next
         </Button>
       </form>

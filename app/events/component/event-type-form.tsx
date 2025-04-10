@@ -93,7 +93,7 @@ export function EventTypeForm({ onSubmit, defaultValues }: EventTypeFormProps) {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" data-testid="event-type-form-submit">
           Next
         </Button>
       </form>

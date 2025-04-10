@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act, prettyDOM } from "@testing-library/react";
 import { vi } from "vitest";
-import { RSVPForm } from "@/app/events/components/rsvp-form";
+import { RSVPForm } from "@/app/events/component/rsvp-form";
 import { ButtonText } from "@/constants/rsvp-form";
 
 // Mock ResizeObserver

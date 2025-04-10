@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { EventTypeForm, EventTypeFormData } from "@/app/events/components/event-type-form";
-import { RSVPForm } from "@/app/events/components/rsvp-form";
-import { BasicEventForm } from "@/app/events/components/basic-event-form";
+import { EventTypeForm, EventTypeFormData } from "@/app/events/component/event-type-form";
+import { RSVPForm } from "@/app/events/component/rsvp-form";
+import { BasicEventForm } from "@/app/events/component/basic-event-form";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
 import { RSVP, Event } from "@/types/schema/Event.schema";
 
@@ -27,7 +27,6 @@ const steps = [
 ];
 
 export default function CreateEventPage() {
-  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     type: {} as EventTypeFormData,

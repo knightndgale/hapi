@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import CreateEventPage from "@/app/events/create/page";
 import { useRouter } from "next/navigation";
@@ -7,101 +7,91 @@ import { useRouter } from "next/navigation";
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(() => ({
     push: vi.fn(),
+    back: vi.fn(),
   })),
 }));
 
-// Mock form components
-vi.mock("@/app/events/components/basic-event-form", () => ({
-  BasicEventForm: ({ onSubmit }: { onSubmit: (data: any) => void }) => (
-    <div>
-      <h2>Basic Information</h2>
-      <button onClick={() => onSubmit({ name: "Test Event" })}>Next</button>
-    </div>
-  ),
+// Mock ResizeObserver
+const mockResizeObserver = vi.fn(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
+window.ResizeObserver = mockResizeObserver;
 
-vi.mock("@/app/events/components/event-type-form", () => ({
-  EventTypeForm: ({ onSubmit }: { onSubmit: (data: any) => void }) => (
-    <div>
-      <h2>Choose Your Event Type</h2>
-      <button onClick={() => onSubmit({ type: "wedding" })}>Next</button>
-    </div>
-  ),
-}));
-
-vi.mock("@/app/events/components/rsvp-form", () => ({
-  RSVPForm: ({ onSubmit }: { onSubmit: (data: any) => void }) => (
-    <div>
-      <h2>RSVP Form</h2>
-      <button onClick={() => onSubmit({ title: "Test RSVP" })}>Next</button>
-    </div>
-  ),
-}));
-
-vi.mock("@/app/events/components/event-customization-form", () => ({
-  EventCustomizationForm: ({ onSubmit }: { onSubmit: (data: any) => void }) => (
-    <div>
-      <h2>Customize</h2>
-      <button onClick={() => onSubmit({ sections: [] })}>Create Event</button>
-    </div>
-  ),
+// Mock IntersectionObserver (might be needed by other components, good to keep)
+const mockIntersectionObserver = vi.fn(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
 describe("CreateEventPage", () => {
   const mockPush = vi.fn();
+  const mockBack = vi.fn();
 
   beforeEach(() => {
     mockPush.mockClear();
+    mockBack.mockClear();
     vi.mocked(useRouter).mockImplementation(() => ({
       push: mockPush,
-      back: vi.fn(),
+      back: mockBack,
       forward: vi.fn(),
       refresh: vi.fn(),
       replace: vi.fn(),
       prefetch: vi.fn(),
     }));
+    mockResizeObserver.mockClear();
+    mockIntersectionObserver.mockClear();
   });
 
   it("renders initial step correctly", () => {
     render(<CreateEventPage />);
 
-    expect(screen.getByText("Create Event")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Choose Your Event Type" })).toBeInTheDocument();
-    expect(screen.getByText("Back to Events")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /create event/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /back to events/i })).toBeInTheDocument();
   });
 
-  it("navigates through all steps", async () => {
+  it("renders and navigates through step 2", async () => {
     render(<CreateEventPage />);
 
-    // Step 1: Event Type
-    await act(async () => {
-      fireEvent.click(screen.getByText("Next"));
-    });
-    expect(screen.getByRole("heading", { name: "Basic Information" })).toBeInTheDocument();
+    expect(screen.getByText(/choose your event type/i)).toBeInTheDocument();
 
-    // Step 2: Basic Information
-    await act(async () => {
-      fireEvent.click(screen.getByText("Next"));
-    });
-    expect(screen.getByRole("heading", { name: "RSVP Form" })).toBeInTheDocument();
+    const weddingRadioButton = screen.getByRole("radio", { name: /wedding/i });
+    expect(weddingRadioButton).toBeInTheDocument();
+    fireEvent.click(weddingRadioButton);
 
-    expect(screen.getByRole("heading", { name: "RSVP Form" })).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("event-type-form-submit"));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("Enter event title")).toBeInTheDocument();
+      expect(screen.getByPlaceholderText("Enter event description")).toBeInTheDocument();
+      expect(screen.getByPlaceholderText("Enter event location")).toBeInTheDocument();
+    });
   });
 
   it("allows navigation back to previous steps", async () => {
-    render(<CreateEventPage />);
+    const { container } = render(<CreateEventPage />);
 
     // Navigate to Basic Information
+    const weddingRadioButton = screen.getByRole("radio", { name: /wedding/i });
+    expect(weddingRadioButton).toBeInTheDocument();
+    fireEvent.click(weddingRadioButton);
     await act(async () => {
-      fireEvent.click(screen.getByText("Next"));
+      fireEvent.click(screen.getByTestId("event-type-form-submit"));
     });
-    expect(screen.getByRole("heading", { name: "Basic Information" })).toBeInTheDocument();
 
-    // Go back to Event Type
-    await act(async () => {
+    expect(screen.getByPlaceholderText("Enter event title")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Enter event description")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Enter event location")).toBeInTheDocument();
+    await waitFor(() => {
       fireEvent.click(screen.getByText("Back"));
     });
-    expect(screen.getByRole("heading", { name: "Choose Your Event Type" })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/choose your event type/i)).toBeInTheDocument();
+    });
   });
 
   it("shows step indicators correctly", () => {

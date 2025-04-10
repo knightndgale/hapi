@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor, act, prettyDOM } from "@testing-library/react";
 import { vi } from "vitest";
-import { BasicEventForm } from "@/app/events/components/basic-event-form";
+import { BasicEventForm } from "@/app/events/component/basic-event-form";
 import { format } from "date-fns";
 import { Event } from "@/types/schema/Event.schema";
 import { ProgramItem } from "@/types/schema/Program.schema";
