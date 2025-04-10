@@ -1,0 +1,8 @@
+FROM directus/directus
+
+USER root
+RUN corepack enable
+USER node
+
+RUN rm node_modules/.modules.yaml
+RUN pnpm install ...
