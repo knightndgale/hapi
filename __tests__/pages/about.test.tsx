@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AboutPage from "@/app/about/page";
 
 describe("FAQ Page", () => {
@@ -6,6 +6,8 @@ describe("FAQ Page", () => {
     render(<AboutPage />);
 
     // Check if the navigation bar is rendered
-    expect(screen.getByTestId("about-page")).toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.getByTestId("about-page")).toBeInTheDocument();
+    });
   });
 });

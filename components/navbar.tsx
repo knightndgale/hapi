@@ -9,16 +9,19 @@ import { useEffect, useState } from "react";
 import { logout } from "@/requests/auth.request";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Skeleton } from "./ui/skeleton";
 
 export function Navbar() {
   const router = useRouter();
   const [user, setUser] = useState<{ first_name: string; last_name: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setIsLoading(false);
   }, []);
 
   const handleLogout = async () => {
@@ -45,7 +48,12 @@ export function Navbar() {
           <span className="font-bold">Hapí</span>
         </Link>
         <section className="ml-auto flex items-center space-x-4">
-          {user ? (
+          {isLoading ? (
+            <div className="flex items-center space-x-2">
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-8 w-24" />
+            </div>
+          ) : user ? (
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" className="font-medium">

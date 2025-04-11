@@ -1,8 +1,9 @@
 import { prettyDOM, render, screen, waitFor, within } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import EventPage, { dummyEvent } from "@/app/events/[id]/page";
+
 import { format } from "date-fns";
 import EventView from "@/app/events/[id]/component/EventView";
+import { dummyEvent } from "@/constants/dummyData";
 
 // Mock the useRouter hook
 const mockPush = vi.fn();

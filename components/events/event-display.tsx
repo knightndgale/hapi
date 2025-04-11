@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Navbar } from "@/components/navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, MapPin, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -85,7 +84,6 @@ export function EventDisplay({ id }: EventDisplayProps) {
         backgroundColor: "rgba(0, 0, 0, 0.85)",
         backgroundBlendMode: "overlay",
       }}>
-      <Navbar />
       <main className="flex-1 container mx-auto py-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">

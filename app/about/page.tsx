@@ -1,11 +1,9 @@
 "use client";
-import { Navbar } from "@/components/navbar";
 import Image from "next/image";
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col" data-testid="about-page">
-      <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative h-[400px] w-full">
