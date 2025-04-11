@@ -1,5 +1,6 @@
 import { authentication, AuthenticationData, createDirectus, rest } from "@directus/sdk";
 import { get as getServerCookie, set as setServerCookie } from "./cookies";
+import { convertTimeToMilliseconds } from "@/helpers/timeConverter";
 
 // Utility function for client-side cookie access
 const getClientCookie = (name: string): string | null => {
@@ -10,10 +11,10 @@ const getClientCookie = (name: string): string | null => {
   return null;
 };
 
-const setClientCookie = (name: string, value: string, days: number): void => {
+const setClientCookie = (name: string, value: string, timeString: string): void => {
   if (typeof document === "undefined") return; // Check if running in browser
   const date = new Date();
-  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  date.setTime(date.getTime() + convertTimeToMilliseconds(timeString));
   const expires = `expires=${date.toUTCString()}`;
   document.cookie = `${name}=${value}; ${expires}; path=/`;
 };
@@ -44,8 +45,10 @@ export const createDirectusClient = () => {
             await setServerCookie(null);
             return;
           }
-          setClientCookie("access_token", value.access_token, 1); // 1 day expiry for access token
-          setClientCookie("refresh_token", value.refresh_token, 7); // 7 days expiry for refresh token
+          const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
+          const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
+          setClientCookie("access_token", value.access_token, accessTokenTTL);
+          setClientCookie("refresh_token", value.refresh_token, refreshTokenTTL);
         },
       };
 
