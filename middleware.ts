@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { createDirectusClient } from "@/lib/directus";
-import { convertTimeToMilliseconds } from "@/helpers/timeConverter";
 import { getCurrentUser } from "@/requests/auth.request";
 import { TokenManager } from "@/lib/tokenManager";
 
@@ -18,11 +16,9 @@ const publicPaths = ["/login", "/signup", "/", "/api/auth", "/about", "/faq", "/
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const tokenManager = TokenManager.getInstance();
-
   // Debug logging
   debug("Processing request", { pathname });
 
-  // Check if the path is public (exact match)
   if (publicPaths.includes(pathname)) {
     debug("Path is public (exact match)");
     return NextResponse.next();
