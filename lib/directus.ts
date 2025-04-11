@@ -1,4 +1,4 @@
-import { authentication, createDirectus, rest } from "@directus/sdk";
+import { authentication, AuthenticationData, createDirectus, rest } from "@directus/sdk";
 import { get as getServerCookie, set as setServerCookie } from "./cookies";
 
 // Utility function for client-side cookie access
@@ -36,11 +36,14 @@ export const createDirectusClient = () => {
         get: async () => {
           const accessToken = getClientCookie("access_token");
           const refreshToken = getClientCookie("refresh_token");
-          if (!accessToken && !refreshToken) return null;
           return { access_token: accessToken, refresh_token: refreshToken, expires: 0, expires_at: 0 };
         },
-        set: async (value: any) => {
+        set: async (value: AuthenticationData | null) => {
           if (!value) return;
+          if (!value.access_token || !value.refresh_token) {
+            await setServerCookie(null);
+            return;
+          }
           setClientCookie("access_token", value.access_token, 1); // 1 day expiry for access token
           setClientCookie("refresh_token", value.refresh_token, 7); // 7 days expiry for refresh token
         },

@@ -11,8 +11,6 @@ export const get: () => Promise<AuthenticationData | null> = async () => {
   const accessToken = (await cookies()).get("access_token")?.value || null;
   const refreshToken = (await cookies()).get("refresh_token")?.value || null;
 
-  if (!accessToken && !refreshToken && decoded) return null;
-
   const expiresInSeconds = decoded?.exp ? decoded.exp - Math.floor(Date.now() / 1000) : 0;
   const expiresAt = decoded?.exp ? decoded.exp * 1000 : Date.now() + 15 * 60 * 1000;
 
@@ -25,9 +23,11 @@ export const get: () => Promise<AuthenticationData | null> = async () => {
 };
 
 export const set: (value: AuthenticationData | null) => Promise<unknown> | unknown = async (value: AuthenticationData | null) => {
-  if (value === null) return;
-  if (!value.access_token || !value.refresh_token || !value.expires) return;
-
+  if (!value || !value.access_token || !value.refresh_token || !value.expires) {
+    (await cookies()).delete("access_token");
+    (await cookies()).delete("refresh_token");
+    return;
+  }
   const expiresAtDate = new Date(Date.now() + value.expires);
 
   (await cookies()).set({
