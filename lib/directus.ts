@@ -1,7 +1,11 @@
 import { authentication, AuthenticationData, createDirectus, rest } from "@directus/sdk";
 import { get as getServerCookie, set as setServerCookie } from "./cookies";
 import { convertTimeToMilliseconds } from "@/helpers/timeConverter";
-import { refreshAuthentication } from "@/requests/auth.request";
+import { TokenManager } from "./tokenManager";
+
+const debug = (message: string, data?: any) => {
+  console.log(`🔐 [DirectusClient] ${message}`, data ? data : "");
+};
 
 // Utility function for client-side cookie access
 const getClientCookie = (name: string): string | null => {
@@ -26,6 +30,7 @@ const isServer = typeof window === "undefined";
 // Function to create a new Directus client instance
 export const createDirectusClient = () => {
   const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL;
+  const tokenManager = TokenManager.getInstance();
 
   if (!directusUrl) {
     throw new Error("NEXT_PUBLIC_DIRECTUS_BASE_URL is not defined");
@@ -36,63 +41,62 @@ export const createDirectusClient = () => {
     ? { get: getServerCookie, set: setServerCookie }
     : {
         get: async () => {
+          debug("Getting tokens from client-side storage");
           const accessToken = getClientCookie("access_token");
           const refreshToken = getClientCookie("refresh_token");
 
-          // If access token exists, return it
-          if (accessToken) {
-            return {
-              access_token: accessToken,
-              refresh_token: refreshToken,
-              expires: 0,
-              expires_at: 0,
-            };
-          }
+          debug("Retrieved tokens", { hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
 
-          // If refresh token exists, try to refresh
-          if (refreshToken) {
-            const response = await refreshAuthentication();
-            if (!response.success || !response.data?.access_token || !response.data?.refresh_token) {
-              await setServerCookie(null);
-              return null;
+          const validTokens = await tokenManager.getValidTokens(accessToken, refreshToken);
+
+          if (validTokens) {
+            debug("Valid tokens obtained", { hasAccessToken: !!validTokens.access_token, hasRefreshToken: !!validTokens.refresh_token });
+
+            // Update cookies with new tokens if they were refreshed
+            if (validTokens.access_token !== accessToken || validTokens.refresh_token !== refreshToken) {
+              debug("Updating cookies with new tokens");
+              const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
+              const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
+
+              if (validTokens.access_token) {
+                setClientCookie("access_token", validTokens.access_token, accessTokenTTL);
+              }
+              if (validTokens.refresh_token) {
+                setClientCookie("refresh_token", validTokens.refresh_token, refreshTokenTTL);
+              }
             }
-
-            const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "15m";
-            const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
-
-            setClientCookie("access_token", response.data.access_token, accessTokenTTL);
-            setClientCookie("refresh_token", response.data.refresh_token, refreshTokenTTL);
-
-            return {
-              access_token: response.data.access_token,
-              refresh_token: response.data.refresh_token,
-              expires: 0,
-              expires_at: 0,
-            };
+          } else {
+            debug("No valid tokens available");
           }
 
-          // If we get here, no tokens exist
-          await setServerCookie(null);
-          return null;
+          return validTokens;
         },
         set: async (value: AuthenticationData | null) => {
+          debug("Setting tokens in client-side storage", { hasValue: !!value });
+
           if (!value || !value.access_token || !value.refresh_token) {
+            debug("Clearing tokens");
             await setServerCookie(null);
             return;
           }
 
-          const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "15m";
+          const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
           const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
+
+          debug("Setting new tokens with TTL", { accessTokenTTL, refreshTokenTTL });
 
           setClientCookie("access_token", value.access_token, accessTokenTTL);
           setClientCookie("refresh_token", value.refresh_token, refreshTokenTTL);
         },
       };
 
-  return createDirectus(directusUrl)
+  const client = createDirectus(directusUrl)
     .with(
       rest({
-        onRequest: (options) => ({ ...options, cache: "no-store" }),
+        onRequest: (options) => {
+          debug("Making request");
+          return { ...options, cache: "no-store" };
+        },
         credentials: "include",
       })
     )
@@ -102,6 +106,8 @@ export const createDirectusClient = () => {
         credentials: "include",
       })
     );
+
+  return client;
 };
 
 // Export the function to create a new instance

@@ -14,7 +14,7 @@ export const get: () => Promise<AuthenticationData | null> = async () => {
 
   // Calculate expiration times
   const expiresInSeconds = decoded?.exp ? decoded.exp - Math.floor(Date.now() / 1000) : 0;
-  const expiresAt = decoded?.exp ? decoded.exp * 1000 : Date.now() + convertTimeToMilliseconds(process.env.ACCESS_TOKEN_TTL || "15m");
+  const expiresAt = decoded?.exp ? decoded.exp * 1000 : Date.now() + convertTimeToMilliseconds(process.env.ACCESS_TOKEN_TTL || "2m");
 
   return {
     access_token: accessToken,
@@ -31,7 +31,7 @@ export const set: (value: AuthenticationData | null) => Promise<unknown> | unkno
     return;
   }
 
-  const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "15m";
+  const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
   const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
 
   const accessTokenExpires = new Date(Date.now() + convertTimeToMilliseconds(accessTokenTTL));
@@ -41,17 +41,17 @@ export const set: (value: AuthenticationData | null) => Promise<unknown> | unkno
     name: "access_token",
     value: value.access_token,
     expires: accessTokenExpires,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    // httpOnly: true,
+    // secure: process.env.NODE_ENV === "production",
+    // sameSite: "lax",
   });
 
   (await cookies()).set({
     name: "refresh_token",
     value: value.refresh_token,
     expires: refreshTokenExpires,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    // httpOnly: true,
+    // secure: process.env.NODE_ENV === "production",
+    // sameSite: "lax",
   });
 };
