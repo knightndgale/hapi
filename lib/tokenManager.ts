@@ -44,14 +44,18 @@ export class TokenManager {
     try {
       this.refreshPromise = (async () => {
         debug("Attempting to refresh tokens");
-        const response = await refreshAuthentication();
+        const response = await refreshAuthentication(refreshToken);
 
         if (!response.success || !response.data?.access_token || !response.data?.refresh_token) {
           debug("Token refresh failed", response);
           return null;
         }
+        // when refresh attemp is successful it should not attempt refresh again.
 
         debug("Token refresh successful");
+        this.isRefreshing = false;
+        this.refreshPromise = null;
+        this.resetRefreshAttempts();
         return {
           access_token: response.data.access_token,
           refresh_token: response.data.refresh_token,

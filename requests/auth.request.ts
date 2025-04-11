@@ -1,6 +1,6 @@
 import { createDirectusClient } from "../lib/directus";
 import { errorHandler } from "../helpers/errorHandler";
-import { AuthenticationData, createUser, DirectusRole, DirectusUser, readMe } from "@directus/sdk";
+import { AuthenticationData, createUser, DirectusRole, DirectusUser, readMe, refresh } from "@directus/sdk";
 import { User } from "@/types/schema/User.schema";
 import { TDefaultFieldFilter } from "@/types/index.types";
 import { Roles } from "@/constants/roles.enum";
@@ -56,11 +56,11 @@ export const logout = async () => {
   }
 };
 
-export const refreshAuthentication = async () => {
+export const refreshAuthentication = async (refresh_token: string) => {
   const client = createDirectusClient();
 
   try {
-    const response = (await client.refresh()) as AuthenticationData;
+    const response = (await client.request(refresh("json", refresh_token))) as AuthenticationData;
     if (!response?.access_token || !response?.refresh_token) {
       throw new Error("Invalid refresh response");
     }
