@@ -47,14 +47,12 @@ export const login = async (email: string, password: string) => {
 
 export const logout = async () => {
   const client = createDirectusClient();
-
+  localStorage.removeItem("user");
   try {
     await client.logout();
-    localStorage.removeItem("user");
     return { data: { message: "Logged out successfully" }, success: true };
   } catch (error) {
-    localStorage.removeItem("user");
-    return { success: true };
+    return { success: false, message: errorHandler(error) };
   }
 };
 
