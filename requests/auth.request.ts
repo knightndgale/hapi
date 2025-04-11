@@ -66,8 +66,6 @@ export const refreshAuthentication = async (refresh_token: string) => {
     }
     return { data: response, success: true };
   } catch (error) {
-    // If refresh fails, clear all tokens and user data
-    localStorage.removeItem("user");
     return { success: false, message: errorHandler(error) };
   }
 };

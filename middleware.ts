@@ -1,8 +1,8 @@
+"use server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getCurrentUser } from "@/requests/auth.request";
 import { TokenManager } from "@/lib/tokenManager";
-
 const debug = (message: string, data?: any) => {
   console.log(`🔐 [Middleware] ${message}`, data ? data : "");
 };

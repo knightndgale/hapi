@@ -3,10 +3,6 @@ import { get as getServerCookie, set as setServerCookie } from "./cookies";
 import { convertTimeToMilliseconds } from "@/helpers/timeConverter";
 import { TokenManager } from "./tokenManager";
 
-const debug = (message: string, data?: any) => {
-  console.log(`🔐 [DirectusClient] ${message}`, data ? data : "");
-};
-
 // Utility function for client-side cookie access
 const getClientCookie = (name: string): string | null => {
   if (typeof window === "undefined") return null;
@@ -41,20 +37,14 @@ export const createDirectusClient = () => {
     ? { get: getServerCookie, set: setServerCookie }
     : {
         get: async () => {
-          debug("Getting tokens from client-side storage");
           const accessToken = getClientCookie("access_token");
           const refreshToken = getClientCookie("refresh_token");
-
-          debug("Retrieved tokens", { hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
 
           const validTokens = await tokenManager.getValidTokens(accessToken, refreshToken);
 
           if (validTokens) {
-            debug("Valid tokens obtained", { hasAccessToken: !!validTokens.access_token, hasRefreshToken: !!validTokens.refresh_token });
-
             // Update cookies with new tokens if they were refreshed
             if (validTokens.access_token !== accessToken || validTokens.refresh_token !== refreshToken) {
-              debug("Updating cookies with new tokens");
               const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
               const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
 
@@ -66,24 +56,18 @@ export const createDirectusClient = () => {
               }
             }
           } else {
-            debug("No valid tokens available");
           }
 
           return validTokens;
         },
         set: async (value: AuthenticationData | null) => {
-          debug("Setting tokens in client-side storage", { hasValue: !!value });
-
           if (!value || !value.access_token || !value.refresh_token) {
-            debug("Clearing tokens");
             await setServerCookie(null);
             return;
           }
 
           const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
           const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
-
-          debug("Setting new tokens with TTL", { accessTokenTTL, refreshTokenTTL });
 
           setClientCookie("access_token", value.access_token, accessTokenTTL);
           setClientCookie("refresh_token", value.refresh_token, refreshTokenTTL);
@@ -94,7 +78,6 @@ export const createDirectusClient = () => {
     .with(
       rest({
         onRequest: (options) => {
-          debug("Making request");
           return { ...options, cache: "no-store" };
         },
         credentials: "include",
