@@ -61,8 +61,13 @@ export const refreshAuthentication = async () => {
 
   try {
     const response = await client.refresh();
+    if (!response?.access_token || !response?.refresh_token) {
+      throw new Error("Invalid refresh response");
+    }
     return { data: response, success: true };
   } catch (error) {
+    // If refresh fails, clear all tokens and user data
+    localStorage.removeItem("user");
     return { success: false, message: errorHandler(error) };
   }
 };

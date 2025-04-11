@@ -5,7 +5,7 @@ import { refreshAuthentication } from "@/requests/auth.request";
 
 // Utility function for client-side cookie access
 const getClientCookie = (name: string): string | null => {
-  if (typeof document === "undefined") return null; // Check if running in browser
+  if (typeof window === "undefined") return null;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
@@ -13,7 +13,7 @@ const getClientCookie = (name: string): string | null => {
 };
 
 const setClientCookie = (name: string, value: string, timeString: string): void => {
-  if (typeof document === "undefined") return; // Check if running in browser
+  if (typeof window === "undefined") return;
   const date = new Date();
   date.setTime(date.getTime() + convertTimeToMilliseconds(timeString));
   const expires = `expires=${date.toUTCString()}`;
@@ -38,18 +38,52 @@ export const createDirectusClient = () => {
         get: async () => {
           const accessToken = getClientCookie("access_token");
           const refreshToken = getClientCookie("refresh_token");
-          if (!accessToken && !refreshToken) return null;
 
-          return { access_token: accessToken, refresh_token: refreshToken, expires: 0, expires_at: 0 };
+          // If access token exists, return it
+          if (accessToken) {
+            return {
+              access_token: accessToken,
+              refresh_token: refreshToken,
+              expires: 0,
+              expires_at: 0,
+            };
+          }
+
+          // If refresh token exists, try to refresh
+          if (refreshToken) {
+            const response = await refreshAuthentication();
+            if (!response.success || !response.data?.access_token || !response.data?.refresh_token) {
+              await setServerCookie(null);
+              return null;
+            }
+
+            const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "15m";
+            const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
+
+            setClientCookie("access_token", response.data.access_token, accessTokenTTL);
+            setClientCookie("refresh_token", response.data.refresh_token, refreshTokenTTL);
+
+            return {
+              access_token: response.data.access_token,
+              refresh_token: response.data.refresh_token,
+              expires: 0,
+              expires_at: 0,
+            };
+          }
+
+          // If we get here, no tokens exist
+          await setServerCookie(null);
+          return null;
         },
         set: async (value: AuthenticationData | null) => {
-          if (!value) return;
-          if (!value.access_token || !value.refresh_token) {
+          if (!value || !value.access_token || !value.refresh_token) {
             await setServerCookie(null);
             return;
           }
-          const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
+
+          const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "15m";
           const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
+
           setClientCookie("access_token", value.access_token, accessTokenTTL);
           setClientCookie("refresh_token", value.refresh_token, refreshTokenTTL);
         },
