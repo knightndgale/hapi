@@ -3,6 +3,7 @@
 import { AuthenticationData } from "@directus/sdk";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
+import { convertTimeToMilliseconds } from "@/helpers/timeConverter";
 
 export const get: () => Promise<AuthenticationData | null> = async () => {
   const ac = (await cookies()).get("access_token")?.value;
@@ -28,7 +29,11 @@ export const set: (value: AuthenticationData | null) => Promise<unknown> | unkno
     (await cookies()).delete("refresh_token");
     return;
   }
-  const expiresAtDate = new Date(Date.now() + value.expires);
+
+  const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
+  const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
+
+  const expiresAtDate = new Date(Date.now() + convertTimeToMilliseconds(accessTokenTTL));
 
   (await cookies()).set({
     name: "access_token",
@@ -38,6 +43,6 @@ export const set: (value: AuthenticationData | null) => Promise<unknown> | unkno
   (await cookies()).set({
     name: "refresh_token",
     value: value.refresh_token,
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + convertTimeToMilliseconds(refreshTokenTTL)),
   });
 };

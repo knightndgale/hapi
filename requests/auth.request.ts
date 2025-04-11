@@ -56,7 +56,7 @@ export const logout = async () => {
   }
 };
 
-export const refresh = async () => {
+export const refreshAuthentication = async () => {
   const client = createDirectusClient();
 
   try {

@@ -1,6 +1,7 @@
 import { authentication, AuthenticationData, createDirectus, rest } from "@directus/sdk";
 import { get as getServerCookie, set as setServerCookie } from "./cookies";
 import { convertTimeToMilliseconds } from "@/helpers/timeConverter";
+import { refreshAuthentication } from "@/requests/auth.request";
 
 // Utility function for client-side cookie access
 const getClientCookie = (name: string): string | null => {
@@ -37,6 +38,8 @@ export const createDirectusClient = () => {
         get: async () => {
           const accessToken = getClientCookie("access_token");
           const refreshToken = getClientCookie("refresh_token");
+          if (!accessToken && !refreshToken) return null;
+
           return { access_token: accessToken, refresh_token: refreshToken, expires: 0, expires_at: 0 };
         },
         set: async (value: AuthenticationData | null) => {
