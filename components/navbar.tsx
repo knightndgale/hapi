@@ -10,6 +10,7 @@ import { logout } from "@/requests/auth.request";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Skeleton } from "./ui/skeleton";
+import { getGuests } from "@/requests/guest.request";
 
 export function Navbar() {
   const router = useRouter();
@@ -40,6 +41,27 @@ export function Navbar() {
     }
   };
 
+  const handleGetGuests = async () => {
+    try {
+      const response = await getGuests();
+      if (!response.success) {
+        // If the request fails due to authentication, redirect to login
+        if (response.message?.includes("authentication")) {
+          localStorage.removeItem("user");
+          setUser(null);
+          toast.error("Your session has expired. Please log in again.");
+          router.push("/login");
+          return;
+        }
+        toast.error(response.message || "Failed to get guests");
+        return;
+      }
+      console.log(response.data);
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    }
+  };
+
   return (
     <nav className="border-b">
       <div className="flex h-16 items-center px-4 container mx-auto">
@@ -54,18 +76,23 @@ export function Navbar() {
               <Skeleton className="h-8 w-24" />
             </div>
           ) : user ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" className="font-medium">
-                  {user.first_name}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-40 p-2">
-                <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </PopoverContent>
-            </Popover>
+            <>
+              <Button variant="ghost" className="font-medium" onClick={handleGetGuests}>
+                Get Guest Test
+              </Button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="font-medium">
+                    {user.first_name}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-40 p-2">
+                  <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </PopoverContent>
+              </Popover>
+            </>
           ) : (
             <>
               <Link href="/login">
