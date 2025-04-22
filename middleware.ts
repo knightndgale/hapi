@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getCurrentUser } from "@/requests/auth.request";
 import { TokenManager } from "@/lib/tokenManager";
+
 const debug = (message: string, data?: any) => {
   console.log(`🔐 [Middleware] ${message}`, data ? data : "");
 };
@@ -55,7 +56,10 @@ export async function middleware(request: NextRequest) {
           const validTokens = await tokenManager.refreshTokens(refreshToken);
           if (!validTokens) {
             debug("Token refresh failed, redirecting to login");
-            return NextResponse.redirect(new URL("/login", request.url));
+            const response = NextResponse.redirect(new URL("/login", request.url));
+            response.cookies.delete("access_token");
+            response.cookies.delete("refresh_token");
+            return response;
           }
 
           const response = NextResponse.next();
@@ -95,7 +99,10 @@ export async function middleware(request: NextRequest) {
       const validTokens = await tokenManager.refreshTokens(refreshToken);
       if (!validTokens) {
         debug("Token refresh failed, redirecting to login");
-        return NextResponse.redirect(new URL("/login", request.url));
+        const response = NextResponse.redirect(new URL("/login", request.url));
+        response.cookies.delete("access_token");
+        response.cookies.delete("refresh_token");
+        return response;
       }
 
       const response = NextResponse.next();
