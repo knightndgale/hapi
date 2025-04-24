@@ -16,23 +16,23 @@ const debug = (message: string, data?: any) => {
  *
  * Key Features:
  * - Protects specified routes from unauthorized access
- * - Manages JWT token validation and refresh
  * - Handles cookie-based authentication
  * - Provides debug logging for development
+ * - Implements automatic token refresh for both public and protected routes
+ * - Maintains session continuity by refreshing tokens when possible
  *
- * Protected Routes:
- * - /dashboard
- * - /profile
- * - /api/guests
- * - /events/create
- * - /events/[id]
- * - /events/[id]/guests
- * - /invite/[eventId]/[guestId]
+ * Route Protection:
+ * - Protected routes require valid authentication
+ * - Public routes remain accessible without authentication
+ * - Token refresh is attempted on all routes where tokens exist
+ * - Redirects to login only occur for protected routes when authentication fails
  *
  * Token Management:
  * - Validates access tokens
  * - Refreshes expired tokens using refresh tokens
  * - Sets new tokens in cookies with appropriate TTL
+ * - Attempts token refresh on all routes where tokens exist
+ * - Clears invalid tokens and redirects to login for protected routes
  *
  * Environment Variables:
  * - ACCESS_TOKEN_TTL: Access token time-to-live (default: "2m")
