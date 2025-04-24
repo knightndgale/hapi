@@ -8,6 +8,42 @@ const debug = (message: string, data?: any) => {
   console.log(`🔐 [Middleware] ${message}`, data ? data : "");
 };
 
+/**
+ * Middleware Documentation
+ *
+ * This middleware handles authentication and authorization for protected routes in the application.
+ * It manages token validation, refresh, and redirection based on authentication status.
+ *
+ * Key Features:
+ * - Protects specified routes from unauthorized access
+ * - Manages JWT token validation and refresh
+ * - Handles cookie-based authentication
+ * - Provides debug logging for development
+ *
+ * Protected Routes:
+ * - /dashboard
+ * - /profile
+ * - /api/guests
+ * - /events/create
+ * - /events/[id]
+ * - /events/[id]/guests
+ * - /invite/[eventId]/[guestId]
+ *
+ * Token Management:
+ * - Validates access tokens
+ * - Refreshes expired tokens using refresh tokens
+ * - Sets new tokens in cookies with appropriate TTL
+ *
+ * Environment Variables:
+ * - ACCESS_TOKEN_TTL: Access token time-to-live (default: "2m")
+ * - REFRESH_TOKEN_TTL: Refresh token time-to-live (default: "1d")
+ *
+ * @module middleware
+ * @function middleware
+ * @param {NextRequest} request - The incoming request object
+ * @returns {NextResponse} The response object with appropriate headers and redirects
+ */
+
 // Paths that require authentication
 const protectedPaths = ["/dashboard", "/profile", "/api/guests", "/events/create", "/events/[id]", "/events/[id]/guests", "/invite/[eventId]/[guestId]"];
 
