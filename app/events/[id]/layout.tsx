@@ -1,10 +1,10 @@
-import { Navbar } from "@/components/navbar";
+import { Navigation } from "@/components/navigation";
 import React from "react";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <Navbar />
+      <Navigation />
       {children}
     </>
   );

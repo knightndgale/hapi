@@ -42,20 +42,18 @@ export const createDirectusClient = () => {
 
           const validTokens = await tokenManager.getValidTokens(accessToken, refreshToken);
 
-          if (validTokens) {
-            // Update cookies with new tokens if they were refreshed
-            if (validTokens.access_token !== accessToken || validTokens.refresh_token !== refreshToken) {
-              const accessTokenTTL = process.env.ACCESS_TOKEN_TTL || "2m";
-              const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL || "1d";
+          if (!validTokens) {
+            return null;
+          }
 
-              if (validTokens.access_token) {
-                setClientCookie("access_token", validTokens.access_token, accessTokenTTL);
-              }
-              if (validTokens.refresh_token) {
-                setClientCookie("refresh_token", validTokens.refresh_token, refreshTokenTTL);
-              }
-            }
-          } else {
+          // Update cookies with new tokens if they were refreshed
+
+          const accessTokenTTL = process.env.NEXT_PUBLIC_ACCESS_TOKEN_TTL || "2m";
+          const refreshTokenTTL = process.env.NEXT_PUBLIC_REFRESH_TOKEN_TTL || "1d";
+
+          if (validTokens.access_token && validTokens.refresh_token) {
+            setClientCookie("access_token", validTokens.access_token, accessTokenTTL);
+            setClientCookie("refresh_token", validTokens.refresh_token, refreshTokenTTL);
           }
 
           return validTokens;

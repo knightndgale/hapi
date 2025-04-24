@@ -6,7 +6,7 @@ import { TDefaultFieldFilter } from "@/types/index.types";
 import { Roles } from "@/constants/roles.enum";
 import { getRoles } from "./roles.request";
 
-export const getCurrentUser = async (
+export const getMe = async (
   props: Partial<TDefaultFieldFilter<Pick<DirectusRole, "name" | "id">>> = {
     fields: ["first_name", "last_name", "email", "role.*"],
   }
@@ -27,7 +27,7 @@ export const login = async (email: string, password: string) => {
     const response = await client.login(email, password);
     // Get user details after successful login
 
-    const user = await getCurrentUser({ fields: ["first_name", "last_name", "email", "role.*"] });
+    const user = await getMe({ fields: ["first_name", "last_name", "email", "role.*"] });
     if (!user.success) throw Error("Failed to get user details");
 
     // Store user details in localStorage

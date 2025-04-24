@@ -5,13 +5,14 @@ import { Event } from "@/types/schema/Event.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Grid2X2, List, Calendar, MapPin, Users } from "lucide-react";
+import { Grid2X2, List, Calendar, MapPin, Users, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 
 const eventTypes = ["all", "wedding", "birthday", "seminar"];
 const eventStatuses = ["all", "draft", "published", "archived"];
@@ -25,7 +26,7 @@ const statusColors: Record<string, string> = {
 
 export function DashboardContent() {
   const { events, loading, error, currentPage, pageSize, totalPages, viewMode, filters, actions } = useDashboard();
-
+  const router = useRouter();
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -67,6 +68,9 @@ export function DashboardContent() {
             </Button>
             <Button variant={viewMode === "list" ? "default" : "outline"} size="icon" onClick={() => actions.setViewMode("list")}>
               <List className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" onClick={() => router.push("/events/create")}>
+              <Plus /> Create Event
             </Button>
           </div>
         </div>
