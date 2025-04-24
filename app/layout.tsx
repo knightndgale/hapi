@@ -12,6 +12,13 @@ export const metadata: Metadata = {
   description: "Create and manage events with QR code check-in",
 };
 
+/**
+ * Root layout component that sets up global providers, theming, and notification toasters for the application.
+ *
+ * Wraps all page content with the Inter font, system-based theme support, and notification components.
+ *
+ * @param children - The content to render within the layout.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>

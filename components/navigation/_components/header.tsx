@@ -11,6 +11,13 @@ import { toast } from "sonner";
 
 import { User } from "@/types/schema/User.schema";
 
+/**
+ * Renders the application header with navigation links, user authentication controls, and theme toggle.
+ *
+ * Displays the brand logo and name, and conditionally shows user options or authentication links based on the presence of a {@link User} prop. Provides a logout action with feedback and redirects on success.
+ *
+ * @param user - The currently authenticated user, if any.
+ */
 export function Header({ user }: { user?: User }) {
   const router = useRouter();
 
