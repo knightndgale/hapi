@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Navbar } from "@/components/navbar";
+
 import Link from "next/link";
-import { Calendar, Users, QrCode, ArrowRight, Sparkles, Shield } from "lucide-react";
+import { Calendar, Users, QrCode, ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
+import { Navigation } from "@/components/navigation";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navigation />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative py-24 px-4 overflow-hidden bg-gradient-to-b from-primary/5 to-transparent">

@@ -1,7 +1,7 @@
 "use server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getCurrentUser } from "@/requests/auth.request";
+import { getMe } from "@/requests/auth.request";
 import { TokenManager } from "@/lib/tokenManager";
 
 const debug = (message: string, data?: any) => {
@@ -48,10 +48,10 @@ export async function middleware(request: NextRequest) {
   // If access token exists, check if it's expired
   if (accessToken) {
     try {
-      const response = await getCurrentUser();
+      const response = await getMe();
       if (!response.success) {
-        debug("getCurrentUser failed, trying refresh");
-        // If getCurrentUser fails, try to refresh the token
+        debug("getMe failed, trying refresh");
+        // If getMe fails, try to refresh the token
         if (refreshToken) {
           const validTokens = await tokenManager.refreshTokens(refreshToken);
           if (!validTokens) {

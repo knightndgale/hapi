@@ -1,11 +1,11 @@
 import { DashboardProvider } from "./context/dashboard-context";
 import { getEvents } from "@/actions/event.action";
-import { Navbar } from "@/components/navbar";
+import { Navigation } from "@/components/navigation";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Navbar />
+      <Navigation />
       <DashboardProvider
         actions={{
           getEvents,
