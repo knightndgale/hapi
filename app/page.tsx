@@ -5,6 +5,11 @@ import { Calendar, Users, QrCode, ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { Navigation } from "@/components/navigation";
 
+/**
+ * Renders the landing page for the event management platform, including hero, features, and call-to-action sections.
+ *
+ * Displays promotional content, feature highlights, and navigation options for new users.
+ */
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">

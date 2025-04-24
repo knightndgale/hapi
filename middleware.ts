@@ -47,7 +47,15 @@ const debug = (message: string, data?: any) => {
 // Paths that require authentication
 const protectedPaths = ["/dashboard", "/profile", "/api/guests", "/events/create", "/events/[id]", "/events/[id]/guests", "/invite/[eventId]/[guestId]"];
 
-// Helper function to handle token refresh
+/**
+ * Attempts to refresh authentication tokens using the provided refresh token.
+ *
+ * If the refresh is successful, returns a Next.js response with updated `access_token` and `refresh_token` cookies set according to their respective TTLs. Returns `null` if the refresh token is missing or invalid, or if an error occurs during the refresh process.
+ *
+ * @param request - The incoming Next.js request.
+ * @param refreshToken - The refresh token used to obtain new tokens.
+ * @returns A NextResponse with updated authentication cookies, or `null` if the refresh fails.
+ */
 async function handleTokenRefresh(request: NextRequest, refreshToken: string | undefined) {
   if (!refreshToken) return null;
 
@@ -82,6 +90,14 @@ async function handleTokenRefresh(request: NextRequest, refreshToken: string | u
   }
 }
 
+/**
+ * Middleware that enforces authentication and token management for protected routes.
+ *
+ * For routes requiring authentication, this middleware validates the access token, attempts token refresh if necessary, and redirects unauthenticated users to the login page. It manages token cookies and allows requests to proceed for public routes or when valid tokens are present.
+ *
+ * @param request - The incoming Next.js request object.
+ * @returns A NextResponse that either allows the request, refreshes tokens, or redirects to the login page.
+ */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const tokenManager = TokenManager.getInstance();

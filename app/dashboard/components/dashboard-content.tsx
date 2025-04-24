@@ -24,6 +24,11 @@ const statusColors: Record<string, string> = {
   archived: "bg-gray-100 text-gray-800",
 };
 
+/**
+ * Renders the event management dashboard with filtering, view toggling, event listing, and pagination controls.
+ *
+ * Displays events in either a grid or list view, allows filtering by search, type, and status, and provides pagination. Includes a button to create new events.
+ */
 export function DashboardContent() {
   const { events, loading, error, currentPage, pageSize, totalPages, viewMode, filters, actions } = useDashboard();
   const router = useRouter();
