@@ -37,6 +37,7 @@ interface DashboardProviderProps {
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export function DashboardProvider({ children, actions: { loadEvents } }: DashboardProviderProps) {
+  // TODO: Add pagination and filters using directus
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
