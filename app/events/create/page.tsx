@@ -10,6 +10,9 @@ import { RSVPForm } from "@/app/events/component/rsvp-form";
 import { BasicEventForm } from "@/app/events/component/basic-event-form";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
 import { RSVP, Event } from "@/types/schema/Event.schema";
+import { createRSVP } from "@/requests/rsvp.request";
+import { toast } from "sonner";
+import { createEvent } from "@/requests/event.request";
 
 const steps = [
   {
@@ -27,6 +30,7 @@ const steps = [
 ];
 
 export default function CreateEventPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     type: {} as EventTypeFormData,
@@ -47,13 +51,20 @@ export default function CreateEventPage() {
   };
 
   const handleSubmit = async (data: Event) => {
-    try {
-      // TODO: Implement event creation logic
-      console.log("Form data:", data);
-      // router.push("/events");
-    } catch (error) {
-      console.error("Error creating event:", error);
+    if (!data || !data.rsvp) return;
+    const { rsvp, ...event } = data;
+    const rsvpResponse = await createRSVP(rsvp);
+    if (!rsvpResponse.success) {
+      toast.error(rsvpResponse.message);
+      return;
     }
+    const eventResponse = await createEvent({ ...event, rsvp: rsvpResponse.data?.id });
+    if (!eventResponse.success) {
+      toast.error(eventResponse.message);
+      return;
+    }
+    toast.success("Successfully created event");
+    router.push(`/dashboard`);
   };
 
   const renderStep = () => {

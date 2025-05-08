@@ -1,5 +1,7 @@
 "use server";
 
+import { errorHandler } from "@/helpers/errorHandler";
+import { getEvents } from "@/requests/event.request";
 import { Event, EventStatus, EventType } from "@/types/schema/Event.schema";
 // Mock data for development
 const mockEventData: Event = {
@@ -27,7 +29,7 @@ const mockEventData: Event = {
       icon: "church",
     },
   ],
-  attendees: 0,
+  attendees: [],
   maxAttendees: 100,
   rsvp: {
     title: "Together With Their Families",
@@ -63,7 +65,7 @@ const dummyEvents: Event[] = [
       decline_text: "Sorry, can't make it",
     },
     program: [],
-    attendees: 0,
+    attendees: [],
     maxAttendees: 100,
     sections: [],
   },
@@ -87,7 +89,7 @@ const dummyEvents: Event[] = [
       decline_text: "Maybe next time",
     },
     program: [],
-    attendees: 0,
+    attendees: [],
     maxAttendees: 500,
     sections: [],
   },
@@ -124,7 +126,7 @@ const generateDummyEvents = (): Event[] => {
         icon: "church",
       },
     ],
-    attendees: Math.floor(Math.random() * 100),
+    attendees: [],
     pageBanner: `https://picsum.photos/seed/${i + 1}/400/300`,
     maxAttendees: 200,
     status: statuses[Math.floor(Math.random() * statuses.length)],
@@ -145,9 +147,10 @@ export async function getEventData(eventId: string): Promise<Event> {
   return mockEventData;
 }
 
-export async function getEvents(): Promise<Event[]> {
-  // Simulate API delay
-  // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return generateDummyEvents();
+export async function loadEvents(): Promise<Event[]> {
+  const response = await getEvents();
+  if (!response.success) {
+    return [];
+  }
+  return response.data || [];
 }

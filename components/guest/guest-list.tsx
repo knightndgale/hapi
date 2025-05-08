@@ -20,12 +20,11 @@ export function GuestList({ eventId }: { eventId: string }) {
     setGuests([
       {
         id: "1",
-        eventId,
         firstName: "John",
         lastName: "Doe",
         email: "john@example.com",
         response: "pending",
-        guestType: "regular",
+        type: "regular",
       },
     ]);
   }, [eventId]);

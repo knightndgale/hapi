@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, use } from "react";
-import { GuestList } from "@/components/guests/guest-list";
-import { AddGuestForm } from "@/components/guests/add-guest-form";
+import { GuestList } from "@/components/guest/guest-list";
+import { AddGuestForm } from "@/components/guest/add-attendee-form";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -16,17 +16,17 @@ export default function GuestsPage(props: { params: Promise<{ id: string }> }) {
       <main className="flex-1 container mx-auto py-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">Guest List</h1>
+            <h1 className="text-3xl font-bold">Attendee List</h1>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Guest
+                  Add Attendee
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Guest</DialogTitle>
+                  <DialogTitle>Add New Attendee</DialogTitle>
                 </DialogHeader>
                 <AddGuestForm eventId={params.id} onSuccess={() => setOpen(false)} />
               </DialogContent>

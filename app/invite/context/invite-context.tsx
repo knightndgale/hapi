@@ -2,17 +2,11 @@
 
 import { createContext, useContext } from "react";
 import { Event } from "@/types/schema/Event.schema";
-
-interface GuestData {
-  id: string;
-  firstName: string;
-  lastName: string;
-  guestType: "regular" | "entourage" | "sponsor";
-}
+import { Guest } from "@/types/schema/Guest.schema";
 
 interface InviteContextType {
   getEventData: (eventId: string) => Promise<Event>;
-  getGuestData: (guestId: string) => Promise<GuestData>;
+  getGuestData: (guestId: string) => Promise<Guest>;
   submitRSVP: (data: {
     eventId: string;
     guestId: string;

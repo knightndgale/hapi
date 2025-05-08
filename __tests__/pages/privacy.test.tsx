@@ -19,7 +19,7 @@ describe("Privacy Policy Page", () => {
     expect(screen.getByText(/At Hapi, we take your privacy seriously/)).toBeInTheDocument();
     expect(screen.getByText(/Account information/)).toBeInTheDocument();
     expect(screen.getByText(/Event information/)).toBeInTheDocument();
-    expect(screen.getByText(/Guest information/)).toBeInTheDocument();
+    expect(screen.getByText(/Attendee information/)).toBeInTheDocument();
     expect(screen.getByText(/Content you upload/)).toBeInTheDocument();
 
     // Check if contact information is rendered

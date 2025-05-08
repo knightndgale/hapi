@@ -19,7 +19,7 @@ interface DashboardContextType {
   viewMode: "grid" | "list";
   filters: Filters;
   actions: {
-    getEvents: () => Promise<Event[]>;
+    loadEvents: () => Promise<Event[]>;
     setCurrentPage: (page: number) => void;
     setPageSize: (size: number) => void;
     setViewMode: (mode: "grid" | "list") => void;
@@ -30,13 +30,13 @@ interface DashboardContextType {
 interface DashboardProviderProps {
   children: React.ReactNode;
   actions: {
-    getEvents: () => Promise<Event[]>;
+    loadEvents: () => Promise<Event[]>;
   };
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
-export function DashboardProvider({ children, actions: { getEvents } }: DashboardProviderProps) {
+export function DashboardProvider({ children, actions: { loadEvents } }: DashboardProviderProps) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +56,7 @@ export function DashboardProvider({ children, actions: { getEvents } }: Dashboar
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const data = await getEvents();
+        const data = await loadEvents();
         if (isMounted) {
           setEvents(data);
         }
@@ -76,7 +76,7 @@ export function DashboardProvider({ children, actions: { getEvents } }: Dashboar
     return () => {
       isMounted = false;
     };
-  }, [getEvents]);
+  }, [loadEvents]);
 
   const filteredEvents = events.filter((event) => {
     const matchesType = filters.type === "all" || event.type === filters.type;
@@ -102,7 +102,7 @@ export function DashboardProvider({ children, actions: { getEvents } }: Dashboar
     viewMode,
     filters,
     actions: {
-      getEvents,
+      loadEvents,
       setCurrentPage,
       setPageSize,
       setViewMode,

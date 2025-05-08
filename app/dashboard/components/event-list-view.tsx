@@ -37,7 +37,7 @@ export function EventListView({ events }: EventListViewProps) {
               <TableCell>{event.location}</TableCell>
               <TableCell className="capitalize">{event.status}</TableCell>
               <TableCell>
-                {event.attendees}/{event.maxAttendees}
+                {event.attendees.length}/{event.maxAttendees}
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">

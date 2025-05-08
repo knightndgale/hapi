@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { MediaSchema } from "./MediaSchema";
+
 import { ProgramItemSchema } from "./Program.schema";
 import { ThemeSchema } from "./Theme.schema";
+import { GuestSchema } from "./Guest.schema";
 
 export const EventTypeSchema = z.enum(["wedding", "birthday", "seminar"], { message: "Please select an event type" });
 
@@ -12,6 +13,7 @@ export const EventStatusSchema = z.enum(["draft", "published", "archived"]);
 export type EventStatus = z.infer<typeof EventStatusSchema>;
 
 export const RSVPSchema = z.object({
+  id: z.string().readonly().optional(),
   logo: z.string().url().optional(),
   title_as_image: z.string().url().optional(),
   title: z.string({ message: "Title is required" }),
@@ -32,7 +34,7 @@ export const SectionSchema = z.object({
 });
 
 export const EventSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().readonly().optional(),
   title: z.string({ message: "Title is required" }).min(1, "Title is required"),
   description: z.string({ message: "Description is required" }).min(1, "Description is required"),
   location: z.string({ message: "Location is required" }).min(1, "Location is required"),
@@ -42,11 +44,10 @@ export const EventSchema = z.object({
   endTime: z.string({ message: "End time is required" }),
   type: EventTypeSchema,
   templateId: z.string(),
-  attendees: z.number(),
+  attendees: z.array(GuestSchema).default([]),
   maxAttendees: z.number(),
   rsvp: RSVPSchema.optional(),
   status: EventStatusSchema,
-  backgroundImage: z.string().url().optional(),
   pageBanner: z.string().url().optional(),
   sections: z.array(SectionSchema).default([]),
   theme: ThemeSchema.optional(),

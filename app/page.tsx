@@ -84,7 +84,7 @@ export default function Home() {
                   icon: Users,
                   title: "Attendee Tracking",
                   description: "Monitor attendance in real-time. Get valuable insights about participation and engagement at your events.",
-                  features: ["Live Analytics", "Export Reports", "Guest Management"],
+                  features: ["Live Analytics", "Export Reports", "Attendee Management"],
                 },
               ].map((feature, index) => (
                 <div key={index} className="relative group">

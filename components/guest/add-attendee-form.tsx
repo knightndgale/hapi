@@ -26,13 +26,13 @@ export function AddGuestForm({ eventId, onSuccess }: AddGuestFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4" data-testid="add-guest-form">
       <div className="space-y-2">
-        <Label htmlFor="guestType">Guest Type</Label>
+        <Label htmlFor="guestType">Attendee Type</Label>
         <Select value={guestType} onValueChange={setGuestType}>
           <SelectTrigger>
             <SelectValue placeholder="Select guest type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="regular">Regular Guest</SelectItem>
+            <SelectItem value="regular">Regular Attendee</SelectItem>
             <SelectItem value="entourage">Entourage</SelectItem>
             <SelectItem value="sponsor">Sponsor</SelectItem>
           </SelectContent>
@@ -51,7 +51,7 @@ export function AddGuestForm({ eventId, onSuccess }: AddGuestFormProps) {
         <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
       </div>
       <Button type="submit" className="w-full">
-        Add Guest
+        Add Attendee
       </Button>
     </form>
   );

@@ -22,7 +22,7 @@ export default function PrivacyPage() {
             <ul className="list-disc pl-6 text-muted-foreground">
               <li>Account information (name, email, password)</li>
               <li>Event information (titles, descriptions, dates, locations)</li>
-              <li>Guest information (names, email addresses, RSVP responses)</li>
+              <li>Attendee information (names, email addresses, RSVP responses)</li>
               <li>Content you upload (images, text)</li>
             </ul>
           </section>

@@ -6,13 +6,7 @@ import { Event } from "@/types/schema/Event.schema";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { submitRSVP } from "@/actions/guest.action";
 import { InvitationForm } from "./invitation-form";
-
-interface GuestData {
-  id: string;
-  firstName: string;
-  lastName: string;
-  guestType: "regular" | "entourage" | "sponsor";
-}
+import { Guest } from "@/types/schema/Guest.schema";
 
 interface InvitationDataFetcherProps {
   eventId: string;
@@ -22,7 +16,7 @@ interface InvitationDataFetcherProps {
 export function InvitationDataFetcher({ eventId, guestId }: InvitationDataFetcherProps) {
   const { getEventData, getGuestData } = useInviteContext();
   const [eventData, setEventData] = useState<Event | null>(null);
-  const [guestData, setGuestData] = useState<GuestData | null>(null);
+  const [guestData, setGuestData] = useState<Guest | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

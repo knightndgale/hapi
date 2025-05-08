@@ -57,7 +57,7 @@ export function EventCard({ event }: EventCardProps) {
           <div className="flex items-center">
             <Users className="mr-2 h-4 w-4" />
             <span>
-              {event.attendees} / {event.maxAttendees} attendees
+              {event.attendees.length} / {event.maxAttendees} attendees
             </span>
           </div>
           <Dialog>

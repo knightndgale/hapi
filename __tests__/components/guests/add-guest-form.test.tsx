@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { vi } from "vitest";
-import { AddGuestForm } from "@/components/guests/add-guest-form";
+import { AddGuestForm } from "@/components/guest/add-attendee-form";
 
 describe("AddGuestForm", () => {
   const mockOnSubmit = vi.fn();

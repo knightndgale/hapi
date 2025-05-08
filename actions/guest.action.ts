@@ -1,12 +1,14 @@
 "use server";
 
+import { Guest } from "@/types/schema/Guest.schema";
 import { Event } from "@/types/schema/Event.schema";
 
-const mockGuestData = {
+const mockGuestData: Guest = {
   id: "guest-1",
   firstName: "Aurora",
   lastName: "Demonteverde",
-  guestType: "regular" as const,
+  type: "regular" as const,
+  response: "pending" as const,
 };
 
 export async function getGuestData(guestId: string) {

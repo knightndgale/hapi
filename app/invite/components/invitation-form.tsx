@@ -13,17 +13,11 @@ import { BACKGROUND_IMAGES, THEME_COLORS, DEFAULT_MESSAGES } from "@/constants/i
 import formatDate from "@/helpers/formatDate";
 import isRSVPDeadlinePassed from "@/helpers/isRSVPDeadlinePassed";
 import { toast } from "sonner";
-
-interface GuestData {
-  id: string;
-  firstName: string;
-  lastName: string;
-  guestType: "regular" | "entourage" | "sponsor";
-}
+import { Guest } from "@/types/schema/Guest.schema";
 
 interface InvitationFormProps {
   eventData: Event;
-  guestData: GuestData;
+  guestData: Guest;
   onSubmitRSVP: (data: any) => Promise<{ success: boolean }>;
 }
 
@@ -45,7 +39,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP }: Invitatio
         eventId: eventData.id,
         guestId: guestData.id,
         response,
-        phoneNumber: guestData.guestType !== "regular" ? phoneNumber : undefined,
+        phoneNumber: guestData.type !== "regular" ? phoneNumber : undefined,
         dietaryRequirements,
         message,
         images: uploadedImages,
@@ -67,7 +61,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP }: Invitatio
 
   const theme = THEME_COLORS[eventData.type];
   const messages = eventData.rsvp || DEFAULT_MESSAGES[eventData.type];
-  const isPhoneRequired = guestData.guestType === "entourage" || guestData.guestType === "sponsor";
+  const isPhoneRequired = guestData.type === "entourage" || guestData.type === "sponsor";
 
   return (
     <div
