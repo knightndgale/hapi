@@ -30,6 +30,7 @@ const BasicFormEventSchema = EventSchema.pick({
   program: true,
   pageBanner: true,
   maxAttendees: true,
+  status: true,
 }).partial({ pageBanner: true });
 
 type BasicFormEvent = z.infer<typeof BasicFormEventSchema>;
@@ -54,6 +55,7 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
       program: defaultValues?.program || [],
       pageBanner: defaultValues?.pageBanner || undefined,
       maxAttendees: defaultValues?.maxAttendees || 0,
+      status: defaultValues?.status || "draft",
     },
   });
 
@@ -74,19 +76,41 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Event Name</FormLabel>
-              <FormControl>
-                <Input data-testid="event-title" placeholder="Enter event title" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Name</FormLabel>
+                <FormControl>
+                  <Input data-testid="event-title" placeholder="Enter event title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Status</FormLabel>
+                <FormControl>
+                  <select
+                    data-testid="event-status"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    {...field}>
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -102,19 +126,42 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="location"
-          render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <FormLabel>Location</FormLabel>
-              <FormControl>
-                <Input data-testid="location" placeholder="Enter event location" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Location</FormLabel>
+                <FormControl>
+                  <Input data-testid="location" placeholder="Enter event location" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="maxAttendees"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Maximum Attendees</FormLabel>
+                <FormControl>
+                  <Input
+                    data-testid="max-attendees"
+                    type="number"
+                    placeholder="Enter maximum number of attendees"
+                    {...field}
+                    value={field.value || ""}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -171,27 +218,6 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
                   </div>
                 )}
               </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="maxAttendees"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Maximum Attendees</FormLabel>
-              <FormControl>
-                <Input
-                  data-testid="max-attendees"
-                  type="number"
-                  placeholder="Enter maximum number of attendees"
-                  {...field}
-                  value={field.value || ""}
-                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
