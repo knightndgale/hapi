@@ -6,12 +6,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <>
       <Navigation />
-      <DashboardProvider
-        actions={{
-          loadEvents,
-        }}>
-        {children}
-      </DashboardProvider>
+      <DashboardProvider>{children}</DashboardProvider>
     </>
   );
 }

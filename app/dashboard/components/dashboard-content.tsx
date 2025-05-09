@@ -25,7 +25,13 @@ const statusColors: Record<string, string> = {
 };
 
 export function DashboardContent() {
-  const { events, loading, error, currentPage, pageSize, totalPages, viewMode, filters, actions } = useDashboard();
+  const {
+    state: { loading, error, currentPage, pageSize, viewMode, filters },
+    totalPages,
+
+    filteredEvents,
+    actions,
+  } = useDashboard();
   const router = useRouter();
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -79,7 +85,7 @@ export function DashboardContent() {
       {/* Events Display */}
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event: Event, index: number) => (
+          {filteredEvents.map((event: Event) => (
             <Link href={`/events/${event.id}`} key={event.id}>
               <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
                 <CardHeader className="relative h-48 p-0">
@@ -123,7 +129,7 @@ export function DashboardContent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {events.map((event: Event) => (
+              {filteredEvents.map((event: Event) => (
                 <TableRow key={event.id} className="cursor-pointer hover:bg-gray-50" onClick={() => (window.location.href = `/events/${event.id}`)}>
                   <TableCell>{event.title}</TableCell>
                   <TableCell>{event.type}</TableCell>

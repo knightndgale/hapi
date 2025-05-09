@@ -19,7 +19,7 @@ export const createEvent = async (event: Partial<Omit<Event, "id" | "rsvp"> & { 
 export const getEvents = async (props?: Partial<TDefaultFieldFilter<Event>>) => {
   try {
     const client = createDirectusClient();
-    const response = (await client.request(readItems(Collections.EVENTS))) as unknown as Event[];
+    const response = (await client.request(readItems(Collections.EVENTS, props))) as unknown as Event[];
     return { success: true, data: response };
   } catch (error) {
     return { success: false, message: errorHandler(error) };
