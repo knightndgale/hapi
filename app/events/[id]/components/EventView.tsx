@@ -10,7 +10,9 @@ import { format } from "date-fns";
 
 import { motion } from "framer-motion";
 import { fadeIn, slideIn } from "@/lib/animations";
-import React, { use } from "react";
+import React from "react";
+import { useEvent } from "../context/event-context";
+import { LoadingSpinner } from "./loading-spinner";
 
 // Dummy data following the updated schema
 
@@ -68,13 +70,37 @@ function renderSection(section: Section) {
   }
 }
 
-interface EventViewProps {
-  event: Event;
-  id: number | undefined;
-}
+const EventView = () => {
+  const { state } = useEvent();
+  const { event, loading, error } = state;
 
-const EventView: React.FC<EventViewProps> = ({ event, id }) => {
   const router = useRouter();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center justify-center">
+          <div data-testid="loading-spinner" className="animate-spin rounded-full border-4 border-gray-200 border-t-primary w-12 h-12" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-red-500">Error: {error}</div>
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-gray-500">Event not found</div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -110,7 +136,7 @@ const EventView: React.FC<EventViewProps> = ({ event, id }) => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-                <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+                <Card data-testid="event-details-card" className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
                   <CardHeader className="text-xl font-semibold">Event Details</CardHeader>
                   <CardContent className="space-y-6">
                     {[
@@ -126,14 +152,16 @@ const EventView: React.FC<EventViewProps> = ({ event, id }) => {
                         transition={{ delay: 0.1 * index }}
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-black/5 transition-colors duration-300">
                         <item.icon className="h-5 w-5 text-primary" />
-                        <span className="text-lg">{item.text}</span>
+                        <span data-testid={`${item.icon}-text`} className="text-lg">
+                          {item.text}
+                        </span>
                       </motion.div>
                     ))}
                   </CardContent>
                 </Card>
               </motion.div>
 
-              {event.program.length > 0 && (
+              {event.program && event.program.length > 0 && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
                   <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
                     <CardHeader className="text-xl font-semibold flex items-center gap-3 pb-2">
@@ -194,10 +222,10 @@ const EventView: React.FC<EventViewProps> = ({ event, id }) => {
               <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
                 <CardHeader className="text-lg font-semibold">Quick Actions</CardHeader>
                 <CardContent className="space-y-4">
-                  <Button className="w-full" onClick={() => router.push(`/events/${id}/guests`)}>
+                  <Button className="w-full" onClick={() => router.push(`/events/${state.event?.id}/guests`)}>
                     Manage Guests
                   </Button>
-                  <Button variant="outline" className="w-full" onClick={() => router.push(`/events/${id}/edit`)}>
+                  <Button variant="outline" className="w-full" onClick={() => router.push(`/events/${state.event?.id}/edit`)}>
                     Edit Event
                   </Button>
                 </CardContent>

@@ -1,14 +1,9 @@
-import React, { Suspense } from "react";
-import EventView from "./component/EventView";
-import { dummyEvent } from "@/constants/dummyData";
-import { getGuests } from "@/requests/guest.request";
+"use client";
 
-export default async function EventPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+import { useEvent } from "./context/event-context";
+import { LoadingSpinner } from "./components/loading-spinner";
+import EventView from "./components/EventView";
 
-  return (
-    <Suspense>
-      <EventView event={dummyEvent} id={Number(id)} />
-    </Suspense>
-  );
+export default function EventPage() {
+  return <EventView />;
 }

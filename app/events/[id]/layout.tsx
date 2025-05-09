@@ -1,13 +1,12 @@
+import { EventProvider } from "./context/event-context";
 import { Navigation } from "@/components/navigation";
-import React from "react";
 
-const layout = ({ children }: { children: React.ReactNode }) => {
+export default async function EventLayout({ children, params }: { children: React.ReactNode; params: Promise<{ id: string }> }) {
+  const parameters = await params;
   return (
     <>
       <Navigation />
-      {children}
+      <EventProvider eventId={parameters.id}>{children}</EventProvider>
     </>
   );
-};
-
-export default layout;
+}

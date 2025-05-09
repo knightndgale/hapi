@@ -34,7 +34,7 @@ export const SectionSchema = z.object({
 });
 
 export const EventSchema = z.object({
-  id: z.string().readonly().optional(),
+  id: z.string().readonly(),
   title: z.string({ message: "Title is required" }).min(1, "Title is required"),
   description: z.string({ message: "Description is required" }).min(1, "Description is required"),
   location: z.string({ message: "Location is required" }).min(1, "Location is required"),
@@ -51,6 +51,7 @@ export const EventSchema = z.object({
   pageBanner: z.string().url().optional(),
   sections: z.array(SectionSchema).default([]),
   theme: ThemeSchema.optional(),
+  backgroundImage: z.string().url().optional(),
   program: z.array(ProgramItemSchema).default([]),
 });
 

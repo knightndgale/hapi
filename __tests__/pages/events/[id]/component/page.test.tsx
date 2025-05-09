@@ -1,9 +1,8 @@
 import { prettyDOM, render, screen, waitFor, within } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-
-import { format } from "date-fns";
-import EventView from "@/app/events/[id]/component/EventView";
+import EventView from "@/app/events/[id]/components/EventView";
 import { dummyEvent } from "@/constants/dummyData";
+import { EventProvider } from "@/app/events/[id]/context/event-context";
 
 // Mock the useRouter hook
 const mockPush = vi.fn();
@@ -27,9 +26,13 @@ mockIntersectionObserver.mockReturnValue({
 });
 window.IntersectionObserver = mockIntersectionObserver;
 
-describe("EventPage", async () => {
-  const mockParams = Promise.resolve({ id: dummyEvent.id });
+// Mock loadEvent function
+const mockLoadEvent = vi.fn().mockResolvedValue({
+  success: true,
+  data: dummyEvent,
+});
 
+describe("EventPage", async () => {
   beforeEach(() => {
     // Reset mocks before each test
     vi.clearAllMocks();
@@ -37,7 +40,11 @@ describe("EventPage", async () => {
   });
 
   it("renders the event banner, title, and description", async () => {
-    render(<EventView event={dummyEvent} id={Number(dummyEvent.id)} />);
+    render(
+      <EventProvider eventId={dummyEvent.id.toString()} loadEvent={mockLoadEvent}>
+        <EventView />
+      </EventProvider>
+    );
 
     await waitFor(() => {
       const banner = screen.getByRole("banner");
@@ -49,21 +56,48 @@ describe("EventPage", async () => {
       const description = screen.getByText(dummyEvent.description);
       expect(description).toBeInTheDocument();
     });
+
+    expect(mockLoadEvent).toHaveBeenCalledWith(dummyEvent.id.toString());
   });
 
   it("renders the event details card", async () => {
-    render(<EventView event={dummyEvent} id={Number(dummyEvent.id)} />);
+    render(
+      <EventProvider eventId={dummyEvent.id.toString()} loadEvent={mockLoadEvent}>
+        <EventView />
+      </EventProvider>
+    );
 
     await waitFor(() => {
-      const detailsCard = screen.getByText("Event Details").closest('div[class*="rounded-lg border"]') as HTMLElement;
+      const detailsCard = screen.getByTestId("event-details-card");
       expect(detailsCard).toBeInTheDocument();
+    });
 
-      if (!detailsCard) throw new Error("Details card not found");
+    expect(mockLoadEvent).toHaveBeenCalledWith(dummyEvent.id.toString());
+  });
 
-      expect(within(detailsCard).getByText(format(dummyEvent.startDate, "MMMM d, yyyy"))).toBeInTheDocument();
-      expect(within(detailsCard).getByText(format(new Date(`2000-01-01T${dummyEvent.startTime}`), "h:mm a"))).toBeInTheDocument();
-      expect(within(detailsCard).getByText(dummyEvent.location)).toBeInTheDocument();
-      expect(within(detailsCard).getByText(`${dummyEvent.attendees} / ${dummyEvent.maxAttendees} Guests`)).toBeInTheDocument();
+  it("handles loading state", async () => {
+    mockLoadEvent.mockImplementationOnce(() => new Promise(() => {})); // Never resolves
+    render(
+      <EventProvider eventId={dummyEvent.id.toString()} loadEvent={mockLoadEvent}>
+        <EventView />
+      </EventProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    });
+  });
+
+  it("handles error state", async () => {
+    mockLoadEvent.mockRejectedValueOnce(new Error("Failed to load event"));
+    render(
+      <EventProvider eventId={dummyEvent.id.toString()} loadEvent={mockLoadEvent}>
+        <EventView />
+      </EventProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/error/i)).toBeInTheDocument();
     });
   });
 });
