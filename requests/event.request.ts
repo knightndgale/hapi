@@ -26,7 +26,7 @@ export const getEvents = async (props?: Partial<TDefaultFieldFilter<Event>>) => 
   }
 };
 
-export const getEventById = async (id: Event["id"], props: Partial<TDefaultFieldFilter<Event>> = { fields: ["*.*"] }) => {
+export const getEventById = async (id: Event["id"], props: Partial<TDefaultFieldFilter<Event>> = { fields: ["*", "rsvp.*"] }) => {
   try {
     const client = createDirectusClient();
     const response = (await client.request(readItem(Collections.EVENTS, id, props))) as unknown as Event;

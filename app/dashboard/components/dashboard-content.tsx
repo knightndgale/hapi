@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useDashboard } from "../context/dashboard-context";
@@ -6,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Grid2X2, List, Calendar, MapPin, Users, Plus } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -85,35 +85,39 @@ export function DashboardContent() {
       {/* Events Display */}
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map((event: Event) => (
-            <Link href={`/events/${event.id}`} key={event.id}>
-              <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
-                <CardHeader className="relative h-48 p-0">
-                  <Image src={event.pageBanner || `https://picsum.photos/seed/${event.id}/400/300`} alt={event.title} fill className="object-cover rounded-t-lg" />
-                  <Badge className={`${statusColors[event.status]} absolute top-4 right-4`}>{event.status}</Badge>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <CardTitle className="text-lg mb-4">{event.title}</CardTitle>
-                  <div className="space-y-2 text-sm text-gray-500">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>{format(new Date(event.startDate), "PPP")}</span>
+          {filteredEvents.map(async (event: Event) => {
+            const imageUrl = event.pageBanner ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${event.pageBanner}` : `https://picsum.photos/seed/${event.id}/400/300`;
+
+            return (
+              <Link href={`/events/${event.id}`} key={event.id}>
+                <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+                  <CardHeader className="relative h-48 p-0">
+                    <img src={imageUrl} alt={event.title} className="object-cover rounded-t-lg w-full h-full" />
+                    <Badge className={`${statusColors[event.status]} absolute top-4 right-4`}>{event.status}</Badge>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <CardTitle className="text-lg mb-4">{event.title}</CardTitle>
+                    <div className="space-y-2 text-sm text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        <span>{format(new Date(event.startDate), "PPP")}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        <span>{event.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        <span>
+                          {event.attendees.length} / {event.maxAttendees} attendees
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      <span>{event.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      <span>
-                        {event.attendees.length} / {event.maxAttendees} attendees
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       ) : (
         <div className="rounded-md border">

@@ -5,6 +5,8 @@ import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
+import { upload } from "@/requests/file.request";
+import { toast } from "sonner";
 
 interface ImageUploadProps {
   value?: string;
@@ -13,21 +15,25 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({ value, onChange, onRemove }: ImageUploadProps) {
-  const [isUploading, setIsUploading] = useState(false);
-
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       try {
-        setIsUploading(true);
         const file = acceptedFiles[0];
-        // TODO: Implement actual image upload logic here
-        // For now, we'll just create a fake URL
-        const fakeUrl = URL.createObjectURL(file);
-        onChange(fakeUrl);
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await upload(formData);
+
+        if (!response.success || !response.data) {
+          toast.error(response?.message || "Failed to upload file");
+          return;
+        }
+
+        onChange(response.data.id);
       } catch (error) {
         console.error("Error uploading image:", error);
+        toast.error("Failed to upload image");
       } finally {
-        setIsUploading(false);
       }
     },
     [onChange]
@@ -41,11 +47,13 @@ export function ImageUpload({ value, onChange, onRemove }: ImageUploadProps) {
     maxFiles: 1,
   });
 
+  const imageUrl = value ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${value}` : undefined;
+
   return (
     <div className="space-y-4">
-      {value ? (
+      {imageUrl ? (
         <div className="relative aspect-video w-full overflow-hidden rounded-lg">
-          <Image src={value} alt="Uploaded image" fill className="object-cover" />
+          <Image src={imageUrl} alt="Uploaded image" fill className="object-cover" />
           <Button type="button" variant="destructive" size="icon" className="absolute right-2 top-2" onClick={onRemove}>
             <X className="h-4 w-4" />
           </Button>

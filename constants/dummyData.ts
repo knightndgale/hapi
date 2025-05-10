@@ -1,6 +1,7 @@
 import { Event } from "@/types/schema/Event.schema";
 
 export const dummyEvent: Event = {
+  created_by: "1",
   id: "1",
   title: "John & Jane's Wedding",
   description: "Join us in celebrating our special day!",

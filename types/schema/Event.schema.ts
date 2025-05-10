@@ -14,14 +14,14 @@ export type EventStatus = z.infer<typeof EventStatusSchema>;
 
 export const RSVPSchema = z.object({
   id: z.string().readonly().optional(),
-  logo: z.string().url().optional(),
-  title_as_image: z.string().url().optional(),
+  logo: z.string().uuid().optional(),
+  title_as_image: z.string().uuid().optional(),
   title: z.string({ message: "Title is required" }),
   subtitle: z.string({ message: "Subtitle is required" }),
   invitation: z.string({ message: "Invitation message is required" }),
   accept_text: z.string({ message: "Accept text is required" }),
   decline_text: z.string({ message: "Decline text is required" }),
-  backgroundImage: z.string().url().optional(),
+  backgroundImage: z.string().uuid().optional(),
   deadline: z.string().optional(),
 });
 
@@ -48,11 +48,12 @@ export const EventSchema = z.object({
   maxAttendees: z.number(),
   rsvp: RSVPSchema.optional(),
   status: EventStatusSchema,
-  pageBanner: z.string().url().optional(),
+  pageBanner: z.string().uuid().optional(),
   sections: z.array(SectionSchema).default([]),
   theme: ThemeSchema.optional(),
   backgroundImage: z.string().url().optional(),
   program: z.array(ProgramItemSchema).default([]),
+  created_by: z.string(),
 });
 
 export type Event = z.infer<typeof EventSchema>;

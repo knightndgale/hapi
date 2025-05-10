@@ -6,6 +6,9 @@ const nextConfig = {
         hostname: "example.com",
       },
       {
+        hostname: "localhost",
+      },
+      {
         hostname: "images.unsplash.com",
       },
       {

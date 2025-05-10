@@ -1,7 +1,7 @@
 "use server";
 
 import { errorHandler } from "@/helpers/errorHandler";
-import { getEvents } from "@/requests/event.request";
+import { getEventById, getEvents } from "@/requests/event.request";
 import { Event, EventStatus, EventType } from "@/types/schema/Event.schema";
 // Mock data for development
 const mockEventData: Event = {
@@ -41,6 +41,7 @@ const mockEventData: Event = {
     title_as_image: "https://i.ibb.co/r2wYRn2j/Kindly-Respond-removebg-preview-1.png",
   },
   status: "published",
+  created_by: "1",
 };
 
 // Dummy data for events
@@ -68,6 +69,7 @@ const dummyEvents: Event[] = [
     attendees: [],
     maxAttendees: 100,
     sections: [],
+    created_by: "1",
   },
   {
     id: "2",
@@ -92,6 +94,7 @@ const dummyEvents: Event[] = [
     attendees: [],
     maxAttendees: 500,
     sections: [],
+    created_by: "1",
   },
   // Add more dummy events as needed
 ];
@@ -139,12 +142,16 @@ const generateDummyEvents = (): Event[] => {
       deadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
       logo: `https://picsum.photos/seed/${i + 1}/100/100`,
     },
+    created_by: "1",
   }));
 };
 
-export async function getEventData(eventId: string): Promise<Event> {
-  // TODO: Replace with actual API call
-  return mockEventData;
+export async function getEventData(eventId: string): Promise<Event | undefined> {
+  const response = await getEventById(eventId);
+  if (!response.success) {
+    return undefined;
+  }
+  return response.data;
 }
 
 export async function loadEvents(): Promise<Event[]> {

@@ -17,7 +17,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ProgramItemModal } from "./program-item-modal";
 import { ProgramItem, ProgramItemSchema } from "@/types/schema/Program.schema";
 import { Event, EventSchema } from "@/types/schema/Event.schema";
-import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 const BasicFormEventSchema = EventSchema.pick({
   title: true,
@@ -169,55 +169,9 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
           render={({ field }) => (
             <FormItem>
               <FormLabel>Banner</FormLabel>
-              <div className="space-y-4">
-                {field.value ? (
-                  <div className="relative group">
-                    <img src={field.value} alt="Event banner" className="w-full h-48 object-cover rounded-lg" />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => field.onChange(undefined)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex gap-4">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button type="button" variant="outline" className="flex-1">
-                          <Upload className="mr-2 h-4 w-4" />
-                          Upload Image
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent aria-describedby="banner-upload-description">
-                        <DialogHeader>
-                          <DialogTitle>Upload Banner Image</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                // TODO: Implement file upload logic
-                                const reader = new FileReader();
-                                reader.onload = (event) => {
-                                  field.onChange(event.target?.result as string);
-                                };
-                                reader.readAsDataURL(file);
-                              }
-                            }}
-                          />
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                    <Input data-testid="page-banner" placeholder="Enter image URL" value={field.value || ""} onChange={(e) => field.onChange(e.target.value)} />
-                  </div>
-                )}
-              </div>
+              <FormControl>
+                <ImageUpload value={field.value} onChange={field.onChange} onRemove={() => field.onChange(undefined)} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

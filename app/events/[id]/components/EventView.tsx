@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -12,7 +13,6 @@ import { motion } from "framer-motion";
 import { fadeIn, slideIn } from "@/lib/animations";
 import React from "react";
 import { useEvent } from "../context/event-context";
-import { LoadingSpinner } from "./loading-spinner";
 
 // Dummy data following the updated schema
 
@@ -114,14 +114,16 @@ const EventView = () => {
         }}
         data-testid="main-container">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative h-[500px] w-full">
-          <Image
+          <img
             role="banner"
             data-testid="event-banner"
-            src={event.pageBanner || "https://images.unsplash.com/photo-1511795409834-432f7b1728f8?w=1600&auto=format&fit=crop&q=60"}
+            src={
+              event.pageBanner
+                ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${event.pageBanner}`
+                : "https://images.unsplash.com/photo-1511795409834-432f7b1728f8?w=1600&auto=format&fit=crop&q=60"
+            }
             alt={event.title}
-            fill
-            className="object-cover"
-            priority
+            className="object-cover w-full h-full"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="absolute bottom-0 left-0 right-0 p-8 text-white">
@@ -232,12 +234,13 @@ const EventView = () => {
               </Card>
 
               {event.rsvp && (
-                <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+                <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => router.push(`/invite/${event.id}/creatorView`)}>
                   <CardHeader className="text-lg font-semibold">RSVP Details</CardHeader>
                   <CardContent className="space-y-2">
                     <p className="font-medium">{event.rsvp.title}</p>
                     <p className="text-sm text-muted-foreground">{event.rsvp.subtitle}</p>
                     {event.rsvp.deadline && <p className="text-sm">Deadline: {format(new Date(event.rsvp.deadline), "MMMM d, yyyy")}</p>}
+                    <p className="text-sm text-blue-600 mt-2">Click to view your RSVP</p>
                   </CardContent>
                 </Card>
               )}

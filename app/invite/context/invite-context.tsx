@@ -5,8 +5,8 @@ import { Event } from "@/types/schema/Event.schema";
 import { Guest } from "@/types/schema/Guest.schema";
 
 interface InviteContextType {
-  getEventData: (eventId: string) => Promise<Event>;
-  getGuestData: (guestId: string) => Promise<Guest>;
+  getEventData: (eventId: string) => Promise<Event | undefined>;
+  getGuestData: (guestId: string) => Promise<Guest | undefined>;
   submitRSVP: (data: {
     eventId: string;
     guestId: string;

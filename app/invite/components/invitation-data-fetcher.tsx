@@ -13,55 +13,64 @@ interface InvitationDataFetcherProps {
   guestId: string;
 }
 
+// Sample guest data for creator view
+const sampleGuestData: Guest = {
+  id: "creator-view",
+  firstName: "Sample",
+  lastName: "Guest",
+  email: "sample@example.com",
+  response: "pending",
+  type: "regular",
+  phoneNumber: "",
+  dietaryRequirements: "",
+  message: "",
+};
+
 export function InvitationDataFetcher({ eventId, guestId }: InvitationDataFetcherProps) {
   const { getEventData, getGuestData } = useInviteContext();
   const [eventData, setEventData] = useState<Event | null>(null);
   const [guestData, setGuestData] = useState<Guest | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isCreatorView = guestId === "creatorView";
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function fetchData() {
+    const fetchData = async () => {
       try {
-        setIsLoading(true);
-        const [event, guest] = await Promise.all([getEventData(eventId), getGuestData(guestId)]);
+        setLoading(true);
 
-        if (isMounted) {
-          setEventData(event);
-          setGuestData(guest);
+        // Fetch event data
+        const eventResponse = await getEventData(eventId);
+        if (!eventResponse) {
+          throw new Error("Failed to load event data");
         }
+        setEventData(eventResponse);
+
+        // If it's creator view, use sample data, otherwise fetch guest data
+        if (isCreatorView) {
+          setGuestData(sampleGuestData);
+        } else {
+          const guestResponse = await getGuestData(guestId);
+          if (!guestResponse) {
+            throw new Error("Failed to load guest data");
+          }
+          setGuestData(guestResponse);
+        }
+
+        setLoading(false);
       } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : "Failed to fetch data");
-          // Set default data for error state
-          setEventData(null);
-          setGuestData(null);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        setError(err instanceof Error ? err.message : "An error occurred");
+        setLoading(false);
       }
-    }
+    };
 
     fetchData();
+  }, [eventId, guestId, getEventData, getGuestData, isCreatorView]);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [eventId, guestId, getEventData, getGuestData]);
-
-  if (isLoading) {
-    return (
-      <div role="status" aria-label="Loading invitation data">
-        <LoadingSpinner />
-      </div>
-    );
+  if (loading) {
+    return <LoadingSpinner />;
   }
 
-  // Show error message within the default UI
   if (error) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -100,5 +109,5 @@ export function InvitationDataFetcher({ eventId, guestId }: InvitationDataFetche
     );
   }
 
-  return <InvitationForm eventData={eventData} guestData={guestData} onSubmitRSVP={submitRSVP} />;
+  return <InvitationForm eventData={eventData} guestData={guestData} onSubmitRSVP={submitRSVP} isCreatorView={isCreatorView} />;
 }

@@ -19,9 +19,10 @@ interface InvitationFormProps {
   eventData: Event;
   guestData: Guest;
   onSubmitRSVP: (data: any) => Promise<{ success: boolean }>;
+  isCreatorView?: boolean;
 }
 
-export function InvitationForm({ eventData, guestData, onSubmitRSVP }: InvitationFormProps) {
+export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorView = false }: InvitationFormProps) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dietaryRequirements, setDietaryRequirements] = useState("");
   const [message, setMessage] = useState("");
@@ -67,7 +68,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP }: Invitatio
     <div
       className="min-h-screen flex items-center justify-center p-8"
       style={{
-        backgroundImage: `url('${BACKGROUND_IMAGES[eventData.type]}')`,
+        backgroundImage: eventData.backgroundImage ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp?.backgroundImage}` : BACKGROUND_IMAGES[eventData.type],
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -76,12 +77,18 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP }: Invitatio
         <div className="space-y-4">
           {eventData.rsvp?.logo && (
             <div className="relative w-16 h-16 mx-auto">
-              <Image src={eventData.rsvp.logo} alt="Logo" fill className="object-contain" sizes="64px" />
+              <Image src={eventData.rsvp.logo ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp.logo}` : ""} alt="Logo" fill className="object-contain" sizes="64px" />
             </div>
           )}
           {messages?.title_as_image ? (
             <div className="relative h-36 flex justify-start">
-              <Image src={messages.title_as_image} alt="Title" fill className="object-contain object-left" sizes="(max-width: 768px) 100vw, 768px" />
+              <Image
+                src={eventData.rsvp?.title_as_image ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp.title_as_image}` : ""}
+                alt="Title"
+                fill
+                className="object-contain object-left"
+                sizes="(max-width: 768px) 100vw, 768px"
+              />
             </div>
           ) : (
             <h1 className="text-3xl font-bold text-black" data-testid="test-title">
@@ -186,7 +193,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP }: Invitatio
                 e.currentTarget.style.backgroundColor = theme.primary;
               }}
               onClick={() => handleSubmit("accept")}
-              disabled={loading || Boolean(messages.deadline && isRSVPDeadlinePassed(messages.deadline))}>
+              disabled={loading || Boolean(messages.deadline && isRSVPDeadlinePassed(messages.deadline)) || isCreatorView}>
               {loading ? "Submitting..." : messages.accept_text}
             </Button>
             <Button
@@ -203,7 +210,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP }: Invitatio
                 e.currentTarget.style.backgroundColor = `${theme.primary}cc`;
               }}
               onClick={() => handleSubmit("decline")}
-              disabled={loading || Boolean(messages.deadline && isRSVPDeadlinePassed(messages.deadline))}>
+              disabled={loading || Boolean(messages.deadline && isRSVPDeadlinePassed(messages.deadline)) || isCreatorView}>
               {loading ? "Submitting..." : messages.decline_text}
             </Button>
           </div>

@@ -4,21 +4,28 @@ import { createContext, useContext, useReducer, ReactNode, useEffect, useMemo } 
 import { Event } from "@/types/schema/Event.schema";
 import { getEventById } from "@/requests/event.request";
 import { TDefaultFieldFilter } from "@/types/index.types";
+import { getMe } from "@/requests/auth.request";
 
 // Types
 interface EventState {
   event: Event | null;
   loading: boolean;
   error: string | null;
+  user: { id: string } | null;
 }
 
-type EventAction = { type: "SET_EVENT"; payload: Event } | { type: "SET_LOADING"; payload: boolean } | { type: "SET_ERROR"; payload: string | null };
+type EventAction =
+  | { type: "SET_EVENT"; payload: Event }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "SET_USER"; payload: { id: string } | null };
 
 // Initial state
 const initialState: EventState = {
   event: null,
   loading: true,
   error: null,
+  user: null,
 };
 
 // Context
@@ -51,6 +58,8 @@ function eventReducer(state: EventState, action: EventAction): EventState {
       return { ...state, loading: action.payload };
     case "SET_ERROR":
       return { ...state, error: action.payload, loading: false };
+    case "SET_USER":
+      return { ...state, user: action.payload };
     default:
       return state;
   }
@@ -72,6 +81,36 @@ interface EventProviderProps {
 // Provider Component
 export function EventProvider({ children, eventId, loadEvent = getEventById }: EventProviderProps) {
   const [state, dispatch] = useReducer(eventReducer, initialState);
+
+  useEffect(() => {
+    const loadEventData = async () => {
+      try {
+        dispatch({ type: "SET_LOADING", payload: true });
+        const response = await loadEvent(eventId);
+        if (response.success && response.data) {
+          dispatch({ type: "SET_EVENT", payload: response.data });
+        } else {
+          dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
+        }
+      } catch (error) {
+        dispatch({ type: "SET_ERROR", payload: error instanceof Error ? error.message : "An error occurred" });
+      }
+    };
+
+    const loadUserData = async () => {
+      try {
+        const response = await getMe();
+        if (response.success && response.data) {
+          dispatch({ type: "SET_USER", payload: { id: response.data.id } });
+        }
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+      }
+    };
+
+    loadEventData();
+    loadUserData();
+  }, [eventId, loadEvent]);
 
   // Memoize actions to prevent unnecessary re-renders
   const actions = useMemo(
@@ -101,11 +140,6 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
     }),
     [state, actions]
   );
-
-  // Load event on mount
-  useEffect(() => {
-    actions.loadEvent();
-  }, [actions]);
 
   return <EventContext.Provider value={contextValue}>{children}</EventContext.Provider>;
 }
