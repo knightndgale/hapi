@@ -63,12 +63,56 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
   const theme = THEME_COLORS[eventData.type];
   const messages = eventData.rsvp || DEFAULT_MESSAGES[eventData.type];
   const isPhoneRequired = guestData.type === "entourage" || guestData.type === "sponsor";
+  const hasResponded = guestData.response !== "pending";
+
+  if (hasResponded && !isCreatorView) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center p-8"
+        style={{
+          backgroundImage: eventData.rsvp?.backgroundImage ? `url(${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp.backgroundImage})` : `url(${BACKGROUND_IMAGES[eventData.type]})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}>
+        <div className="max-w-2xl w-full bg-white/95 backdrop-blur-md p-8 rounded-lg shadow-lg space-y-8">
+          <div className="space-y-6 text-center">
+            {eventData.rsvp?.logo && (
+              <div className="relative w-16 h-16 mx-auto">
+                <Image src={`${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp.logo}`} alt="Logo" fill className="object-contain" sizes="64px" />
+              </div>
+            )}
+
+            <h1 className="text-3xl font-bold text-black">Thank You for Your Response!</h1>
+            <p className="text-lg text-black">
+              Dear {guestData.firstName} {guestData.lastName},
+            </p>
+            <p className="text-lg text-black">We have received your RSVP response. The {eventData.type} page is currently being finalized, and we will notify you once it&apos;s ready.</p>
+            <div className="flex flex-wrap justify-center gap-4 text-black mt-8">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 flex-shrink-0" />
+                <span className="truncate">{formatDate(String(eventData.startDate))}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 flex-shrink-0" />
+                <span className="truncate">{eventData.startTime}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 flex-shrink-0" />
+                <span className="truncate">{eventData.location}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       className="min-h-screen flex items-center justify-center p-8"
       style={{
-        backgroundImage: eventData.backgroundImage ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp?.backgroundImage}` : BACKGROUND_IMAGES[eventData.type],
+        backgroundImage: eventData.rsvp?.backgroundImage ? `url(${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp.backgroundImage})` : `url(${BACKGROUND_IMAGES[eventData.type]})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
