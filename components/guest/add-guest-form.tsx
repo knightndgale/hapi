@@ -1,58 +1,155 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { QRCodeCanvas } from "qrcode.react";
+import { createGuest, updateGuest } from "@/requests/guest.request";
+import { Guest, GuestSchema } from "@/types/schema/Guest.schema";
+
+const AddGuestFormSchema = GuestSchema.pick({
+  first_name: true,
+  last_name: true,
+  email: true,
+  type: true,
+}).partial({ email: true });
+
+type AddGuestFormData = z.infer<typeof AddGuestFormSchema>;
 
 interface AddGuestFormProps {
   eventId: string;
   onSuccess: () => void;
+  editGuest?: Guest | null;
 }
 
-export function AddGuestForm({ eventId, onSuccess }: AddGuestFormProps) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [guestType, setGuestType] = useState("regular");
+export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProps) {
+  const [showQR, setShowQR] = useState(false);
+  const [createdToken, setCreatedToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement guest creation with the guest type
-    onSuccess();
+  const form = useForm<AddGuestFormData>({
+    resolver: zodResolver(AddGuestFormSchema),
+    defaultValues: {
+      first_name: editGuest?.first_name || "",
+      last_name: editGuest?.last_name || "",
+      email: editGuest?.email || "",
+      type: editGuest?.type || "regular",
+    },
+  });
+
+  const handleSubmit = async (data: AddGuestFormData) => {
+    setLoading(true);
+    if (editGuest) {
+      const res = await updateGuest(editGuest.id, data);
+      setLoading(false);
+      if (res.success) {
+        onSuccess();
+      }
+    } else {
+      const res = await createGuest(
+        {
+          ...data,
+        },
+        eventId
+      );
+      setLoading(false);
+      if (res.success) {
+        onSuccess();
+        if (res.data && res.data.token) {
+          setCreatedToken(res.data.token);
+          setShowQR(true);
+        }
+      }
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" data-testid="add-guest-form">
-      <div className="space-y-2">
-        <Label htmlFor="guestType">Attendee Type</Label>
-        <Select value={guestType} onValueChange={setGuestType}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select guest type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="regular">Regular Attendee</SelectItem>
-            <SelectItem value="entourage">Entourage</SelectItem>
-            <SelectItem value="sponsor">Sponsor</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="firstName">First Name</Label>
-        <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="lastName">Last Name</Label>
-        <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="email">Email (Optional)</Label>
-        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      </div>
-      <Button type="submit" className="w-full">
-        Add Attendee
-      </Button>
-    </form>
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4" data-testid="add-guest-form">
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Attendee Type</FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select guest type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="regular">Regular Attendee</SelectItem>
+                      <SelectItem value="entourage">Entourage</SelectItem>
+                      <SelectItem value="sponsor">Sponsor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="first_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input {...field} required />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="last_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input {...field} required />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email (Optional)</FormLabel>
+                <FormControl>
+                  <Input type="email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full" disabled={loading}>
+            {editGuest ? "Update Attendee" : "Add Attendee"}
+          </Button>
+        </form>
+      </Form>
+      <Dialog open={showQR} onOpenChange={setShowQR}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Guest QR Code</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center space-y-4">
+            {createdToken && <QRCodeCanvas value={createdToken} size={256} level="H" />}
+            <Input readOnly value={createdToken || "No token"} />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

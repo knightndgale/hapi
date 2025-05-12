@@ -149,9 +149,9 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
                 <FormLabel>Maximum Attendees</FormLabel>
                 <FormControl>
                   <Input
-                    data-testid="max-attendees"
+                    data-testid="max-guests"
                     type="number"
-                    placeholder="Enter maximum number of attendees"
+                    placeholder="Enter maximum number of guests"
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}

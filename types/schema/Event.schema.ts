@@ -44,7 +44,7 @@ export const EventSchema = z.object({
   endTime: z.string({ message: "End time is required" }),
   type: EventTypeSchema,
   templateId: z.string(),
-  attendees: z.array(GuestSchema).default([]),
+  guests: z.array(GuestSchema).default([]),
   maxAttendees: z.number(),
   rsvp: RSVPSchema.optional(),
   status: EventStatusSchema,

@@ -29,7 +29,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
       location: "Convention Center",
       type: "seminar",
       templateId: "seminar-professional",
-      attendees: [],
+      guests: [],
       pageBanner: "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
       program: [
         {
@@ -153,7 +153,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
                 <div className="flex items-center">
                   <Users className="mr-2 h-5 w-5" />
                   <span>
-                    {event.attendees.length} / {event.maxAttendees} attendees
+                    {event.guests.length} / {event.maxAttendees} guests
                   </span>
                 </div>
               </div>

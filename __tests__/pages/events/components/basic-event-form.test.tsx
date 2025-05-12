@@ -35,7 +35,7 @@ describe("BasicEventForm", () => {
     program: [],
     type: "wedding",
     templateId: "123",
-    attendees: 100,
+    guests: 100,
     maxAttendees: 100,
     status: "draft",
     backgroundImage: "https://example.com/image.jpg",

@@ -145,7 +145,7 @@ const EventView = () => {
                       { icon: Calendar, text: format(new Date(event.startDate), "MMMM d, yyyy") },
                       { icon: Clock, text: format(new Date(`2000-01-01T${event.startTime}`), "h:mm a") },
                       { icon: MapPin, text: event.location },
-                      { icon: Users, text: `${event.attendees} / ${event.maxAttendees} Guests` },
+                      { icon: Users, text: `${event.guests} / ${event.maxAttendees} Guests` },
                     ].map((item, index) => (
                       <motion.div
                         key={index}

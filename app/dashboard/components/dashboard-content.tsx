@@ -109,7 +109,7 @@ export function DashboardContent() {
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4" />
                         <span>
-                          {event.attendees.length} / {event.maxAttendees} attendees
+                          {event?.guests?.length || 0} / {event?.maxAttendees || 0} guests
                         </span>
                       </div>
                     </div>
@@ -143,7 +143,7 @@ export function DashboardContent() {
                   <TableCell>{format(new Date(event.startDate), "PPP")}</TableCell>
                   <TableCell>{event.location}</TableCell>
                   <TableCell>
-                    {event.attendees.length} / {event.maxAttendees}
+                    {event.guests.length} / {event.maxAttendees}
                   </TableCell>
                 </TableRow>
               ))}

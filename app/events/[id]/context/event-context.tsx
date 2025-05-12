@@ -5,6 +5,7 @@ import { Event } from "@/types/schema/Event.schema";
 import { getEventById } from "@/requests/event.request";
 import { TDefaultFieldFilter } from "@/types/index.types";
 import { getMe } from "@/requests/auth.request";
+import { Guest } from "@/types/schema/Guest.schema";
 
 // Types
 interface EventState {
@@ -88,7 +89,9 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
         dispatch({ type: "SET_LOADING", payload: true });
         const response = await loadEvent(eventId);
         if (response.success && response.data) {
-          dispatch({ type: "SET_EVENT", payload: response.data });
+          const guestsList = response.data.guests as unknown as { guests_id: Guest }[];
+          const guests = guestsList.map((guest) => guest.guests_id);
+          dispatch({ type: "SET_EVENT", payload: { ...response.data, guests } });
         } else {
           dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
         }

@@ -30,7 +30,7 @@ describe("EventDisplay", () => {
     sections: [],
     templateId: "1",
     status: "published",
-    attendees: 10,
+    guests: 10,
     maxAttendees: 20,
   };
 

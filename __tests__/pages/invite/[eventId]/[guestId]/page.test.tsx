@@ -30,7 +30,7 @@ const mockEventData: Event = {
       },
     },
   ],
-  attendees: [],
+  guests: [],
   maxAttendees: 100,
   rsvp: {
     title: "Together With Their Families",

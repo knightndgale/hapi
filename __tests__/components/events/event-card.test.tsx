@@ -46,7 +46,7 @@ describe("EventCard", () => {
         },
       },
     ],
-    attendees: 10,
+    guests: 10,
     maxAttendees: 20,
     sections: [],
   };
