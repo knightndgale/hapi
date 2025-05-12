@@ -20,8 +20,8 @@ export function GuestList({ eventId }: { eventId: string }) {
     setGuests([
       {
         id: "1",
-        firstName: "John",
-        lastName: "Doe",
+        first_name: "John",
+        last_name: "Doe",
         email: "john@example.com",
         response: "pending",
         type: "regular",
@@ -71,7 +71,7 @@ export function GuestList({ eventId }: { eventId: string }) {
             {guests.map((guest) => (
               <TableRow key={guest.id}>
                 <TableCell>
-                  {guest.firstName} {guest.lastName}
+                  {guest.first_name} {guest.last_name}
                 </TableCell>
                 <TableCell>{guest.email}</TableCell>
                 <TableCell>

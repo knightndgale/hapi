@@ -4,8 +4,8 @@ export const GuestResponseSchema = z.enum(["pending", "accepted", "declined"]);
 
 export const GuestSchema = z.object({
   id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
+  first_name: z.string(),
+  last_name: z.string(),
   email: z.string().email().optional(),
   response: GuestResponseSchema,
   type: z.enum(["regular", "entourage", "sponsor"]),

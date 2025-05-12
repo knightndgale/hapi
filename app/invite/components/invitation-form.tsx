@@ -85,7 +85,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
 
             <h1 className="text-3xl font-bold text-black">Thank You for Your Response!</h1>
             <p className="text-lg text-black">
-              Dear {guestData.firstName} {guestData.lastName},
+              Dear {guestData.first_name} {guestData.last_name},
             </p>
             <p className="text-lg text-black">We have received your RSVP response. The {eventData.type} page is currently being finalized, and we will notify you once it&apos;s ready.</p>
             <div className="flex flex-wrap justify-center gap-4 text-black mt-8">
@@ -140,7 +140,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
             </h1>
           )}
           <p className="text-xl text-black" data-testid="test-greetings">
-            Dear {guestData.firstName} {guestData.lastName},
+            Dear {guestData.first_name} {guestData.last_name},
           </p>
           <p className="text-lg text-black mt-4">{messages.invitation}</p>
           <div className="flex flex-wrap justify-center gap-4 text-black">

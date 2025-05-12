@@ -5,8 +5,8 @@ import { Event } from "@/types/schema/Event.schema";
 
 const mockGuestData: Guest = {
   id: "guest-1",
-  firstName: "Aurora",
-  lastName: "Demonteverde",
+  first_name: "Aurora",
+  last_name: "Demonteverde",
   type: "regular" as const,
   response: "pending" as const,
 };

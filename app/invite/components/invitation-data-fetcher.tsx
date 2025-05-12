@@ -16,8 +16,8 @@ interface InvitationDataFetcherProps {
 // Sample guest data for creator view
 const sampleGuestData: Guest = {
   id: "creator-view",
-  firstName: "Sample",
-  lastName: "Guest",
+  first_name: "Sample",
+  last_name: "Guest",
   email: "sample@example.com",
   response: "pending",
   type: "regular",

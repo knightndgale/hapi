@@ -66,6 +66,7 @@ export function EventDisplay({ id }: EventDisplayProps) {
       maxAttendees: 200,
       status: "published",
       sections: [],
+      created_by: "1",
     };
 
     setEvent(mockEvent);
