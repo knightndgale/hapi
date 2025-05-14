@@ -33,7 +33,7 @@ const initialState: EventState = {
 interface EventContextType {
   state: EventState;
   actions: {
-    loadEvent: () => Promise<void>;
+    loadEvent: (id: string, props?: Partial<TDefaultFieldFilter<Event>>) => Promise<void>;
   };
 }
 
@@ -41,7 +41,7 @@ interface EventContextType {
 const EventContext = createContext<EventContextType>({
   state: initialState,
   actions: {
-    loadEvent: async () => {},
+    loadEvent: async (id: string, props?: Partial<TDefaultFieldFilter<Event>>) => {},
   },
 });
 
@@ -118,12 +118,14 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
   // Memoize actions to prevent unnecessary re-renders
   const actions = useMemo(
     () => ({
-      loadEvent: async () => {
+      loadEvent: async (id?: string, props?: Partial<TDefaultFieldFilter<Event>>) => {
         try {
           dispatch({ type: "SET_LOADING", payload: true });
-          const response = await loadEvent(eventId);
+          const response = await loadEvent(id ?? eventId, props);
           if (response.success && response.data) {
-            dispatch({ type: "SET_EVENT", payload: response.data });
+            const guestsList = response.data.guests as unknown as { guests_id: Guest }[];
+            const guests = guestsList.map((guest) => guest.guests_id);
+            dispatch({ type: "SET_EVENT", payload: { ...response.data, guests } });
           } else {
             dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
           }

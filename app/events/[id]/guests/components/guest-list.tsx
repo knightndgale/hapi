@@ -18,8 +18,8 @@ import useDisclosure from "@/hooks/useDisclosure";
 export function GuestList({ eventId }: { eventId: string }) {
   const { state, actions } = useEvent();
 
-  const createModal = useDisclosure();
-  const editModal = useDisclosure();
+  const guestForm = useDisclosure();
+
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [showQR, setShowQR] = useState(false);
 
@@ -54,40 +54,34 @@ export function GuestList({ eventId }: { eventId: string }) {
             // TODO: Implement search
           }}
         />
-        <Button onClick={createModal.onOpen} variant="default">
+        <Button onClick={guestForm.onOpen} variant="default">
           Add Guest
         </Button>
       </div>
 
-      <Dialog open={createModal.isOpen} onOpenChange={createModal.onClose}>
+      <Dialog
+        open={guestForm.isOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedGuest(null);
+          }
+          guestForm.onClose();
+        }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Guest</DialogTitle>
+            <DialogTitle>{selectedGuest ? "Edit Guest" : "Add Guest"}</DialogTitle>
           </DialogHeader>
           <AddGuestForm
             eventId={eventId}
+            editGuest={selectedGuest}
             onSuccess={() => {
-              createModal.onClose();
-              actions.loadEvent();
+              setSelectedGuest(null);
+              guestForm.onClose();
+              actions.loadEvent(eventId, {
+                fields: ["*", "guests.guests_id.*"],
+              });
             }}
           />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={editModal.isOpen} onOpenChange={editModal.onClose}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Guest</DialogTitle>
-          </DialogHeader>
-          {/* {selectedGuest && (
-            <AddGuestForm
-              eventId={eventId}
-              editGuest={selectedGuest}
-              onSuccess={() => {
-                setShowEditModal(false);
-              }}
-            />
-          )} */}
         </DialogContent>
       </Dialog>
 
@@ -109,7 +103,7 @@ export function GuestList({ eventId }: { eventId: string }) {
                 </TableCell>
                 <TableCell>{guest.email}</TableCell>
                 <TableCell>
-                  <span className={getResponseColor(guest.response)}>{guest.response.charAt(0).toUpperCase() + guest.response.slice(1)}</span>
+                  <span className={getResponseColor(guest.response)}>{guest.response ? guest.response.charAt(0).toUpperCase() + guest.response.slice(1) : "Pending"}</span>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-2">
@@ -134,7 +128,7 @@ export function GuestList({ eventId }: { eventId: string }) {
                       size="icon"
                       onClick={() => {
                         setSelectedGuest(guest);
-                        editModal.onOpen();
+                        guestForm.onOpen();
                       }}>
                       <Edit2 className="h-4 w-4" />
                     </Button>

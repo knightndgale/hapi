@@ -28,37 +28,47 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    if (editGuest) {
-      // Edit mode
-      const res = await updateGuest(editGuest.id, {
-        first_name,
-        last_name,
-        email,
-        type,
-      });
-      setLoading(false);
-      if (res.success) {
-        onSuccess();
-      }
-    } else {
-      // Create mode
-
-      const res = await createGuest(
-        {
+    try {
+      let response;
+      if (editGuest) {
+        // Edit mode
+        response = await updateGuest(editGuest.id, {
           first_name,
           last_name,
           email,
           type,
-        },
-        eventId
-      );
-      setLoading(false);
-      if (res.success && res.data && res.data.token) {
-        setCreatedToken(res.data.token);
-        setShowQR(true);
-        onSuccess();
+        });
+      } else {
+        // Create mode
+        response = await createGuest(
+          {
+            first_name,
+            last_name,
+            email,
+            type,
+          },
+          eventId
+        );
       }
+
+      if (response.success) {
+        // Call onSuccess first to close the modal and refresh the table
+        onSuccess();
+
+        // If it's a new guest and we have a token, show the QR code
+        if (!editGuest && response.data?.token) {
+          setCreatedToken(response.data.token);
+          setShowQR(true);
+        }
+      }
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleQRClose = () => {
+    setShowQR(false);
+    setCreatedToken(null);
   };
 
   return (
@@ -93,7 +103,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
           {editGuest ? "Update Guest" : "Add Guest"}
         </Button>
       </form>
-      <Dialog open={showQR} onOpenChange={setShowQR}>
+      <Dialog open={showQR} onOpenChange={handleQRClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Guest QR Code</DialogTitle>
