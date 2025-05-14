@@ -47,23 +47,20 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
   const handleSubmit = async (data: AddGuestFormData) => {
     setLoading(true);
     try {
-      if (editGuest) {
-        const res = await updateGuest(editGuest.id, data);
-        if (res.success) {
-          onSuccess();
-        }
-      } else {
-        const res = await createGuest(
-          {
-            ...data,
-          },
-          eventId
-        );
-        if (res.success && res.data && res.data.token) {
-          setCreatedToken(res.data.token);
-          setShowQR(true);
-        }
+      const res = editGuest ? await updateGuest(editGuest.id, data) : await createGuest({ ...data }, eventId);
+
+      if (!res.success) {
+        toast.error(res.message);
+        return;
       }
+
+      if (!editGuest && res.data && res.data.token) {
+        setCreatedToken(res.data.token);
+        setShowQR(true);
+        return;
+      }
+
+      onSuccess();
     } finally {
       setLoading(false);
     }
