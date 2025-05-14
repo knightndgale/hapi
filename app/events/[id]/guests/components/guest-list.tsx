@@ -5,7 +5,7 @@ import { Guest, GuestResponse } from "@/types/schema/Guest.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { QRCodeCanvas } from "qrcode.react";
 import { Edit2, Trash2, Share2 } from "lucide-react";
 import { getGuests, archiveGuest } from "@/requests/guest.request";
@@ -14,22 +14,27 @@ import { toast } from "sonner";
 import { getEventById } from "@/requests/event.request";
 import { useEvent } from "../../context/event-context";
 import useDisclosure from "@/hooks/useDisclosure";
+import { Status } from "@/types/index.types";
 
 export function GuestList({ eventId }: { eventId: string }) {
   const { state, actions } = useEvent();
 
   const guestForm = useDisclosure();
+  const deleteDialog = useDisclosure();
 
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
+  const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
 
   const handleDelete = async (guestId: string) => {
-    if (!window.confirm("Are you sure you want to remove this guest?")) return;
     const res = await archiveGuest(guestId);
     if (res.success) {
       toast.success("Guest removed");
+      actions.loadEvent(eventId);
     } else {
       toast.error(res.message || "Failed to remove guest");
     }
+    setGuestToDelete(null);
+    deleteDialog.onClose();
   };
 
   const getResponseColor = (response: GuestResponse) => {
@@ -76,11 +81,28 @@ export function GuestList({ eventId }: { eventId: string }) {
             onSuccess={() => {
               setSelectedGuest(null);
               guestForm.onClose();
-              actions.loadEvent(eventId, {
-                fields: ["*", "guests.guests_id.*"],
-              });
+              actions.loadEvent(eventId);
             }}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteDialog.isOpen} onOpenChange={deleteDialog.onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Remove Guest</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to remove {guestToDelete?.first_name} {guestToDelete?.last_name} from the guest list? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex space-x-2 justify-end">
+            <Button variant="outline" onClick={deleteDialog.onClose}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={() => guestToDelete && handleDelete(guestToDelete.id)}>
+              Remove Guest
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -117,7 +139,7 @@ export function GuestList({ eventId }: { eventId: string }) {
                           <DialogTitle>Share Invitation</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
-                          <div className="flex justify-center">{guest.token && <QRCodeCanvas value={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${guest.token}`} size={256} level="H" />}</div>
+                          <div className="flex justify-center">{guest.token && <QRCodeCanvas value={guest.token} size={256} level="H" />}</div>
                           <Input readOnly value={guest.token || "No token"} />
                         </div>
                       </DialogContent>
@@ -131,7 +153,13 @@ export function GuestList({ eventId }: { eventId: string }) {
                       }}>
                       <Edit2 className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(guest.id)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setGuestToDelete(guest);
+                        deleteDialog.onOpen();
+                      }}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </div>

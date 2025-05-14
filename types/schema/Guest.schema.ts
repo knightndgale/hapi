@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Status } from "../index.types";
 
 export const GuestResponseSchema = z.enum(["pending", "accepted", "declined"]);
 
@@ -13,6 +14,7 @@ export const GuestSchema = z.object({
   dietary_requirements: z.string().optional(),
   message: z.string().optional(),
   token: z.string().optional(),
+  status: z.enum(Status.options as [string, ...string[]]),
 });
 
 export type GuestResponse = z.infer<typeof GuestResponseSchema>;

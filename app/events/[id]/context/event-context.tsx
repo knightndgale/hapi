@@ -3,7 +3,7 @@
 import { createContext, useContext, useReducer, ReactNode, useEffect, useMemo } from "react";
 import { Event } from "@/types/schema/Event.schema";
 import { getEventById } from "@/requests/event.request";
-import { TDefaultFieldFilter } from "@/types/index.types";
+import { Status, TDefaultFieldFilter } from "@/types/index.types";
 import { getMe } from "@/requests/auth.request";
 import { Guest } from "@/types/schema/Guest.schema";
 
@@ -87,10 +87,14 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
     const loadEventData = async () => {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
-        const response = await loadEvent(eventId);
+        const response = await loadEvent(eventId, {
+          fields: ["*", "guests.guests_id.*"],
+        });
+
         if (response.success && response.data) {
           const guestsList = response.data.guests as unknown as { guests_id: Guest }[];
-          const guests = guestsList.map((guest) => guest.guests_id);
+          // TODO [ ] Improve event filtering using directus filtering not manual filtering
+          const guests = guestsList.map((guest) => guest.guests_id).filter((guest) => guest.status !== Status.Enum.archived);
           dispatch({ type: "SET_EVENT", payload: { ...response.data, guests } });
         } else {
           dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
@@ -124,7 +128,8 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           const response = await loadEvent(id ?? eventId, props);
           if (response.success && response.data) {
             const guestsList = response.data.guests as unknown as { guests_id: Guest }[];
-            const guests = guestsList.map((guest) => guest.guests_id);
+            const guests = guestsList.map((guest) => guest.guests_id).filter((guest) => guest.status !== Status.Enum.archived);
+
             dispatch({ type: "SET_EVENT", payload: { ...response.data, guests } });
           } else {
             dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
