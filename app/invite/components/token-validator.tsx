@@ -25,14 +25,15 @@ export function TokenValidator({ token }: TokenValidatorProps) {
     const validateToken = async () => {
       try {
         // Parse token to get guestId and eventId
-        const [guestId, eventId] = token.split(":");
+        const [guestId, eventId] = token.split("%");
 
         if (!guestId || !eventId) {
           throw new Error("Invalid token format");
         }
 
         // Get guest data
-        const guestResponse = await getGuestByToken(token);
+        const guestResponse = await getGuestByToken([guestId, eventId].join(":"));
+
         if (!guestResponse.success || !guestResponse.data) {
           throw new Error("Guest not found");
         }

@@ -21,7 +21,6 @@ export function GuestList({ eventId }: { eventId: string }) {
   const guestForm = useDisclosure();
 
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
-  const [showQR, setShowQR] = useState(false);
 
   const handleDelete = async (guestId: string) => {
     if (!window.confirm("Are you sure you want to remove this guest?")) return;
@@ -118,7 +117,7 @@ export function GuestList({ eventId }: { eventId: string }) {
                           <DialogTitle>Share Invitation</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
-                          <div className="flex justify-center">{guest.token && <QRCodeCanvas value={guest.token} size={256} level="H" />}</div>
+                          <div className="flex justify-center">{guest.token && <QRCodeCanvas value={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${guest.token}`} size={256} level="H" />}</div>
                           <Input readOnly value={guest.token || "No token"} />
                         </div>
                       </DialogContent>

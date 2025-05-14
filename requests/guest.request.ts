@@ -89,8 +89,20 @@ export const verifyGuestToken = async (token: string) => {
   try {
     const secret = new TextEncoder().encode(JWT_SECRET);
     const { payload } = await jose.jwtVerify(token, secret);
-    return { success: true, data: payload };
+
+    // Verify that the payload contains the required fields
+    if (!payload.guestId || !payload.eventId) {
+      return { success: false, message: "Invalid token payload" };
+    }
+
+    return {
+      success: true,
+      data: {
+        guestId: payload.guestId as number,
+        eventId: payload.eventId as string,
+      },
+    };
   } catch (error) {
-    return { success: false, message: "Invalid token" };
+    return { success: false, message: "Invalid or expired token" };
   }
 };

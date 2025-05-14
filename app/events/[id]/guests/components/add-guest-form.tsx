@@ -39,7 +39,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
     defaultValues: {
       first_name: editGuest?.first_name || "",
       last_name: editGuest?.last_name || "",
-      email: editGuest?.email || "",
+      email: editGuest?.email || undefined,
       type: editGuest?.type || "regular",
     },
   });
@@ -154,7 +154,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
             <DialogTitle>Guest QR Code</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4">
-            {createdToken && <QRCodeCanvas value={createdToken} size={256} level="H" />}
+            {createdToken && <QRCodeCanvas value={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${createdToken}`} size={256} level="H" />}
             <Input readOnly value={createdToken || "No token"} />
           </div>
         </DialogContent>
