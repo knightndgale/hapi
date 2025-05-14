@@ -4,6 +4,10 @@ import { createDirectusClient } from "@/lib/directus";
 import { Status, TDefaultFieldFilter } from "@/types/index.types";
 import { Guest } from "@/types/schema/Guest.schema";
 import { createItem, readItems, updateItem } from "@directus/sdk";
+import * as jose from "jose";
+
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || "your-secret-key";
+const TOKEN_EXPIRATION = process.env.NEXT_PUBLIC_GUEST_TOKEN_EXPIRATION || "30d";
 
 export const getGuests = async (props?: Partial<TDefaultFieldFilter<Guest>>) => {
   try {
@@ -40,8 +44,21 @@ export const createGuest = async (data: Omit<Guest, "id" | "token" | "response" 
     const client = createDirectusClient();
 
     const response = (await client.request(createItem(Collections.GUESTS, data))) as unknown as Guest;
+
     await client.request(createItem(Collections.EVENT_GUESTS, { guests_id: response.id, events_id: eventId }));
-    return { success: true, data: response };
+
+    // Generate JWT token with guest and event information
+    const tokenPayload = {
+      guestId: response.id,
+      eventId: eventId,
+    };
+
+    const secret = new TextEncoder().encode(JWT_SECRET);
+
+    const token = await new jose.SignJWT(tokenPayload).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime(TOKEN_EXPIRATION).sign(secret);
+
+    const updatedGuest = (await client.request(updateItem(Collections.GUESTS, response.id, { token }))) as unknown as Guest;
+    return { success: true, data: updatedGuest };
   } catch (error) {
     return { success: false, message: errorHandler(error) };
   }
@@ -64,5 +81,16 @@ export const archiveGuest = async (id: string) => {
     return { success: true };
   } catch (error) {
     return { success: false, message: errorHandler(error) };
+  }
+};
+
+// Add a function to verify and decode the JWT token
+export const verifyGuestToken = async (token: string) => {
+  try {
+    const secret = new TextEncoder().encode(JWT_SECRET);
+    const { payload } = await jose.jwtVerify(token, secret);
+    return { success: true, data: payload };
+  } catch (error) {
+    return { success: false, message: "Invalid token" };
   }
 };

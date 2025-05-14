@@ -21,8 +21,8 @@ const sampleGuestData: Guest = {
   email: "sample@example.com",
   response: "pending",
   type: "regular",
-  phoneNumber: "",
-  dietaryRequirements: "",
+  phone_number: "",
+  dietary_requirements: "",
   message: "",
 };
 
