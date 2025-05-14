@@ -38,6 +38,7 @@ export function Header({ user }: { user?: User }) {
         <section className="ml-auto flex items-center space-x-4">
           {user ? (
             <>
+              <Button onClick={() => router.push("/dashboard")}>Dashboard</Button>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="ghost" className="font-medium">
