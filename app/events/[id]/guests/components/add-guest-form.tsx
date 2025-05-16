@@ -13,6 +13,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { createGuest, updateGuest } from "@/requests/guest.request";
 import { Guest, GuestSchema } from "@/types/schema/Guest.schema";
 import { toast } from "sonner";
+import { Status } from "@/types/index.types";
 
 const AddGuestFormSchema = GuestSchema.pick({
   first_name: true,
@@ -47,7 +48,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
   const handleSubmit = async (data: AddGuestFormData) => {
     setLoading(true);
     try {
-      const res = editGuest ? await updateGuest(editGuest.id, data) : await createGuest({ ...data }, eventId);
+      const res = editGuest ? await updateGuest(editGuest.id, data) : await createGuest({ ...data, status: Status.Enum.published }, eventId);
 
       if (!res.success) {
         toast.error(res.message);
