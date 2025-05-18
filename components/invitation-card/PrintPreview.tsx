@@ -25,18 +25,18 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
       setIsGenerating(true);
       toast.loading("Generating PDF...", { id: "pdf-generation" });
 
-      // Ensure the component is visible and has dimensions
+      // Create a clone of the element for PDF generation
       const cardElement = componentRef.current;
-      const originalStyle = cardElement.style.cssText;
-      cardElement.style.position = "absolute";
-      cardElement.style.left = "-9999px";
-      cardElement.style.top = "0";
-      cardElement.style.width = "3.5in";
-      cardElement.style.height = "2in";
-      document.body.appendChild(cardElement);
+      const clone = cardElement.cloneNode(true) as HTMLElement;
+      clone.style.position = "absolute";
+      clone.style.left = "-9999px";
+      clone.style.top = "0";
+      clone.style.width = "3.5in";
+      clone.style.height = "2in";
+      document.body.appendChild(clone);
 
-      // Create a canvas from the component with improved settings
-      const canvas = await html2canvas(cardElement, {
+      // Create a canvas from the cloned component
+      const canvas = await html2canvas(clone, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
@@ -53,9 +53,8 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
         },
       });
 
-      // Restore original element
-      cardElement.style.cssText = originalStyle;
-      document.body.removeChild(cardElement);
+      // Remove the clone after capture
+      document.body.removeChild(clone);
 
       // Create PDF with exact dimensions
       const pdf = new jsPDF({
