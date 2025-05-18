@@ -15,6 +15,7 @@ import { getEventById } from "@/requests/event.request";
 import { useEvent } from "../../context/event-context";
 import useDisclosure from "@/hooks/useDisclosure";
 import { Status } from "@/types/index.types";
+import { PrintPreview } from "@/components/invitation-card/PrintPreview";
 
 export function GuestList({ eventId }: { eventId: string }) {
   const { state, actions } = useEvent();
@@ -24,6 +25,8 @@ export function GuestList({ eventId }: { eventId: string }) {
 
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
+  const [selectedGuestForPrint, setSelectedGuestForPrint] = useState<Guest | null>(null);
 
   const handleDelete = async (guestId: string) => {
     const res = await archiveGuest(guestId);
@@ -106,6 +109,32 @@ export function GuestList({ eventId }: { eventId: string }) {
         </DialogContent>
       </Dialog>
 
+      <Dialog
+        open={showPrintPreview}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowPrintPreview(false);
+            setSelectedGuestForPrint(null);
+          }
+        }}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Guest Invitation Card</DialogTitle>
+          </DialogHeader>
+          {selectedGuestForPrint && state.event && (
+            <PrintPreview
+              event={state.event}
+              guest={selectedGuestForPrint}
+              qrCodeUrl={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${selectedGuestForPrint.token}`}
+              onClose={() => {
+                setShowPrintPreview(false);
+                setSelectedGuestForPrint(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
@@ -128,22 +157,15 @@ export function GuestList({ eventId }: { eventId: string }) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-2">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={() => setSelectedGuest(guest)}>
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Share Invitation</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div className="flex justify-center">{guest.token && <QRCodeCanvas value={guest.token} size={256} level="H" />}</div>
-                          <Input readOnly value={guest.token || "No token"} />
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setSelectedGuestForPrint(guest);
+                        setShowPrintPreview(true);
+                      }}>
+                      <Share2 className="h-4 w-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"

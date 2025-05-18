@@ -14,6 +14,8 @@ import { createGuest, updateGuest } from "@/requests/guest.request";
 import { Guest, GuestSchema } from "@/types/schema/Guest.schema";
 import { toast } from "sonner";
 import { Status } from "@/types/index.types";
+import { PrintPreview } from "@/components/invitation-card/PrintPreview";
+import { useEvent } from "../../context/event-context";
 
 const AddGuestFormSchema = GuestSchema.pick({
   first_name: true,
@@ -34,6 +36,8 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
   const [showQR, setShowQR] = useState(false);
   const [createdToken, setCreatedToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [createdGuest, setCreatedGuest] = useState<Guest | null>(null);
+  const { state } = useEvent();
 
   const form = useForm<AddGuestFormData>({
     resolver: zodResolver(AddGuestFormSchema),
@@ -55,9 +59,12 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
         return;
       }
 
-      if (!editGuest && res.data && res.data.token) {
-        setCreatedToken(res.data.token);
-        setShowQR(true);
+      if (!editGuest && res.data) {
+        setCreatedGuest(res.data);
+        if (res.data.token) {
+          setCreatedToken(res.data.token);
+          setShowQR(true);
+        }
         return;
       }
 
@@ -70,6 +77,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
   const handleQRClose = () => {
     setShowQR(false);
     setCreatedToken(null);
+    setCreatedGuest(null);
     onSuccess();
   };
 
@@ -150,14 +158,13 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
             handleQRClose();
           }
         }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Guest QR Code</DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col items-center space-y-4">
-            {createdToken && <QRCodeCanvas value={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${createdToken}`} size={256} level="H" />}
-            <Input readOnly value={createdToken || "No token"} />
-          </div>
+          {createdGuest && state.event && (
+            <PrintPreview event={state.event} guest={createdGuest} qrCodeUrl={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${createdToken}`} onClose={handleQRClose} />
+          )}
         </DialogContent>
       </Dialog>
     </>
