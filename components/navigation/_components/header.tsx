@@ -38,14 +38,16 @@ export function Header({ user }: { user?: User }) {
         <section className="ml-auto flex items-center space-x-4">
           {user ? (
             <>
-              <Button onClick={() => router.push("/dashboard")}>Dashboard</Button>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="ghost" className="font-medium">
                     {user.first_name}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-40 p-2">
+                <PopoverContent className="w-40 p-2 space-y-1">
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => router.push("/dashboard")}>
+                    Dashboard
+                  </Button>
                   <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
                     Logout
                   </Button>
