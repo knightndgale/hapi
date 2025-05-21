@@ -31,7 +31,9 @@ export const getEventById = async (id: Event["id"], props: Partial<TDefaultField
   try {
     const client = createDirectusClient();
 
+    console.log("🚀 ~ getEventById ~ props:", props);
     const response = (await client.request(readItem(Collections.EVENTS, id, props))) as unknown as Event;
+    console.log("🚀 ~ getEventById ~ response:", response);
     return { success: true, data: response };
   } catch (error) {
     return { success: false, message: errorHandler(error) };

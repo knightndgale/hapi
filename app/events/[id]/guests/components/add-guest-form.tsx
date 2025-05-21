@@ -158,7 +158,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
             handleQRClose();
           }
         }}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="sm:max-w-1xl">
           <DialogHeader>
             <DialogTitle>Guest QR Code</DialogTitle>
           </DialogHeader>

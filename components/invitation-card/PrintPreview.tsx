@@ -28,27 +28,44 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
       // Create a clone of the element for PDF generation
       const cardElement = componentRef.current;
       const clone = cardElement.cloneNode(true) as HTMLElement;
+
+      // Set up the clone with proper dimensions and positioning
       clone.style.position = "absolute";
       clone.style.left = "-9999px";
       clone.style.top = "0";
-      clone.style.width = "3.5in";
-      clone.style.height = "2in";
+      clone.style.width = "2in";
+      clone.style.height = "3.5in";
+      clone.style.transform = "none";
       document.body.appendChild(clone);
 
-      // Create a canvas from the cloned component
+      // Wait for QR code to render
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Create a canvas from the cloned component with higher quality settings
       const canvas = await html2canvas(clone, {
-        scale: 2,
+        scale: 4,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: "#FDF6F0",
+        backgroundColor: "#FFFFFF",
         logging: false,
-        width: 336, // 3.5in * 96dpi
-        height: 192, // 2in * 96dpi
+        width: 192,
+        height: 336,
         onclone: (clonedDoc) => {
           const element = clonedDoc.querySelector("[data-card]") as HTMLElement;
           if (element) {
-            element.style.width = "3.5in";
-            element.style.height = "2in";
+            element.style.width = "2in";
+            element.style.height = "3.5in";
+            element.style.transform = "none";
+            element.style.padding = "0.25in";
+          }
+
+          // Ensure QR code is properly rendered
+          const qrCode = clonedDoc.querySelector("canvas");
+          if (qrCode) {
+            qrCode.style.width = "100px";
+            qrCode.style.height = "100px";
+            qrCode.style.display = "block";
+            qrCode.style.margin = "0 auto";
           }
         },
       });
@@ -58,17 +75,17 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
 
       // Create PDF with exact dimensions
       const pdf = new jsPDF({
-        orientation: "landscape",
+        orientation: "portrait",
         unit: "in",
-        format: [3.5, 2],
+        format: [2, 3.5],
         compress: true,
       });
 
       // Convert canvas to image with better quality settings
-      const imgData = canvas.toDataURL("image/jpeg", 0.95);
+      const imgData = canvas.toDataURL("image/jpeg", 1.0);
 
       // Add the image to the PDF
-      pdf.addImage(imgData, "JPEG", 0, 0, 3.5, 2);
+      pdf.addImage(imgData, "JPEG", 0, 0, 2, 3.5);
 
       // Generate filename
       const filename = `${event.title}-${guest.first_name}-${guest.last_name}.pdf`.replace(/[^a-z0-9]/gi, "_").toLowerCase();
@@ -90,16 +107,16 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
 
   return (
     <div className="flex flex-col space-y-6">
-      <div className="w-full flex justify-center bg-gradient-to-br from-[#FDF6F0] to-[#F5E6E0] p-12 rounded-xl shadow-lg">
-        <div className="transform scale-90 origin-top" style={{ width: "3.5in", height: "2in" }}>
+      <div className="w-full flex justify-center bg-white rounded-xl">
+        <div className="transform scale-100 origin-top" style={{ width: "2in", height: "3.5in" }}>
           <WeddingCard ref={componentRef} event={event} guest={guest} qrCodeUrl={qrCodeUrl} />
         </div>
       </div>
       <div className="flex justify-end space-x-3">
-        <Button variant="outline" onClick={onClose} className="border-[#D0C0B6] text-[#5F3922] hover:bg-[#F5E6E0]">
+        <Button variant="outline" onClick={onClose} className="border-gray-200 text-gray-700 hover:bg-gray-50">
           Close
         </Button>
-        <Button onClick={handleDownload} className="bg-[#D0C0B6] hover:bg-[#C0B0A6] text-[#5F3922]" disabled={isGenerating}>
+        <Button onClick={handleDownload} className="bg-gray-900 hover:bg-gray-800 text-white" disabled={isGenerating}>
           {isGenerating ? "Generating..." : "Download PDF"}
         </Button>
       </div>

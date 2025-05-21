@@ -88,7 +88,7 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
       try {
         dispatch({ type: "SET_LOADING", payload: true });
         const response = await loadEvent(eventId, {
-          fields: ["*", "guests.guests_id.*"],
+          fields: ["*", "guests.guests_id.*", "rsvp.*"],
         });
 
         if (response.success && response.data) {

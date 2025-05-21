@@ -24,6 +24,7 @@ const sampleGuestData: Guest = {
   phone_number: "",
   dietary_requirements: "",
   message: "",
+  status: "pending",
 };
 
 export function InvitationDataFetcher({ eventId, guestId }: InvitationDataFetcherProps) {
