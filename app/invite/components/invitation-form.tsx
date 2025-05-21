@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 interface InvitationFormProps {
   eventData: Event;
   guestData: Guest;
-  onSubmitRSVP: (data: Partial<Guest>) => Promise<{ data: Guest; success: boolean; message?: string }>;
+  onSubmitRSVP: (data: Partial<Guest>) => Promise<{ data?: Guest; success: boolean; message?: string }>;
   isCreatorView?: boolean;
 }
 
@@ -30,8 +30,8 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
   const [loading, setLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const router = useRouter();
-  const handleImagesChange = (images: string[]) => {
-    setUploadedImages(images);
+  const handleImagesChange = (images: string | string[]) => {
+    setUploadedImages(Array.isArray(images) ? images : images ? [images] : []);
   };
 
   const handleRemoveImage = (index: number) => {
@@ -200,7 +200,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
             />
           </div>
 
-          {eventData.type === "wedding" && <ImageUpload value={uploadedImages} onChange={handleImagesChange} onRemove={handleRemoveImage} />}
+          {eventData.type === "wedding" && <ImageUpload value={uploadedImages} onChange={handleImagesChange} onRemove={handleRemoveImage} maxFiles={3} />}
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-500">{uploadedImages.length}/3 images (max 5MB each)</span>
             <span className="text-xs text-gray-500 italic">These photos will be displayed during the event!</span>

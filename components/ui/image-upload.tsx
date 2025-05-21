@@ -9,16 +9,20 @@ import { upload } from "@/requests/file.request";
 import { toast } from "sonner";
 
 interface ImageUploadProps {
-  value?: string[];
-  onChange: (value: string[]) => void;
+  value?: string | string[];
+  onChange: (value: string | string[]) => void;
   onRemove: (index: number) => void;
+  maxFiles?: number;
 }
 
-export function ImageUpload({ value = [], onChange, onRemove }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, onRemove, maxFiles = 1 }: ImageUploadProps) {
+  // Normalize value to array for internal logic
+  const valueArray: string[] = typeof value === "string" ? (value ? [value] : []) : Array.isArray(value) ? value : [];
+
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      if (value.length >= 3) {
-        toast.error("You can only upload up to 3 images.");
+      if (valueArray.length >= maxFiles) {
+        toast.error(`You can only upload up to ${maxFiles} image${maxFiles > 1 ? "s" : ""}.`);
         return;
       }
       try {
@@ -33,13 +37,19 @@ export function ImageUpload({ value = [], onChange, onRemove }: ImageUploadProps
           return;
         }
 
-        onChange([...value, response.data.id]);
+        let newValue: string[];
+        if (maxFiles === 1) {
+          newValue = [response.data.id];
+        } else {
+          newValue = [...valueArray, response.data.id];
+        }
+        onChange(maxFiles === 1 ? newValue[0] : newValue);
       } catch (error) {
         console.error("Error uploading image:", error);
         toast.error("Failed to upload image");
       }
     },
-    [onChange, value]
+    [onChange, valueArray, maxFiles]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -49,13 +59,13 @@ export function ImageUpload({ value = [], onChange, onRemove }: ImageUploadProps
     },
     maxFiles: 1,
     multiple: false,
-    disabled: value.length >= 3,
+    disabled: valueArray.length >= maxFiles,
   });
 
   return (
     <div className="space-y-4">
       <div className="flex gap-4 flex-wrap">
-        {value.map((id, idx) => {
+        {valueArray.map((id, idx) => {
           const imageUrl = id ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${id}` : undefined;
           return (
             <div key={id} className="relative aspect-video w-32 h-20 overflow-hidden rounded-lg">
@@ -67,7 +77,7 @@ export function ImageUpload({ value = [], onChange, onRemove }: ImageUploadProps
           );
         })}
       </div>
-      {value.length < 3 && (
+      {valueArray.length < maxFiles && (
         <div
           {...getRootProps()}
           className={`relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 transition-colors ${
@@ -75,7 +85,7 @@ export function ImageUpload({ value = [], onChange, onRemove }: ImageUploadProps
           }`}>
           <input {...getInputProps()} />
           <Upload className="h-8 w-8 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">{isDragActive ? "Drop the image here" : "Drag and drop an image, or click to select (max 3)"}</p>
+          <p className="text-sm text-muted-foreground">{isDragActive ? `Drop the image here` : `Drag and drop an image, or click to select${maxFiles > 1 ? ` (max ${maxFiles})` : ""}`}</p>
           <p className="text-xs text-muted-foreground">PNG, JPG, JPEG, GIF up to 10MB</p>
         </div>
       )}
