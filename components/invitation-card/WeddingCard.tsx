@@ -10,7 +10,6 @@ interface WeddingCardProps {
 }
 
 export const WeddingCard = forwardRef<HTMLDivElement, WeddingCardProps>(({ event, guest, qrCodeUrl }, ref) => {
-  console.log("🚀 ~ event:", event);
   return (
     <div
       ref={ref}
@@ -21,7 +20,9 @@ export const WeddingCard = forwardRef<HTMLDivElement, WeddingCardProps>(({ event
         pageBreakInside: "avoid",
       }}>
       {/* Event Logo/Title Section */}
-      <div className="w-full text-center">{event.rsvp?.logo && <img src={`${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${event.rsvp?.logo}`} alt="Logo" className="w-[100px] h-[100px]" />}</div>
+      <div className="w-full flex justify-center">
+        {event.rsvp?.logo && <img src={`${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${event.rsvp?.logo}`} alt="Logo" className="w-[100px] h-[100px]" />}
+      </div>
 
       {/* Guest Name */}
       <div className="w-full text-center">

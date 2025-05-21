@@ -146,48 +146,50 @@ export function GuestList({ eventId }: { eventId: string }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {state.event?.guests.map((guest) => (
-              <TableRow key={guest.id}>
-                <TableCell>
-                  {guest.first_name} {guest.last_name}
-                </TableCell>
-                <TableCell>{guest.email}</TableCell>
-                <TableCell>
-                  <span className={getResponseColor(guest.response)}>{guest.response ? guest.response.charAt(0).toUpperCase() + guest.response.slice(1) : "Pending"}</span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setSelectedGuestForPrint(guest);
-                        setShowPrintPreview(true);
-                      }}>
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setSelectedGuest(guest);
-                        guestForm.onOpen();
-                      }}>
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setGuestToDelete(guest);
-                        deleteDialog.onOpen();
-                      }}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {!!state.event?.guests &&
+              state.event?.guests.length > 0 &&
+              state.event?.guests.map((guest) => (
+                <TableRow key={guest?.id}>
+                  <TableCell>
+                    {guest?.first_name} {guest?.last_name}
+                  </TableCell>
+                  <TableCell>{guest?.email}</TableCell>
+                  <TableCell>
+                    <span className={getResponseColor(guest?.response)}>{guest?.response ? guest?.response.charAt(0).toUpperCase() + guest?.response.slice(1) : "Pending"}</span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setSelectedGuestForPrint(guest);
+                          setShowPrintPreview(true);
+                        }}>
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setSelectedGuest(guest);
+                          guestForm.onOpen();
+                        }}>
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setGuestToDelete(guest);
+                          deleteDialog.onOpen();
+                        }}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>
