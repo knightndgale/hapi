@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/mode-toggle";
 import { CalendarDays } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { logout } from "@/requests/auth.request";
@@ -64,7 +63,6 @@ export function Header({ user }: { user?: User }) {
               </Link>
             </>
           )}
-          <ModeToggle />
         </section>
       </div>
     </nav>
