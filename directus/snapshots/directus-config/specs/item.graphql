@@ -43,6 +43,10 @@ type Query {
   events_by_id(id: ID!, version: String): events
   events_aggregated(groupBy: [String], filter: events_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [events_aggregated!]!
   events_by_version(version: String!, id: ID!): version_events
+  directus_sync_id_map(filter: directus_sync_id_map_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): [directus_sync_id_map!]!
+  directus_sync_id_map_by_id(id: ID!, version: String): directus_sync_id_map
+  directus_sync_id_map_aggregated(groupBy: [String], filter: directus_sync_id_map_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [directus_sync_id_map_aggregated!]!
+  directus_sync_id_map_by_version(version: String!, id: ID!): version_directus_sync_id_map
 }
 
 type Mutation {
@@ -68,6 +72,8 @@ type Mutation {
   create_rsvp_item(data: create_rsvp_input!): rsvp
   create_events_items(filter: events_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_events_input!]): [events!]!
   create_events_item(data: create_events_input!): events
+  create_directus_sync_id_map_items(filter: directus_sync_id_map_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_directus_sync_id_map_input!]): [directus_sync_id_map!]!
+  create_directus_sync_id_map_item(data: create_directus_sync_id_map_input!): directus_sync_id_map
   update_guests_items(filter: guests_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_guests_input!): [guests!]!
   update_guests_batch(filter: guests_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_guests_input!]): [guests!]!
   update_guests_item(id: ID!, data: update_guests_input!): guests
@@ -101,6 +107,9 @@ type Mutation {
   update_events_items(filter: events_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_events_input!): [events!]!
   update_events_batch(filter: events_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_events_input!]): [events!]!
   update_events_item(id: ID!, data: update_events_input!): events
+  update_directus_sync_id_map_items(filter: directus_sync_id_map_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_directus_sync_id_map_input!): [directus_sync_id_map!]!
+  update_directus_sync_id_map_batch(filter: directus_sync_id_map_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_directus_sync_id_map_input!]): [directus_sync_id_map!]!
+  update_directus_sync_id_map_item(id: ID!, data: update_directus_sync_id_map_input!): directus_sync_id_map
   delete_guests_items(ids: [ID]!): delete_many
   delete_guests_item(id: ID!): delete_one
   delete_speakers_items(ids: [ID]!): delete_many
@@ -123,6 +132,8 @@ type Mutation {
   delete_rsvp_item(id: ID!): delete_one
   delete_events_items(ids: [ID]!): delete_many
   delete_events_item(id: ID!): delete_one
+  delete_directus_sync_id_map_items(ids: [ID]!): delete_many
+  delete_directus_sync_id_map_item(id: ID!): delete_one
 }
 
 type Subscription {
@@ -158,6 +169,7 @@ type Subscription {
   events_guests_mutated(event: EventEnum): events_guests_mutated
   rsvp_mutated(event: EventEnum): rsvp_mutated
   events_mutated(event: EventEnum): events_mutated
+  directus_sync_id_map_mutated(event: EventEnum): directus_sync_id_map_mutated
 }
 
 """The `Boolean` scalar type represents `true` or `false`."""
@@ -654,6 +666,46 @@ type directus_shares_mutated {
   key: ID!
   event: EventEnum
   data: directus_shares
+}
+
+type directus_sync_id_map {
+  id: ID!
+  table: String!
+  sync_id: String!
+  local_id: String!
+  created_at: Date
+  created_at_func: datetime_functions
+}
+
+type directus_sync_id_map_aggregated {
+  group: JSON
+  countAll: Int
+  count: directus_sync_id_map_aggregated_count
+  countDistinct: directus_sync_id_map_aggregated_count
+  avg: directus_sync_id_map_aggregated_fields
+  sum: directus_sync_id_map_aggregated_fields
+  avgDistinct: directus_sync_id_map_aggregated_fields
+  sumDistinct: directus_sync_id_map_aggregated_fields
+  min: directus_sync_id_map_aggregated_fields
+  max: directus_sync_id_map_aggregated_fields
+}
+
+type directus_sync_id_map_aggregated_count {
+  id: Int
+  table: Int
+  sync_id: Int
+  local_id: Int
+  created_at: Int
+}
+
+type directus_sync_id_map_aggregated_fields {
+  id: Float
+}
+
+type directus_sync_id_map_mutated {
+  key: ID!
+  event: EventEnum
+  data: directus_sync_id_map
 }
 
 type directus_translations {
@@ -1285,6 +1337,15 @@ type time_functions {
 }
 
 """"""
+type version_directus_sync_id_map {
+  id: ID
+  table: String
+  sync_id: String
+  local_id: String
+  created_at: Date
+}
+
+""""""
 type version_events {
   id: ID
   status: String
@@ -1527,6 +1588,14 @@ input create_directus_roles_input {
   children: [create_directus_roles_input]
   policies: [create_directus_access_input]
   users: [create_directus_users_input]
+}
+
+input create_directus_sync_id_map_input {
+  id: ID
+  table: String!
+  sync_id: String!
+  local_id: String!
+  created_at: Date
 }
 
 input create_directus_users_input {
@@ -2051,6 +2120,17 @@ input directus_roles_quantifier_filter {
   _none: directus_roles_filter
 }
 
+input directus_sync_id_map_filter {
+  id: number_filter_operators
+  table: string_filter_operators
+  sync_id: string_filter_operators
+  local_id: string_filter_operators
+  created_at: date_filter_operators
+  created_at_func: datetime_function_filter_operators
+  _and: [directus_sync_id_map_filter]
+  _or: [directus_sync_id_map_filter]
+}
+
 input directus_users_filter {
   id: id_filter_operators
   first_name: string_filter_operators
@@ -2515,6 +2595,14 @@ input update_directus_roles_input {
   children: [update_directus_roles_input]
   policies: [update_directus_access_input]
   users: [update_directus_users_input]
+}
+
+input update_directus_sync_id_map_input {
+  id: ID
+  table: String
+  sync_id: String
+  local_id: String
+  created_at: Date
 }
 
 input update_directus_users_input {

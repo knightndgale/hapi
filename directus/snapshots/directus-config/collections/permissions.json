@@ -12,6 +12,30 @@
     "_syncId": "ddf294b3-1d82-4fe7-b207-89665927556a"
   },
   {
+    "collection": "directus_roles",
+    "action": "read",
+    "permissions": null,
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "*"
+    ],
+    "policy": "_sync_default_public_policy",
+    "_syncId": "e020f47e-5600-485b-b455-51323d5c15f3"
+  },
+  {
+    "collection": "directus_users",
+    "action": "create",
+    "permissions": null,
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "*"
+    ],
+    "policy": "_sync_default_public_policy",
+    "_syncId": "3e44fd23-fdb8-4652-bd86-248eaec64b06"
+  },
+  {
     "collection": "directus_users",
     "action": "read",
     "permissions": null,
