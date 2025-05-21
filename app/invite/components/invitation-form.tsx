@@ -103,7 +103,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 flex-shrink-0" />
-                <span className="truncate">{eventData.location}</span>
+                <p className="text-balance break-words max-w-[300px]">{eventData.location}</p>
               </div>
             </div>
           </div>
