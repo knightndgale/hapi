@@ -5,6 +5,7 @@ import { Event } from "@/types/schema/Event.schema";
 import { Guest } from "@/types/schema/Guest.schema";
 import { WeddingCard } from "./WeddingCard";
 import { toast } from "sonner";
+import html2canvas from "html2canvas";
 
 interface PrintPreviewProps {
   event: Event;
@@ -49,6 +50,24 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
     `,
   }); // Type assertion needed due to type definition issues in the package
 
+  const handleDownloadImage = async () => {
+    if (!componentRef.current) return;
+    setIsGenerating(true);
+    try {
+      const canvas = await html2canvas(componentRef.current, {
+        useCORS: true,
+        backgroundColor: null,
+        scale: 2,
+      });
+      const link = document.createElement("a");
+      link.download = `${event.title}-${guest.first_name}-${guest.last_name}.png`.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <div className="flex flex-col space-y-6">
       <div className="w-full flex justify-center bg-white rounded-xl">
@@ -69,6 +88,9 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
         </Button>
         <Button onClick={handlePrint} className="bg-gray-900 hover:bg-gray-800 text-white" disabled={isGenerating}>
           {isGenerating ? "Generating..." : "Download PDF"}
+        </Button>
+        <Button onClick={handleDownloadImage} className="bg-gray-700 hover:bg-gray-600 text-white" disabled={isGenerating}>
+          Download as Image
         </Button>
       </div>
     </div>
