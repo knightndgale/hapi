@@ -1,0 +1,27 @@
+{
+  "collection": "events",
+  "field": "guests",
+  "type": "alias",
+  "meta": {
+    "collection": "events",
+    "conditions": null,
+    "display": null,
+    "display_options": null,
+    "field": "guests",
+    "group": null,
+    "hidden": false,
+    "interface": null,
+    "note": null,
+    "options": null,
+    "readonly": false,
+    "required": false,
+    "sort": 23,
+    "special": [
+      "m2m"
+    ],
+    "translations": null,
+    "validation": null,
+    "validation_message": null,
+    "width": "full"
+  }
+}

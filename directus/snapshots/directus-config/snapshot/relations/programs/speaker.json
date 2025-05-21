@@ -1,0 +1,25 @@
+{
+  "collection": "programs",
+  "field": "speaker",
+  "related_collection": "speakers",
+  "meta": {
+    "junction_field": null,
+    "many_collection": "programs",
+    "many_field": "speaker",
+    "one_allowed_collections": null,
+    "one_collection": "speakers",
+    "one_collection_field": null,
+    "one_deselect_action": "nullify",
+    "one_field": null,
+    "sort_field": null
+  },
+  "schema": {
+    "table": "programs",
+    "column": "speaker",
+    "foreign_key_table": "speakers",
+    "foreign_key_column": "id",
+    "constraint_name": "programs_speaker_foreign",
+    "on_update": "NO ACTION",
+    "on_delete": "SET NULL"
+  }
+}
