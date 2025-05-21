@@ -9,6 +9,9 @@ const nextConfig = {
         hostname: "localhost",
       },
       {
+        hostname: "directus-production-8483.up.railway.app",
+      },
+      {
         hostname: "images.unsplash.com",
       },
       {
