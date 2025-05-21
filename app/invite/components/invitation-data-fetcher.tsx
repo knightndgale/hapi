@@ -42,6 +42,7 @@ export function InvitationDataFetcher({ eventId, guestId }: InvitationDataFetche
 
         // Fetch event data
         const eventResponse = await getEventData(eventId);
+
         if (!eventResponse) {
           throw new Error("Failed to load event data");
         }
@@ -52,6 +53,7 @@ export function InvitationDataFetcher({ eventId, guestId }: InvitationDataFetche
           setGuestData(sampleGuestData);
         } else {
           const guestResponse = await getGuestData(guestId);
+
           if (!guestResponse) {
             throw new Error("Failed to load guest data");
           }

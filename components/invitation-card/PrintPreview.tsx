@@ -6,6 +6,8 @@ import { Guest } from "@/types/schema/Guest.schema";
 import { WeddingCard } from "./WeddingCard";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
+import { Download, FileImage, Printer, X } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PrintPreviewProps {
   event: Event;
@@ -69,7 +71,7 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
   };
 
   return (
-    <div className="flex flex-col space-y-6">
+    <div className="flex flex-col space-y-6  ">
       <div className="w-full flex justify-center bg-white rounded-xl">
         <div
           ref={componentRef}
@@ -82,17 +84,36 @@ export const PrintPreview = ({ event, guest, qrCodeUrl, onClose }: PrintPreviewP
           <WeddingCard event={event} guest={guest} qrCodeUrl={qrCodeUrl} />
         </div>
       </div>
-      <div className="flex justify-end space-x-3">
-        <Button variant="outline" onClick={onClose} className="border-gray-200 text-gray-700 hover:bg-gray-50">
-          Close
-        </Button>
-        <Button onClick={handlePrint} className="bg-gray-900 hover:bg-gray-800 text-white" disabled={isGenerating}>
-          {isGenerating ? "Generating..." : "Download PDF"}
-        </Button>
-        <Button onClick={handleDownloadImage} className="bg-gray-700 hover:bg-gray-600 text-white" disabled={isGenerating}>
-          Download as Image
-        </Button>
-      </div>
+      <TooltipProvider>
+        <div className="flex justify-center">
+          <div className="flex gap-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 shadow-sm">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={onClose} className="text-gray-500 hover:text-gray-900" aria-label="Close Preview">
+                  <X className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Close Preview</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={handlePrint} variant="ghost" size="icon" className="text-blue-600 hover:text-blue-800" disabled={isGenerating} aria-label="Download as PDF">
+                  <Printer className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Download as PDF</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={handleDownloadImage} variant="ghost" size="icon" className="text-green-600 hover:text-green-800" disabled={isGenerating} aria-label="Download as Image">
+                  <FileImage className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Download as Image</TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+      </TooltipProvider>
     </div>
   );
 };

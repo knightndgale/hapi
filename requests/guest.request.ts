@@ -3,7 +3,7 @@ import { errorHandler } from "@/helpers/errorHandler";
 import { createDirectusClient } from "@/lib/directus";
 import { Status, TDefaultFieldFilter } from "@/types/index.types";
 import { Guest } from "@/types/schema/Guest.schema";
-import { createItem, readItems, updateItem } from "@directus/sdk";
+import { createItem, readItem, readItems, updateItem } from "@directus/sdk";
 import * as jose from "jose";
 
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || "your-secret-key";
@@ -29,10 +29,10 @@ export const getGuestByToken = async (token: string) => {
   }
 };
 
-export const getGuestById = async (id: string) => {
+export const getGuestById = async (id: string | number) => {
   try {
     const client = createDirectusClient();
-    const response = (await client.request(readItems(Collections.GUESTS, { filter: { id } }))) as unknown as Guest;
+    const response = (await client.request(readItem(Collections.GUESTS, id))) as unknown as Guest;
     return { success: true, data: response };
   } catch (error) {
     return { success: false, message: errorHandler(error) };

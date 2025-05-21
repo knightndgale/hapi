@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getGuestByToken, verifyGuestToken } from "@/requests/guest.request";
+import { getGuestById, getGuestByToken, verifyGuestToken } from "@/requests/guest.request";
 import { getEventById } from "@/requests/event.request";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ export default function ValidateTokenPage() {
         const { guestId, eventId } = tokenResult.data;
 
         // Get guest data
-        const guestResponse = await getGuestByToken(token);
+        const guestResponse = await getGuestById(guestId);
 
         if (!guestResponse.success || !guestResponse.data) {
           throw new Error("Guest not found");
@@ -40,6 +40,7 @@ export default function ValidateTokenPage() {
 
         // Get event data
         const eventResponse = await getEventById(eventId);
+
         if (!eventResponse.success || !eventResponse.data) {
           throw new Error("Event not found");
         }
