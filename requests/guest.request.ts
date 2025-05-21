@@ -67,7 +67,14 @@ export const createGuest = async (data: Omit<Guest, "id" | "token" | "response" 
 export const updateGuest = async (id: string, data: Partial<Omit<Guest, "token" | "response" | "phoneNumber" | "dietaryRequirements" | "message">>) => {
   try {
     const client = createDirectusClient();
-    const response = (await client.request(updateItem(Collections.GUESTS, id, data))) as unknown as Guest;
+    const { images, ...payload } = data;
+    if (images && images.length > 0) {
+      for await (const image of images) {
+        await client.request(createItem(Collections.GUEST_FILES, { guests_id: id, directus_files_id: image }));
+      }
+    }
+    const response = (await client.request(updateItem(Collections.GUESTS, id, payload))) as unknown as Guest;
+
     return { success: true, data: response };
   } catch (error) {
     return { success: false, message: errorHandler(error) };

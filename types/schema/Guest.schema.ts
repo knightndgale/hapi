@@ -14,6 +14,7 @@ export const GuestSchema = z.object({
   dietary_requirements: z.string().optional(),
   message: z.string().optional(),
   token: z.string().optional(),
+  images: z.array(z.string()).optional(),
   status: z.enum(Status.options as [string, ...string[]]),
 });
 

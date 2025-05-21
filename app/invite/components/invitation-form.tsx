@@ -7,18 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Clock, MapPin, CalendarCheck } from "lucide-react";
-import { PhotoUpload } from "@/components/invitation/photo-upload";
 import { Event } from "@/types/schema/Event.schema";
 import { BACKGROUND_IMAGES, THEME_COLORS, DEFAULT_MESSAGES } from "@/constants/invitation";
 import formatDate from "@/helpers/formatDate";
 import isRSVPDeadlinePassed from "@/helpers/isRSVPDeadlinePassed";
 import { toast } from "sonner";
 import { Guest } from "@/types/schema/Guest.schema";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { useRouter } from "next/navigation";
 
 interface InvitationFormProps {
   eventData: Event;
   guestData: Guest;
-  onSubmitRSVP: (data: any) => Promise<{ success: boolean }>;
+  onSubmitRSVP: (data: Partial<Guest>) => Promise<{ data: Guest; success: boolean; message?: string }>;
   isCreatorView?: boolean;
 }
 
@@ -27,31 +28,34 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
   const [dietaryRequirements, setDietaryRequirements] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-
-  const handleImagesChange = (images: File[]) => {
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const router = useRouter();
+  const handleImagesChange = (images: string[]) => {
     setUploadedImages(images);
   };
 
-  const handleSubmit = async (response: "accept" | "decline") => {
+  const handleRemoveImage = (index: number) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (response: "accepted" | "declined") => {
     try {
       setLoading(true);
       const result = await onSubmitRSVP({
-        eventId: eventData.id,
-        guestId: guestData.id,
+        id: guestData.id,
         response,
-        phoneNumber: guestData.type !== "regular" ? phoneNumber : undefined,
-        dietaryRequirements,
+        phone_number: guestData.type !== "regular" ? phoneNumber : undefined,
+        dietary_requirements: dietaryRequirements,
         message,
         images: uploadedImages,
       });
 
-      if (result.success) {
-        toast.success("RSVP submitted successfully!");
-        // You could redirect or show a success message here
-      } else {
-        throw new Error("Failed to submit RSVP");
+      if (!result?.success) {
+        toast.error(result?.message);
+        return;
       }
+      toast.success("RSVP submitted successfully!");
+      router.push(`/invite/${eventData.id}/${guestData.id}`);
     } catch (error) {
       console.error("Failed to submit RSVP:", error);
       toast.error("Failed to submit RSVP. Please try again.");
@@ -196,7 +200,12 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
             />
           </div>
 
-          {eventData.type === "wedding" && <PhotoUpload onImagesChange={handleImagesChange} />}
+          {eventData.type === "wedding" && <ImageUpload value={uploadedImages} onChange={handleImagesChange} onRemove={handleRemoveImage} />}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-500">{uploadedImages.length}/3 images (max 5MB each)</span>
+            <span className="text-xs text-gray-500 italic">These photos will be displayed during the event!</span>
+          </div>
+          <p className="text-sm text-gray-600">Upload images of cherished moments with the bride or groom before the wedding. We&apos;d love to see old pictures of you with them! 📸</p>
 
           <div className="space-y-2">
             <Label htmlFor="message" className="text-black font-medium">
@@ -236,7 +245,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = theme.primary;
               }}
-              onClick={() => handleSubmit("accept")}
+              onClick={() => handleSubmit("accepted")}
               disabled={loading || Boolean(messages.deadline && isRSVPDeadlinePassed(messages.deadline)) || isCreatorView}>
               {loading ? "Submitting..." : messages.accept_text}
             </Button>
@@ -253,7 +262,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = `${theme.primary}cc`;
               }}
-              onClick={() => handleSubmit("decline")}
+              onClick={() => handleSubmit("declined")}
               disabled={loading || Boolean(messages.deadline && isRSVPDeadlinePassed(messages.deadline)) || isCreatorView}>
               {loading ? "Submitting..." : messages.decline_text}
             </Button>

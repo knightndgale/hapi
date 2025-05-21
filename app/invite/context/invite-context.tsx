@@ -7,15 +7,7 @@ import { Guest } from "@/types/schema/Guest.schema";
 interface InviteContextType {
   getEventData: (eventId: string) => Promise<Event | undefined>;
   getGuestData: (guestId: string) => Promise<Guest | undefined>;
-  submitRSVP: (data: {
-    eventId: string;
-    guestId: string;
-    response: "accept" | "decline";
-    phoneNumber?: string;
-    dietaryRequirements?: string;
-    message?: string;
-    images?: File[];
-  }) => Promise<{ success: boolean }>;
+  submitRSVP: (data: Partial<Guest>) => Promise<{ data?: Guest; success: boolean; message?: string }>;
 }
 
 const InviteContext = createContext<InviteContextType | null>(null);

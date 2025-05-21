@@ -2,7 +2,7 @@
 
 import { Guest } from "@/types/schema/Guest.schema";
 import { Event } from "@/types/schema/Event.schema";
-import { getGuestById } from "@/requests/guest.request";
+import { getGuestById, updateGuest } from "@/requests/guest.request";
 
 export async function getGuestData(guestId: string) {
   const response = await getGuestById(guestId);
@@ -13,7 +13,11 @@ export async function getGuestData(guestId: string) {
   return response.data;
 }
 
-export async function submitRSVP(data: { eventId: string; guestId: string; response: "accept" | "decline"; phoneNumber?: string; dietaryRequirements?: string; message?: string; images?: File[] }) {
-  // TODO: Replace with actual API call
-  return { success: true };
-}
+export const submitRSVP = async (data: Partial<Guest>) => {
+  if (!data.id) {
+    return { success: false, message: "Guest ID is required" };
+  }
+  const { id, ...guestResponse } = data;
+
+  return await updateGuest(id, guestResponse);
+};
