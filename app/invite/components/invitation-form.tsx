@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Guest } from "@/types/schema/Guest.schema";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
 
 interface InvitationFormProps {
   eventData: Event;
@@ -87,7 +88,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
               </div>
             )}
 
-            <h1 className="text-3xl font-bold text-black">Thank You for Your Response!</h1>
+            <h1 className="text-3xl font-bold text-black">Thank you for your response!</h1>
             <p className="text-lg text-black">
               Dear {guestData.first_name} {guestData.last_name},
             </p>
@@ -99,7 +100,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 flex-shrink-0" />
-                <span className="truncate">{eventData.startTime}</span>
+                <span className="truncate">{dayjs(eventData.startTime).format("HH:mm")}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 flex-shrink-0" />
