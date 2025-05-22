@@ -158,7 +158,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
             <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[300px]">
               <Clock className="w-5 h-5 flex-shrink-0" />
               <span className="truncate" data-testid="test-time">
-                {eventData.startTime}
+                {dayjs(eventData.startTime).format("HH:mm")}
               </span>
             </div>
           </div>
