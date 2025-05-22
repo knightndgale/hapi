@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import { Status } from "@/constants/status.enum";
 
 const eventTypes = ["all", "wedding", "birthday", "seminar"];
 const eventStatuses = ["all", "draft", "published", "archived"];
@@ -86,7 +87,7 @@ export function DashboardContent() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(async (event: Event) => {
             const imageUrl = event.pageBanner ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${event.pageBanner}` : `https://picsum.photos/seed/${event.id}/400/300`;
-
+            const guestsQuantity = event?.guests.filter((guest) => guest.status === Status.PUBLISHED)?.length || 0;
             return (
               <Link href={`/events/${event.id}`} key={event.id}>
                 <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
@@ -108,7 +109,7 @@ export function DashboardContent() {
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4" />
                         <span>
-                          {event?.guests?.length || 0} / {event?.maxAttendees || 0} guests
+                          {guestsQuantity} / {event?.maxAttendees || 0} guests
                         </span>
                       </div>
                     </div>
