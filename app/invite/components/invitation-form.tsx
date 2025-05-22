@@ -158,13 +158,13 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
             <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[300px]">
               <Clock className="w-5 h-5 flex-shrink-0" />
               <span className="truncate" data-testid="test-time">
-                {dayjs(eventData.startTime).format("HH:mm")}
+                {eventData.startTime ? new Date(`2000-01-01T${eventData.startTime}`).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}
               </span>
             </div>
           </div>
           <div className="flex justify-start text-black mt-2">
-            <MapPin className="w-5 h-5 flex-shrink-0" />
-            <p className="text-balance break-words max-w-[300px]">{eventData.location}</p>
+            <MapPin className="w-5 h-5 flex-shrink-0 mr-1" />
+            <p className="text-balance break-words ">{eventData.location}</p>
           </div>
         </div>
 

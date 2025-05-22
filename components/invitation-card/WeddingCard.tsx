@@ -81,11 +81,14 @@ export const WeddingCard = ({ event, guest, qrCodeUrl }: WeddingCardProps) => {
         {/* Event Details */}
         <div className="w-full  text-center ">
           <p className="text-black text-[8px] ">
-            {new Date(event.startDate).toLocaleDateString(undefined, {
+            {new Date(`${event.startDate}T${event.startTime}`).toLocaleDateString(undefined, {
               weekday: "long",
               year: "numeric",
               month: "long",
               day: "numeric",
+            })}
+            {" at "}
+            {new Date(`${event.startDate}T${event.startTime}`).toLocaleTimeString(undefined, {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
