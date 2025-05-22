@@ -1,20 +1,17 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { Guest, GuestResponse } from "@/types/schema/Guest.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { QRCodeCanvas } from "qrcode.react";
 import { Edit2, Trash2, Share2 } from "lucide-react";
-import { getGuests, archiveGuest } from "@/requests/guest.request";
+import { archiveGuest } from "@/requests/guest.request";
 import { AddGuestForm } from "./add-guest-form";
 import { toast } from "sonner";
-import { getEventById } from "@/requests/event.request";
 import { useEvent } from "../../context/event-context";
 import useDisclosure from "@/hooks/useDisclosure";
-import { Status } from "@/types/index.types";
 import { PrintPreview } from "@/components/invitation-card/PrintPreview";
 
 export function GuestList({ eventId }: { eventId: string }) {

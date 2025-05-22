@@ -20,9 +20,10 @@ import { useEvent } from "../../context/event-context";
 const AddGuestFormSchema = GuestSchema.pick({
   first_name: true,
   last_name: true,
-  email: true,
   type: true,
-}).partial({ email: true });
+}).extend({
+  email: z.string().email().optional(),
+});
 
 type AddGuestFormData = z.infer<typeof AddGuestFormSchema>;
 
