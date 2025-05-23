@@ -142,6 +142,7 @@ export function DashboardProvider({ children, loadEvents = getEvents }: Dashboar
         try {
           dispatch({ type: "SET_LOADING", payload: true });
           const response = await loadEvents();
+          console.log("🚀 ~ loadEvents: ~ response:", response);
           if (response.success && response.data) {
             dispatch({ type: "SET_EVENTS", payload: response.data });
           } else {

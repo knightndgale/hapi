@@ -14,10 +14,19 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { Status } from "@/constants/status.enum";
+import { Guest } from "@/types/schema/Guest.schema";
 
 const eventTypes = ["all", "wedding", "birthday", "seminar"];
 const eventStatuses = ["all", "draft", "published", "archived"];
 const pageSizes = [10, 20, 50, 100];
+
+type TGuests = {
+  event_id: string | number;
+  guests_id: Guest;
+};
+type ExtendedEvent = Omit<Event, "guests"> & {
+  guests: TGuests[];
+};
 
 const statusColors: Record<string, string> = {
   draft: "bg-yellow-100 text-yellow-800",
@@ -85,9 +94,11 @@ export function DashboardContent() {
       {/* Events Display */}
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map(async (event: Event) => {
+          {(filteredEvents as unknown as ExtendedEvent[]).map(async (event) => {
             const imageUrl = event.pageBanner ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${event.pageBanner}` : `https://picsum.photos/seed/${event.id}/400/300`;
-            const guestsQuantity = event?.guests.filter((guest) => guest.status === Status.PUBLISHED)?.length || 0;
+
+            const guestsQuantity = event?.guests.filter((guest) => guest.guests_id.status === Status.PUBLISHED)?.length || 0;
+
             return (
               <Link href={`/events/${event.id}`} key={event.id}>
                 <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
