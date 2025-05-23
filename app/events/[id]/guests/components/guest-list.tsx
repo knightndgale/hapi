@@ -13,9 +13,14 @@ import { toast } from "sonner";
 import { useEvent } from "../../context/event-context";
 import useDisclosure from "@/hooks/useDisclosure";
 import { PrintPreview } from "@/components/invitation-card/PrintPreview";
+import { GuestListProvider, useGuestList } from "../context/guest-list-context";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export function GuestList({ eventId }: { eventId: string }) {
-  const { state, actions } = useEvent();
+const pageSizes = [10, 20, 50, 100];
+
+function GuestListContent({ eventId }: { eventId: string }) {
+  const { state, actions, filteredGuests, totalPages } = useGuestList();
+  const { state: eventState, actions: eventActions } = useEvent();
 
   const guestForm = useDisclosure();
   const deleteDialog = useDisclosure();
@@ -29,7 +34,7 @@ export function GuestList({ eventId }: { eventId: string }) {
     const res = await archiveGuest(guestId);
     if (res.success) {
       toast.success("Guest removed");
-      actions.loadEvent(eventId);
+      eventActions.loadEvent(eventId);
     } else {
       toast.error(res.message || "Failed to remove guest");
     }
@@ -48,16 +53,26 @@ export function GuestList({ eventId }: { eventId: string }) {
     }
   };
 
+  // Calculate paginated guests
+  const paginatedGuests = filteredGuests.slice((state.currentPage - 1) * state.pageSize, state.currentPage * state.pageSize);
+
   return (
     <div className="space-y-4" data-testid="guest-list">
-      <div className="flex items-center space-x-2">
-        <Input
-          placeholder="Search guests..."
-          className="max-w-sm"
-          onChange={(e) => {
-            // TODO: Implement search
-          }}
-        />
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+        <div className="flex flex-1 gap-4">
+          <Input placeholder="Search guests..." className="max-w-xs" value={state.search} onChange={(e) => actions.setSearch(e.target.value)} />
+          <Select value={state.responseFilter} onValueChange={(value) => actions.setResponseFilter(value as GuestResponse | "all")}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by response" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Responses</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="accepted">Accepted</SelectItem>
+              <SelectItem value="declined">Declined</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <Button onClick={guestForm.onOpen} variant="default">
           Add Guest
         </Button>
@@ -81,7 +96,7 @@ export function GuestList({ eventId }: { eventId: string }) {
             onSuccess={() => {
               setSelectedGuest(null);
               guestForm.onClose();
-              actions.loadEvent(eventId);
+              eventActions.loadEvent(eventId);
             }}
           />
         </DialogContent>
@@ -118,9 +133,9 @@ export function GuestList({ eventId }: { eventId: string }) {
           <DialogHeader>
             <DialogTitle>Guest Invitation Card</DialogTitle>
           </DialogHeader>
-          {selectedGuestForPrint && state.event && (
+          {selectedGuestForPrint && eventState.event && (
             <PrintPreview
-              event={state.event}
+              event={eventState.event}
               guest={selectedGuestForPrint}
               qrCodeUrl={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${selectedGuestForPrint.token}`}
               onClose={() => {
@@ -143,53 +158,91 @@ export function GuestList({ eventId }: { eventId: string }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {!!state.event?.guests &&
-              state.event?.guests.length > 0 &&
-              state.event?.guests.map((guest) => (
-                <TableRow key={guest?.id}>
-                  <TableCell>
-                    {guest?.first_name} {guest?.last_name}
-                  </TableCell>
-                  <TableCell>{guest?.email}</TableCell>
-                  <TableCell>
-                    <span className={getResponseColor(guest?.response)}>{guest?.response ? guest?.response.charAt(0).toUpperCase() + guest?.response.slice(1) : "Pending"}</span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setSelectedGuestForPrint(guest);
-                          setShowPrintPreview(true);
-                        }}>
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setSelectedGuest(guest);
-                          guestForm.onOpen();
-                        }}>
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setGuestToDelete(guest);
-                          deleteDialog.onOpen();
-                        }}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+            {paginatedGuests.map((guest) => (
+              <TableRow key={guest?.id}>
+                <TableCell>
+                  {guest?.first_name} {guest?.last_name}
+                </TableCell>
+                <TableCell>{guest?.email}</TableCell>
+                <TableCell>
+                  <span className={getResponseColor(guest?.response)}>{guest?.response ? guest?.response.charAt(0).toUpperCase() + guest?.response.slice(1) : "Pending"}</span>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setSelectedGuestForPrint(guest);
+                        setShowPrintPreview(true);
+                      }}>
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setSelectedGuest(guest);
+                        guestForm.onOpen();
+                      }}>
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setGuestToDelete(guest);
+                        deleteDialog.onOpen();
+                      }}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Select value={state.pageSize.toString()} onValueChange={(value) => actions.setPageSize(parseInt(value))}>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {pageSizes.map((size) => (
+                <SelectItem key={size} value={size.toString()}>
+                  {size} / page
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="text-sm text-gray-500">
+            Page {state.currentPage} of {totalPages}
+          </span>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => actions.setCurrentPage(state.currentPage - 1)} disabled={state.currentPage === 1}>
+            Previous
+          </Button>
+          <Button variant="outline" onClick={() => actions.setCurrentPage(state.currentPage + 1)} disabled={state.currentPage === totalPages}>
+            Next
+          </Button>
+        </div>
+      </div>
     </div>
+  );
+}
+
+export function GuestList({ eventId }: { eventId: string }) {
+  const { state } = useEvent();
+  const guests = state.event?.guests || [];
+
+  return (
+    <GuestListProvider guests={guests}>
+      <GuestListContent eventId={eventId} />
+    </GuestListProvider>
   );
 }
