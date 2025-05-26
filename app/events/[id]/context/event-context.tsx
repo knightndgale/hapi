@@ -35,6 +35,7 @@ interface EventContextType {
   actions: {
     loadEvent: (id: string, props?: Partial<TDefaultFieldFilter<Event>>) => Promise<void>;
   };
+  dispatch: React.Dispatch<EventAction>;
 }
 
 // Create context with default values
@@ -43,6 +44,7 @@ const EventContext = createContext<EventContextType>({
   actions: {
     loadEvent: async (id: string, props?: Partial<TDefaultFieldFilter<Event>>) => {},
   },
+  dispatch: () => {},
 });
 
 // Reducer
@@ -147,8 +149,9 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
     () => ({
       state,
       actions,
+      dispatch,
     }),
-    [state, actions]
+    [state, actions, dispatch]
   );
 
   return <EventContext.Provider value={contextValue}>{children}</EventContext.Provider>;

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Event, Section } from "@/types/schema/Event.schema";
-import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart, User, Star, Trophy, Cake, Glasses, Mic, Book } from "lucide-react";
+import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart, User, Star, Trophy, Cake, Glasses, Mic, Book, Edit } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 
@@ -128,8 +128,10 @@ const EventView = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="absolute bottom-0 left-0 right-0 p-8 text-white">
             <div className="container mx-auto">
-              <h1 className="text-5xl font-bold mb-4 text-shadow-lg">{event.title}</h1>
-              <p className="text-xl opacity-90 max-w-2xl text-shadow">{event.description}</p>
+              <div>
+                <h1 className="text-5xl font-bold mb-4 text-shadow-lg">{event.title}</h1>
+                <p className="text-xl opacity-90 max-w-2xl text-shadow">{event.description}</p>
+              </div>
             </div>
           </motion.div>
         </motion.div>

@@ -49,3 +49,34 @@ export const getEventById = async (id: Event["id"], props: Partial<TDefaultField
     return { success: false, message: errorHandler(error) };
   }
 };
+
+export async function updateEvent(eventId: string, data: Partial<Event>) {
+  try {
+    const response = await fetch(`/api/events/${eventId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: result.message || "Failed to update event",
+      };
+    }
+
+    return {
+      success: true,
+      data: result.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Failed to update event",
+    };
+  }
+}
