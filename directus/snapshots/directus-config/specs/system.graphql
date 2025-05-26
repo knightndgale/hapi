@@ -98,14 +98,14 @@ type Mutation {
   users_invite_accept(token: String!, password: String!): Boolean
   users_register(email: String!, password: String!, verification_url: String, first_name: String, last_name: String): Boolean
   users_register_verify(token: String!): Boolean
-  create_collections_item(data: write_directus_collections_input!): write_directus_collections
-  update_collections_item(collection: String!, data: write_directus_collections_input!): write_directus_collections
+  create_collections_item(data: create_directus_collections_input!): directus_collections
+  update_collections_item(collection: String!, data: update_directus_collections_input!): directus_collections
   delete_collections_item(collection: String!): delete_collection
-  create_fields_item(collection: String!, data: write_directus_fields_input!): write_directus_fields
-  update_fields_item(collection: String!, field: String!, data: write_directus_fields_input!): write_directus_fields
+  create_fields_item(collection: String!, data: create_directus_fields_input!): directus_fields
+  update_fields_item(collection: String!, field: String!, data: update_directus_fields_input!): directus_fields
   delete_fields_item(collection: String!, field: String!): delete_field
-  create_relations_item(data: write_directus_relations_input!): write_directus_relations
-  update_relations_item(collection: String!, field: String!, data: write_directus_relations_input!): write_directus_relations
+  create_relations_item(data: create_directus_relations_input!): directus_relations
+  update_relations_item(collection: String!, field: String!, data: update_directus_relations_input!): directus_relations
   delete_relations_item(collection: String!, field: String!): delete_relation
   update_extensions_item(id: ID, data: update_directus_extensions_inputInput): directus_extensions
   update_users_me(data: update_directus_users_input): directus_users
@@ -1873,121 +1873,6 @@ type users_me_tfa_generate_data {
   otpauth_url: String
 }
 
-type write_directus_collections {
-  collection: String
-  meta: write_directus_collections_meta
-  schema: write_directus_collections_schema
-}
-
-type write_directus_collections_meta {
-  collection: String
-  icon: String
-  note: String
-  display_template: String
-  hidden: Boolean
-  singleton: Boolean
-  translations: JSON
-  archive_field: String
-  archive_app_filter: Boolean
-  archive_value: String
-  unarchive_value: String
-  sort_field: String
-  accountability: String
-  color: String
-  item_duplication_fields: JSON
-  sort: Int
-  group: String
-  collapse: String
-  preview_url: String
-  versioning: Boolean
-}
-
-type write_directus_collections_schema {
-  name: String
-  comment: String
-}
-
-type write_directus_fields {
-  collection: String
-  field: String
-  type: String
-  meta: write_directus_fields_meta
-  schema: write_directus_fields_schema
-}
-
-type write_directus_fields_meta {
-  id: Int
-  collection: String
-  field: String
-  special: [String]
-  interface: String
-  options: JSON
-  display: String
-  display_options: JSON
-  readonly: Boolean
-  hidden: Boolean
-  sort: Int
-  width: String
-  translations: JSON
-  note: String
-  conditions: JSON
-  required: Boolean
-  group: String
-  validation: JSON
-  validation_message: String
-}
-
-type write_directus_fields_schema {
-  name: String
-  table: String
-  data_type: String
-  default_value: String
-  max_length: Int
-  numeric_precision: Int
-  numeric_scale: Int
-  is_generated: Boolean
-  generation_expression: String
-  is_indexed: Boolean
-  is_nullable: Boolean
-  is_unique: Boolean
-  is_primary_key: Boolean
-  has_auto_increment: Boolean
-  foreign_key_column: String
-  foreign_key_table: String
-  comment: String
-}
-
-type write_directus_relations {
-  collection: String
-  field: String
-  related_collection: String
-  schema: write_directus_relations_schema
-  meta: write_directus_relations_meta
-}
-
-type write_directus_relations_meta {
-  id: Int
-  many_collection: String
-  many_field: String
-  one_collection: String
-  one_field: String
-  one_collection_field: String
-  one_allowed_collections: [String]
-  junction_field: String
-  sort_field: String
-  one_deselect_action: String
-}
-
-type write_directus_relations_schema {
-  table: String!
-  column: String!
-  foreign_key_table: String!
-  foreign_key_column: String!
-  constraint_name: String
-  on_update: String!
-  on_delete: String!
-}
-
 input big_int_filter_operators {
   _eq: GraphQLBigInt
   _neq: GraphQLBigInt
@@ -2022,6 +1907,21 @@ input create_directus_access_input {
   sort: Int
 }
 
+input create_directus_collections_fields_input {
+  collection: String
+  field: String
+  type: String
+  meta: directus_fields_meta_input
+  schema: directus_fields_schema_input
+}
+
+input create_directus_collections_input {
+  collection: String
+  meta: directus_collections_meta_input
+  schema: directus_collections_schema_input
+  fields: [create_directus_collections_fields_input!]
+}
+
 input create_directus_comments_input {
   id: ID
   collection: String!
@@ -2042,6 +1942,14 @@ input create_directus_dashboards_input {
   user_created: create_directus_users_input
   color: String
   panels: [create_directus_panels_input]
+}
+
+input create_directus_fields_input {
+  collection: String
+  field: String
+  type: String
+  meta: directus_fields_meta_input
+  schema: directus_fields_schema_input
 }
 
 input create_directus_files_input {
@@ -2183,6 +2091,14 @@ input create_directus_presets_input {
   color: String
 }
 
+input create_directus_relations_input {
+  collection: String
+  field: String
+  related_collection: String
+  schema: directus_relations_schema_input
+  meta: directus_relations_meta_input
+}
+
 input create_directus_roles_input {
   id: ID
   name: String!
@@ -2317,26 +2233,13 @@ input datetime_function_filter_operators {
 }
 
 input directus_access_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   role: directus_roles_filter
   user: directus_users_filter
   policy: directus_policies_filter
   sort: number_filter_operators
   _and: [directus_access_filter]
   _or: [directus_access_filter]
-}
-
-""""""
-input directus_access_quantifier_filter {
-  id: id_filter_operators
-  role: directus_roles_filter
-  user: directus_users_filter
-  policy: directus_policies_filter
-  sort: number_filter_operators
-  _and: [directus_access_filter]
-  _or: [directus_access_filter]
-  _some: directus_access_filter
-  _none: directus_access_filter
 }
 
 input directus_activity_filter {
@@ -2350,14 +2253,42 @@ input directus_activity_filter {
   collection: string_filter_operators
   item: string_filter_operators
   origin: string_filter_operators
-  revisions: directus_revisions_quantifier_filter
+  revisions: directus_revisions_filter
   revisions_func: count_function_filter_operators
   _and: [directus_activity_filter]
   _or: [directus_activity_filter]
 }
 
+input directus_collections_meta_input {
+  collection: String!
+  icon: String
+  note: String
+  display_template: String
+  hidden: Boolean!
+  singleton: Boolean!
+  translations: JSON
+  archive_field: String
+  archive_app_filter: Boolean!
+  archive_value: String
+  unarchive_value: String
+  sort_field: String
+  accountability: String
+  color: String
+  item_duplication_fields: JSON
+  sort: Int
+  group: String
+  collapse: String!
+  preview_url: String
+  versioning: Boolean!
+}
+
+input directus_collections_schema_input {
+  name: String
+  comment: String
+}
+
 input directus_comments_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   collection: string_filter_operators
   item: string_filter_operators
   comment: string_filter_operators
@@ -2372,7 +2303,7 @@ input directus_comments_filter {
 }
 
 input directus_dashboards_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   name: string_filter_operators
   icon: string_filter_operators
   note: string_filter_operators
@@ -2380,14 +2311,56 @@ input directus_dashboards_filter {
   date_created_func: datetime_function_filter_operators
   user_created: directus_users_filter
   color: string_filter_operators
-  panels: directus_panels_quantifier_filter
+  panels: directus_panels_filter
   panels_func: count_function_filter_operators
   _and: [directus_dashboards_filter]
   _or: [directus_dashboards_filter]
 }
 
+input directus_fields_meta_input {
+  id: Int!
+  collection: String!
+  field: String!
+  special: [String]
+  interface: String
+  options: JSON
+  display: String
+  display_options: JSON
+  readonly: Boolean!
+  hidden: Boolean!
+  sort: Int
+  width: String
+  translations: JSON
+  note: String
+  conditions: JSON
+  required: Boolean
+  group: String
+  validation: JSON
+  validation_message: String
+}
+
+input directus_fields_schema_input {
+  name: String
+  table: String
+  data_type: String
+  default_value: String
+  max_length: Int
+  numeric_precision: Int
+  numeric_scale: Int
+  is_generated: Boolean
+  generation_expression: String
+  is_indexed: Boolean
+  is_nullable: Boolean
+  is_unique: Boolean
+  is_primary_key: Boolean
+  has_auto_increment: Boolean
+  foreign_key_column: String
+  foreign_key_table: String
+  comment: String
+}
+
 input directus_files_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   storage: string_filter_operators
   filename_disk: string_filter_operators
   filename_download: string_filter_operators
@@ -2424,7 +2397,7 @@ input directus_files_filter {
 }
 
 input directus_flows_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   name: string_filter_operators
   icon: string_filter_operators
   color: string_filter_operators
@@ -2438,14 +2411,14 @@ input directus_flows_filter {
   date_created: date_filter_operators
   date_created_func: datetime_function_filter_operators
   user_created: directus_users_filter
-  operations: directus_operations_quantifier_filter
+  operations: directus_operations_filter
   operations_func: count_function_filter_operators
   _and: [directus_flows_filter]
   _or: [directus_flows_filter]
 }
 
 input directus_folders_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   name: string_filter_operators
   parent: directus_folders_filter
   _and: [directus_folders_filter]
@@ -2468,7 +2441,7 @@ input directus_notifications_filter {
 }
 
 input directus_operations_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   name: string_filter_operators
   key: string_filter_operators
   type: string_filter_operators
@@ -2484,32 +2457,10 @@ input directus_operations_filter {
   user_created: directus_users_filter
   _and: [directus_operations_filter]
   _or: [directus_operations_filter]
-}
-
-""""""
-input directus_operations_quantifier_filter {
-  id: id_filter_operators
-  name: string_filter_operators
-  key: string_filter_operators
-  type: string_filter_operators
-  position_x: number_filter_operators
-  position_y: number_filter_operators
-  options: string_filter_operators
-  options_func: count_function_filter_operators
-  resolve: directus_operations_filter
-  reject: directus_operations_filter
-  flow: directus_flows_filter
-  date_created: date_filter_operators
-  date_created_func: datetime_function_filter_operators
-  user_created: directus_users_filter
-  _and: [directus_operations_filter]
-  _or: [directus_operations_filter]
-  _some: directus_operations_filter
-  _none: directus_operations_filter
 }
 
 input directus_panels_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   dashboard: directus_dashboards_filter
   name: string_filter_operators
   icon: string_filter_operators
@@ -2528,31 +2479,6 @@ input directus_panels_filter {
   user_created: directus_users_filter
   _and: [directus_panels_filter]
   _or: [directus_panels_filter]
-}
-
-""""""
-input directus_panels_quantifier_filter {
-  id: id_filter_operators
-  dashboard: directus_dashboards_filter
-  name: string_filter_operators
-  icon: string_filter_operators
-  color: string_filter_operators
-  show_header: boolean_filter_operators
-  note: string_filter_operators
-  type: string_filter_operators
-  position_x: number_filter_operators
-  position_y: number_filter_operators
-  width: number_filter_operators
-  height: number_filter_operators
-  options: string_filter_operators
-  options_func: count_function_filter_operators
-  date_created: date_filter_operators
-  date_created_func: datetime_function_filter_operators
-  user_created: directus_users_filter
-  _and: [directus_panels_filter]
-  _or: [directus_panels_filter]
-  _some: directus_panels_filter
-  _none: directus_panels_filter
 }
 
 input directus_permissions_filter {
@@ -2571,27 +2497,8 @@ input directus_permissions_filter {
   _or: [directus_permissions_filter]
 }
 
-""""""
-input directus_permissions_quantifier_filter {
-  id: number_filter_operators
-  collection: string_filter_operators
-  action: string_filter_operators
-  permissions: string_filter_operators
-  permissions_func: count_function_filter_operators
-  validation: string_filter_operators
-  validation_func: count_function_filter_operators
-  presets: string_filter_operators
-  presets_func: count_function_filter_operators
-  fields: string_filter_operators
-  policy: directus_policies_filter
-  _and: [directus_permissions_filter]
-  _or: [directus_permissions_filter]
-  _some: directus_permissions_filter
-  _none: directus_permissions_filter
-}
-
 input directus_policies_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   name: string_filter_operators
   icon: string_filter_operators
   description: string_filter_operators
@@ -2599,11 +2506,11 @@ input directus_policies_filter {
   enforce_tfa: boolean_filter_operators
   admin_access: boolean_filter_operators
   app_access: boolean_filter_operators
-  permissions: directus_permissions_quantifier_filter
+  permissions: directus_permissions_filter
   permissions_func: count_function_filter_operators
-  users: directus_access_quantifier_filter
+  users: directus_access_filter
   users_func: count_function_filter_operators
-  roles: directus_access_quantifier_filter
+  roles: directus_access_filter
   roles_func: count_function_filter_operators
   _and: [directus_policies_filter]
   _or: [directus_policies_filter]
@@ -2630,6 +2537,29 @@ input directus_presets_filter {
   _or: [directus_presets_filter]
 }
 
+input directus_relations_meta_input {
+  id: Int
+  many_collection: String
+  many_field: String
+  one_collection: String
+  one_field: String
+  one_collection_field: String
+  one_allowed_collections: [String]
+  junction_field: String
+  sort_field: String
+  one_deselect_action: String
+}
+
+input directus_relations_schema_input {
+  table: String!
+  column: String!
+  foreign_key_table: String!
+  foreign_key_column: String!
+  constraint_name: String
+  on_update: String!
+  on_delete: String!
+}
+
 input directus_revisions_filter {
   id: number_filter_operators
   activity: directus_activity_filter
@@ -2645,61 +2575,24 @@ input directus_revisions_filter {
   _or: [directus_revisions_filter]
 }
 
-""""""
-input directus_revisions_quantifier_filter {
-  id: number_filter_operators
-  activity: directus_activity_filter
-  collection: string_filter_operators
-  item: string_filter_operators
-  data: string_filter_operators
-  data_func: count_function_filter_operators
-  delta: string_filter_operators
-  delta_func: count_function_filter_operators
-  parent: directus_revisions_filter
-  version: directus_versions_filter
-  _and: [directus_revisions_filter]
-  _or: [directus_revisions_filter]
-  _some: directus_revisions_filter
-  _none: directus_revisions_filter
-}
-
 input directus_roles_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   name: string_filter_operators
   icon: string_filter_operators
   description: string_filter_operators
   parent: directus_roles_filter
-  children: directus_roles_quantifier_filter
+  children: directus_roles_filter
   children_func: count_function_filter_operators
-  policies: directus_access_quantifier_filter
+  policies: directus_access_filter
   policies_func: count_function_filter_operators
-  users: directus_users_quantifier_filter
+  users: directus_users_filter
   users_func: count_function_filter_operators
   _and: [directus_roles_filter]
   _or: [directus_roles_filter]
-}
-
-""""""
-input directus_roles_quantifier_filter {
-  id: id_filter_operators
-  name: string_filter_operators
-  icon: string_filter_operators
-  description: string_filter_operators
-  parent: directus_roles_filter
-  children: directus_roles_quantifier_filter
-  children_func: count_function_filter_operators
-  policies: directus_access_quantifier_filter
-  policies_func: count_function_filter_operators
-  users: directus_users_quantifier_filter
-  users_func: count_function_filter_operators
-  _and: [directus_roles_filter]
-  _or: [directus_roles_filter]
-  _some: directus_roles_filter
-  _none: directus_roles_filter
 }
 
 input directus_shares_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   name: string_filter_operators
   collection: string_filter_operators
   item: string_filter_operators
@@ -2719,7 +2612,7 @@ input directus_shares_filter {
 }
 
 input directus_translations_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   language: string_filter_operators
   key: string_filter_operators
   value: string_filter_operators
@@ -2728,7 +2621,7 @@ input directus_translations_filter {
 }
 
 input directus_users_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   first_name: string_filter_operators
   last_name: string_filter_operators
   email: string_filter_operators
@@ -2759,55 +2652,14 @@ input directus_users_filter {
   theme_light_overrides_func: count_function_filter_operators
   theme_dark_overrides: string_filter_operators
   theme_dark_overrides_func: count_function_filter_operators
-  policies: directus_access_quantifier_filter
+  policies: directus_access_filter
   policies_func: count_function_filter_operators
   _and: [directus_users_filter]
   _or: [directus_users_filter]
-}
-
-""""""
-input directus_users_quantifier_filter {
-  id: id_filter_operators
-  first_name: string_filter_operators
-  last_name: string_filter_operators
-  email: string_filter_operators
-  password: hash_filter_operators
-  location: string_filter_operators
-  title: string_filter_operators
-  description: string_filter_operators
-  tags: string_filter_operators
-  tags_func: count_function_filter_operators
-  avatar: directus_files_filter
-  language: string_filter_operators
-  tfa_secret: hash_filter_operators
-  status: string_filter_operators
-  role: directus_roles_filter
-  token: hash_filter_operators
-  last_access: date_filter_operators
-  last_access_func: datetime_function_filter_operators
-  last_page: string_filter_operators
-  provider: string_filter_operators
-  external_identifier: string_filter_operators
-  auth_data: string_filter_operators
-  auth_data_func: count_function_filter_operators
-  email_notifications: boolean_filter_operators
-  appearance: string_filter_operators
-  theme_dark: string_filter_operators
-  theme_light: string_filter_operators
-  theme_light_overrides: string_filter_operators
-  theme_light_overrides_func: count_function_filter_operators
-  theme_dark_overrides: string_filter_operators
-  theme_dark_overrides_func: count_function_filter_operators
-  policies: directus_access_quantifier_filter
-  policies_func: count_function_filter_operators
-  _and: [directus_users_filter]
-  _or: [directus_users_filter]
-  _some: directus_users_filter
-  _none: directus_users_filter
 }
 
 input directus_versions_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   key: string_filter_operators
   name: string_filter_operators
   collection: string_filter_operators
@@ -2843,7 +2695,7 @@ input directus_webhooks_filter {
 }
 
 input events_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   status: string_filter_operators
   user_created: directus_users_filter
   date_created: date_filter_operators
@@ -2867,11 +2719,11 @@ input events_filter {
   backgroundImage: string_filter_operators
   rsvp: rsvp_filter
   pageBanner: directus_files_filter
-  sections: events_sections_quantifier_filter
+  sections: events_sections_filter
   sections_func: count_function_filter_operators
-  programs: events_programs_quantifier_filter
+  programs: events_programs_filter
   programs_func: count_function_filter_operators
-  guests: events_guests_quantifier_filter
+  guests: events_guests_filter
   guests_func: count_function_filter_operators
   _and: [events_filter]
   _or: [events_filter]
@@ -2885,34 +2737,12 @@ input events_guests_filter {
   _or: [events_guests_filter]
 }
 
-""""""
-input events_guests_quantifier_filter {
-  id: number_filter_operators
-  events_id: events_filter
-  guests_id: guests_filter
-  _and: [events_guests_filter]
-  _or: [events_guests_filter]
-  _some: events_guests_filter
-  _none: events_guests_filter
-}
-
 input events_programs_filter {
   id: number_filter_operators
   events_id: events_filter
   programs_id: programs_filter
   _and: [events_programs_filter]
   _or: [events_programs_filter]
-}
-
-""""""
-input events_programs_quantifier_filter {
-  id: number_filter_operators
-  events_id: events_filter
-  programs_id: programs_filter
-  _and: [events_programs_filter]
-  _or: [events_programs_filter]
-  _some: events_programs_filter
-  _none: events_programs_filter
 }
 
 input events_sections_filter {
@@ -2923,34 +2753,12 @@ input events_sections_filter {
   _or: [events_sections_filter]
 }
 
-""""""
-input events_sections_quantifier_filter {
-  id: number_filter_operators
-  events_id: events_filter
-  sections_id: sections_filter
-  _and: [events_sections_filter]
-  _or: [events_sections_filter]
-  _some: events_sections_filter
-  _none: events_sections_filter
-}
-
 input guests_directus_files_filter {
   id: number_filter_operators
   guests_id: guests_filter
   directus_files_id: directus_files_filter
   _and: [guests_directus_files_filter]
   _or: [guests_directus_files_filter]
-}
-
-""""""
-input guests_directus_files_quantifier_filter {
-  id: number_filter_operators
-  guests_id: guests_filter
-  directus_files_id: directus_files_filter
-  _and: [guests_directus_files_filter]
-  _or: [guests_directus_files_filter]
-  _some: guests_directus_files_filter
-  _none: guests_directus_files_filter
 }
 
 input guests_filter {
@@ -2971,7 +2779,7 @@ input guests_filter {
   dietary_requirements: string_filter_operators
   message: string_filter_operators
   token: string_filter_operators
-  images: guests_directus_files_quantifier_filter
+  images: guests_directus_files_filter
   images_func: count_function_filter_operators
   _and: [guests_filter]
   _or: [guests_filter]
@@ -2990,28 +2798,6 @@ input icons_filter {
   _or: [icons_filter]
 }
 
-input id_filter_operators {
-  _eq: ID
-  _neq: ID
-  _contains: ID
-  _icontains: ID
-  _ncontains: ID
-  _starts_with: ID
-  _nstarts_with: ID
-  _istarts_with: ID
-  _nistarts_with: ID
-  _ends_with: ID
-  _nends_with: ID
-  _iends_with: ID
-  _niends_with: ID
-  _in: [ID]
-  _nin: [ID]
-  _null: Boolean
-  _nnull: Boolean
-  _empty: Boolean
-  _nempty: Boolean
-}
-
 input number_filter_operators {
   _eq: GraphQLStringOrFloat
   _neq: GraphQLStringOrFloat
@@ -3028,7 +2814,7 @@ input number_filter_operators {
 }
 
 input programs_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   status: string_filter_operators
   user_created: directus_users_filter
   date_created: date_filter_operators
@@ -3086,7 +2872,7 @@ input sections_filter {
 }
 
 input speakers_filter {
-  id: id_filter_operators
+  id: string_filter_operators
   status: string_filter_operators
   user_created: directus_users_filter
   date_created: date_filter_operators
@@ -3137,6 +2923,10 @@ input update_directus_access_input {
   sort: Int
 }
 
+input update_directus_collections_input {
+  meta: directus_collections_meta_input
+}
+
 input update_directus_comments_input {
   id: ID
   collection: String
@@ -3165,6 +2955,14 @@ input update_directus_extensions_input_metaInput {
 
 input update_directus_extensions_inputInput {
   meta: update_directus_extensions_input_metaInput
+}
+
+input update_directus_fields_input {
+  collection: String
+  field: String
+  type: String
+  meta: directus_fields_meta_input
+  schema: directus_fields_schema_input
 }
 
 input update_directus_files_input {
@@ -3304,6 +3102,14 @@ input update_directus_presets_input {
   filter: JSON
   icon: String
   color: String
+}
+
+input update_directus_relations_input {
+  collection: String
+  field: String
+  related_collection: String
+  schema: directus_relations_schema_input
+  meta: directus_relations_meta_input
 }
 
 input update_directus_roles_input {
@@ -3448,113 +3254,4 @@ input update_directus_webhooks_input {
   headers: JSON
   was_active_before_deprecation: Boolean
   migrated_flow: update_directus_flows_input
-}
-
-input write_directus_collections_input {
-  meta: write_directus_collections_meta_input
-  fields: [write_directus_fields_input!]
-}
-
-input write_directus_collections_meta_input {
-  collection: String
-  icon: String
-  note: String
-  display_template: String
-  hidden: Boolean
-  singleton: Boolean
-  translations: JSON
-  archive_field: String
-  archive_app_filter: Boolean
-  archive_value: String
-  unarchive_value: String
-  sort_field: String
-  accountability: String
-  color: String
-  item_duplication_fields: JSON
-  sort: Int
-  group: String
-  collapse: String
-  preview_url: String
-  versioning: Boolean
-}
-
-input write_directus_fields_input {
-  collection: String
-  field: String
-  type: String
-  meta: write_directus_fields_meta_input
-  schema: write_directus_fields_schema_input
-}
-
-input write_directus_fields_meta_input {
-  id: Int
-  collection: String
-  field: String
-  special: [String]
-  interface: String
-  options: JSON
-  display: String
-  display_options: JSON
-  readonly: Boolean
-  hidden: Boolean
-  sort: Int
-  width: String
-  translations: JSON
-  note: String
-  conditions: JSON
-  required: Boolean
-  group: String
-  validation: JSON
-  validation_message: String
-}
-
-input write_directus_fields_schema_input {
-  name: String
-  table: String
-  data_type: String
-  default_value: String
-  max_length: Int
-  numeric_precision: Int
-  numeric_scale: Int
-  is_generated: Boolean
-  generation_expression: String
-  is_indexed: Boolean
-  is_nullable: Boolean
-  is_unique: Boolean
-  is_primary_key: Boolean
-  has_auto_increment: Boolean
-  foreign_key_column: String
-  foreign_key_table: String
-  comment: String
-}
-
-input write_directus_relations_input {
-  collection: String
-  field: String
-  related_collection: String
-  schema: write_directus_relations_schema_input
-  meta: write_directus_relations_meta_input
-}
-
-input write_directus_relations_meta_input {
-  id: Int
-  many_collection: String
-  many_field: String
-  one_collection: String
-  one_field: String
-  one_collection_field: String
-  one_allowed_collections: [String]
-  junction_field: String
-  sort_field: String
-  one_deselect_action: String
-}
-
-input write_directus_relations_schema_input {
-  table: String!
-  column: String!
-  foreign_key_table: String!
-  foreign_key_column: String!
-  constraint_name: String
-  on_update: String!
-  on_delete: String!
 }
