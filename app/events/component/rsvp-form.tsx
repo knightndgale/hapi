@@ -26,15 +26,15 @@ export function RSVPForm({ onSubmit, defaultValues, type }: RSVPFormProps) {
   const form = useForm<RSVP>({
     resolver: zodResolver(RSVPSchema),
     defaultValues: {
-      title: defaultValues?.title,
-      subtitle: defaultValues?.subtitle,
-      invitation: defaultValues?.invitation,
-      accept_text: defaultValues?.accept_text,
-      decline_text: defaultValues?.decline_text,
-      deadline: defaultValues?.deadline,
-      logo: undefined,
-      title_as_image: undefined,
-      backgroundImage: undefined,
+      title: defaultValues?.title || "",
+      subtitle: defaultValues?.subtitle || "",
+      invitation: defaultValues?.invitation || "",
+      accept_text: defaultValues?.accept_text || "",
+      decline_text: defaultValues?.decline_text || "",
+      deadline: defaultValues?.deadline || "",
+      logo: "",
+      title_as_image: "",
+      backgroundImage: "",
     },
   });
 

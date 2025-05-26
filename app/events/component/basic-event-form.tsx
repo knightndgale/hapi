@@ -18,6 +18,7 @@ import { ProgramItemModal } from "./program-item-modal";
 import { ProgramItem, ProgramItemSchema } from "@/types/schema/Program.schema";
 import { Event, EventSchema } from "@/types/schema/Event.schema";
 import { ImageUpload } from "@/components/ui/image-upload";
+import dayjs from "dayjs";
 
 const BasicFormEventSchema = EventSchema.pick({
   title: true,
@@ -45,15 +46,15 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
   const form = useForm<BasicFormEvent>({
     resolver: zodResolver(BasicFormEventSchema),
     defaultValues: {
-      title: defaultValues?.title,
-      description: defaultValues?.description,
-      location: defaultValues?.location,
-      startDate: defaultValues?.startDate,
-      endDate: defaultValues?.endDate,
-      startTime: defaultValues?.startTime,
-      endTime: defaultValues?.endTime,
+      title: defaultValues?.title || "",
+      description: defaultValues?.description || "",
+      location: defaultValues?.location || "",
+      startDate: defaultValues?.startDate ? new Date(defaultValues.startDate) : new Date(),
+      endDate: defaultValues?.endDate ? new Date(defaultValues.endDate) : new Date(),
+      startTime: defaultValues?.startTime || dayjs().format("HH:mm"),
+      endTime: defaultValues?.endTime || dayjs().format("HH:mm"),
       program: defaultValues?.program || [],
-      pageBanner: defaultValues?.pageBanner || undefined,
+      pageBanner: defaultValues?.pageBanner || "",
       maxAttendees: defaultValues?.maxAttendees || 0,
       status: defaultValues?.status || "draft",
     },
