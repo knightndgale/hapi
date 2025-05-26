@@ -7,7 +7,7 @@ export const GuestSchema = z.object({
   id: z.string().readonly(),
   first_name: z.string(),
   last_name: z.string(),
-  email: z.string().min(1).email().optional(),
+  email: z.string().email("Invalid email format").optional().or(z.literal("")),
   response: GuestResponseSchema,
   type: z.enum(["regular", "entourage", "sponsor"]),
   phone_number: z.string().optional(),

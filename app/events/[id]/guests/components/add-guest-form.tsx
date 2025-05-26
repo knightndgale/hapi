@@ -21,8 +21,7 @@ const AddGuestFormSchema = GuestSchema.pick({
   first_name: true,
   last_name: true,
   type: true,
-}).extend({
-  email: z.string().email().optional(),
+  email: true,
 });
 
 type AddGuestFormData = z.infer<typeof AddGuestFormSchema>;
@@ -45,7 +44,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
     defaultValues: {
       first_name: editGuest?.first_name || "",
       last_name: editGuest?.last_name || "",
-      email: editGuest?.email || undefined,
+      email: editGuest?.email || "",
       type: editGuest?.type || "regular",
     },
   });
