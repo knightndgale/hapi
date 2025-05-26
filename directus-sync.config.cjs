@@ -1,6 +1,6 @@
 module.exports = {
-  directusUrl: "https://directus-production-8483.up.railway.app/",
+  directusUrl: "https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi",
   directusEmail: "knightndgale@gmail.com",
-  directusPassword: "9ekt8xf2ulh7a7j1q9e4l7d125ket1wc",
+  directusPassword: "!C4tr0b0t@07",
   dumpPath: "./directus/snapshots/directus-config",
 };
