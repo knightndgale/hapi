@@ -3,7 +3,7 @@
 import { createContext, useContext, useReducer, useEffect, useMemo, ReactNode } from "react";
 import { Event, EventType, EventStatus } from "@/types/schema/Event.schema";
 import { TDefaultFieldFilter } from "@/types/index.types";
-import { getEvents } from "@/requests/event.request";
+import { getEvents, getMyEvents } from "@/requests/event.request";
 
 // Types
 type EventResponse = {
@@ -109,7 +109,7 @@ interface DashboardProviderProps {
 }
 
 // Provider Component
-export function DashboardProvider({ children, loadEvents = getEvents }: DashboardProviderProps) {
+export function DashboardProvider({ children, loadEvents = getMyEvents }: DashboardProviderProps) {
   const [state, dispatch] = useReducer(dashboardReducer, initialState);
 
   // TODO [ ] IMPLEMENT DIRECTUS FILTERING
@@ -142,7 +142,7 @@ export function DashboardProvider({ children, loadEvents = getEvents }: Dashboar
         try {
           dispatch({ type: "SET_LOADING", payload: true });
           const response = await loadEvents();
-          console.log("🚀 ~ loadEvents: ~ response:", response);
+
           if (response.success && response.data) {
             dispatch({ type: "SET_EVENTS", payload: response.data });
           } else {
