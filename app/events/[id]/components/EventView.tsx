@@ -250,9 +250,10 @@ const EventView = () => {
           </div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 space-y-8">
-            {event.sections.map((section) => (
-              <div key={section.id}>{renderSection(section)}</div>
-            ))}
+            {event.sections.map((section, index) => {
+              console.log("🚀 ~ {event.sections.map ~ section.sections_id:", section.sections_id);
+              return <div key={index}>{renderSection(section.sections_id)}</div>;
+            })}
           </motion.div>
         </div>
       </div>

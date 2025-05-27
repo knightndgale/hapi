@@ -26,7 +26,8 @@ export const RSVPSchema = z.object({
 });
 
 export const SectionSchema = z.object({
-  id: z.string(),
+  id: z.string().readonly().optional().nullable(),
+  section_id: z.string(),
   type: z.enum(["content", "image"]),
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),

@@ -16,39 +16,32 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-const sectionSchema = z.object({
-  id: z.string(),
-  type: z.enum(["content", "image"]),
-  title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
-  image: z.string().optional(),
-});
+import { SectionSchema } from "@/types/schema/Event.schema";
 
 const formSchema = z.object({
   backgroundImage: z.string().optional(),
-  sections: z.array(sectionSchema),
+  sections: z.array(SectionSchema),
 });
 
 export type EventCustomizationFormData = z.infer<typeof formSchema>;
 
 interface EventCustomizationFormProps {
-  onSubmit: (data: EventCustomizationFormData) => void;
+  onSectionSubmit: (data: z.infer<typeof SectionSchema>) => void;
   defaultValues?: Partial<EventCustomizationFormData>;
 }
 
 interface SectionModalProps {
-  section?: z.infer<typeof sectionSchema>;
-  onSubmit: (data: z.infer<typeof sectionSchema>) => void;
+  section?: z.infer<typeof SectionSchema>;
+  onSubmit: (data: z.infer<typeof SectionSchema>) => void;
   onClose: () => void;
   isOpen: boolean;
 }
 
 function SectionModal({ section, onSubmit, onClose, isOpen }: SectionModalProps) {
-  const form = useForm<z.infer<typeof sectionSchema>>({
-    resolver: zodResolver(sectionSchema),
+  const form = useForm<z.infer<typeof SectionSchema>>({
+    resolver: zodResolver(SectionSchema),
     defaultValues: section || {
-      id: Math.random().toString(36).substr(2, 9),
+      section_id: Math.random().toString(36).substr(2, 9),
       type: "content",
       title: "",
       description: "",
@@ -63,7 +56,7 @@ function SectionModal({ section, onSubmit, onClose, isOpen }: SectionModalProps)
         form.reset(section);
       } else {
         form.reset({
-          id: Math.random().toString(36).substr(2, 9),
+          section_id: Math.random().toString(36).substr(2, 9),
           type: "content",
           title: "",
           description: "",
@@ -73,7 +66,7 @@ function SectionModal({ section, onSubmit, onClose, isOpen }: SectionModalProps)
     }
   }, [isOpen, section, form]);
 
-  const handleSubmit = (data: z.infer<typeof sectionSchema>) => {
+  const handleSubmit = (data: z.infer<typeof SectionSchema>) => {
     onSubmit(data);
     onClose();
   };
@@ -168,13 +161,13 @@ function SectionModal({ section, onSubmit, onClose, isOpen }: SectionModalProps)
 }
 
 interface SortableRowProps {
-  section: z.infer<typeof sectionSchema>;
+  section: z.infer<typeof SectionSchema>;
   onEdit: () => void;
   onRemove: () => void;
 }
 
 function SortableRow({ section, onEdit, onRemove }: SortableRowProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.section_id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -213,7 +206,7 @@ function SortableRow({ section, onEdit, onRemove }: SortableRowProps) {
   );
 }
 
-export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomizationFormProps) {
+export function EventCustomizationForm({ onSectionSubmit, defaultValues }: EventCustomizationFormProps) {
   const form = useForm<EventCustomizationFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -223,7 +216,7 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
   });
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [editingSection, setEditingSection] = React.useState<z.infer<typeof sectionSchema> | undefined>();
+  const [editingSection, setEditingSection] = React.useState<z.infer<typeof SectionSchema> | undefined>();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -237,27 +230,20 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
     setIsModalOpen(true);
   };
 
-  const handleEditSection = (section: z.infer<typeof sectionSchema>) => {
+  const handleEditSection = (section: z.infer<typeof SectionSchema>) => {
     setEditingSection(section);
     setIsModalOpen(true);
   };
 
-  const handleSectionSubmit = (data: z.infer<typeof sectionSchema>) => {
-    const sections = form.getValues("sections");
-    if (editingSection) {
-      const index = sections.findIndex((s) => s.id === editingSection.id);
-      sections[index] = data;
-    } else {
-      sections.push(data);
-    }
-    form.setValue("sections", sections);
+  const handleSectionSubmit = (data: z.infer<typeof SectionSchema>) => {
+    onSectionSubmit(data);
   };
 
   const handleRemoveSection = (sectionId: string) => {
     const sections = form.getValues("sections");
     form.setValue(
       "sections",
-      sections.filter((section) => section.id !== sectionId)
+      sections.filter((section) => section.section_id !== sectionId)
     );
   };
 
@@ -266,8 +252,8 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
 
     if (over && active.id !== over.id) {
       const sections = form.getValues("sections");
-      const oldIndex = sections.findIndex((section) => section.id === active.id);
-      const newIndex = sections.findIndex((section) => section.id === over.id);
+      const oldIndex = sections.findIndex((section) => section.section_id === active.id);
+      const newIndex = sections.findIndex((section) => section.section_id === over.id);
 
       form.setValue("sections", arrayMove(sections, oldIndex, newIndex));
     }
@@ -275,7 +261,7 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         <FormField
           control={form.control}
           name="backgroundImage"
@@ -304,7 +290,7 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
 
           <div className="rounded-lg border">
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-              <SortableContext items={form.watch("sections").map((section) => section.id)} strategy={verticalListSortingStrategy}>
+              <SortableContext items={form.watch("sections").map((section) => section.section_id)} strategy={verticalListSortingStrategy}>
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent">
@@ -330,7 +316,7 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
                     ) : (
                       form
                         .watch("sections")
-                        .map((section) => <SortableRow key={section.id} section={section} onEdit={() => handleEditSection(section)} onRemove={() => handleRemoveSection(section.id)} />)
+                        .map((section) => <SortableRow key={section.section_id} section={section} onEdit={() => handleEditSection(section)} onRemove={() => handleRemoveSection(section.section_id)} />)
                     )}
                   </TableBody>
                 </Table>
@@ -338,10 +324,6 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
             </DndContext>
           </div>
         </div>
-
-        <Button type="submit" className="w-full">
-          Create Event
-        </Button>
 
         <SectionModal section={editingSection} onSubmit={handleSectionSubmit} onClose={() => setIsModalOpen(false)} isOpen={isModalOpen} />
       </form>

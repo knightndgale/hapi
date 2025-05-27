@@ -1,22 +1,27 @@
 "use client";
 
 import { createContext, useContext, useReducer, ReactNode, useEffect, useMemo } from "react";
-import { Event } from "@/types/schema/Event.schema";
+import { Event, Section } from "@/types/schema/Event.schema";
 import { getEventById } from "@/requests/event.request";
 import { Status, TDefaultFieldFilter } from "@/types/index.types";
 import { getMe } from "@/requests/auth.request";
 import { Guest } from "@/types/schema/Guest.schema";
-
-// Types
+type EventsSection = {
+  events_id: string;
+  sections_id: Section;
+};
+interface ExtendedEvent extends Omit<Event, "sections"> {
+  sections: EventsSection[];
+}
 interface EventState {
-  event: Event | null;
+  event: ExtendedEvent | null;
   loading: boolean;
   error: string | null;
   user: { id: string } | null;
 }
 
 type EventAction =
-  | { type: "SET_EVENT"; payload: Event }
+  | { type: "SET_EVENT"; payload: ExtendedEvent }
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_ERROR"; payload: string | null }
   | { type: "SET_USER"; payload: { id: string } | null };
@@ -33,7 +38,7 @@ const initialState: EventState = {
 interface EventContextType {
   state: EventState;
   actions: {
-    loadEvent: (id: string, props?: Partial<TDefaultFieldFilter<Event>>) => Promise<void>;
+    loadEvent: (id: string, props?: Partial<TDefaultFieldFilter<ExtendedEvent>>) => Promise<void>;
   };
   dispatch: React.Dispatch<EventAction>;
 }
@@ -42,7 +47,7 @@ interface EventContextType {
 const EventContext = createContext<EventContextType>({
   state: initialState,
   actions: {
-    loadEvent: async (id: string, props?: Partial<TDefaultFieldFilter<Event>>) => {},
+    loadEvent: async (id: string, props?: Partial<TDefaultFieldFilter<ExtendedEvent>>) => {},
   },
   dispatch: () => {},
 });
@@ -70,7 +75,7 @@ function eventReducer(state: EventState, action: EventAction): EventState {
 
 type EventResponse = {
   success: boolean;
-  data?: Event;
+  data?: ExtendedEvent;
   message?: string;
 };
 
@@ -78,7 +83,7 @@ type EventResponse = {
 interface EventProviderProps {
   children: ReactNode;
   eventId: string;
-  loadEvent?: (id: string, props?: Partial<TDefaultFieldFilter<Event>>) => Promise<EventResponse>;
+  loadEvent?: (id: string, props?: Partial<TDefaultFieldFilter<Event>>) => Promise<{ success: boolean; data?: Event; message?: string }>;
 }
 
 // Provider Component
@@ -90,14 +95,21 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
       try {
         dispatch({ type: "SET_LOADING", payload: true });
         const response = await loadEvent(eventId, {
-          fields: ["*", "guests.guests_id.*", "rsvp.*"],
+          fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*"],
         });
 
         if (response.success && response.data) {
-          const guestsList = response.data.guests as unknown as { guests_id: Guest }[];
-          // TODO [ ] Improve event filtering using directus filtering not manual filtering
+          const eventData = response.data;
+          const guestsList = eventData.guests as unknown as { guests_id: Guest }[];
           const guests = guestsList.map((guest) => guest.guests_id).filter((guest) => guest?.status !== Status.Enum.archived);
-          dispatch({ type: "SET_EVENT", payload: { ...response.data, guests } });
+
+          // Transform sections into EventsSection format
+          const sections = eventData.sections.map((section: any) => ({
+            events_id: eventData.id,
+            sections_id: section.sections_id,
+          }));
+
+          dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections } });
         } else {
           dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
         }
@@ -129,10 +141,17 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           dispatch({ type: "SET_LOADING", payload: true });
           const response = await loadEvent(id ?? eventId, props);
           if (response.success && response.data) {
-            const guestsList = response.data.guests as unknown as { guests_id: Guest }[];
+            const eventData = response.data;
+            const guestsList = eventData.guests as unknown as { guests_id: Guest }[];
             const guests = guestsList.map((guest) => guest.guests_id).filter((guest) => guest?.status !== Status.Enum.archived);
 
-            dispatch({ type: "SET_EVENT", payload: { ...response.data, guests } });
+            // Transform sections into EventsSection format
+            const sections = eventData.sections.map((section: any) => ({
+              events_id: eventData.id,
+              sections_id: section.sections_id,
+            }));
+
+            dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections } });
           } else {
             dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
           }

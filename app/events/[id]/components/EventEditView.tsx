@@ -6,29 +6,27 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { updateEvent } from "@/requests/event.request";
+import { addEventSection } from "@/requests/event.request";
+import { Section } from "@/types/schema/Event.schema";
 
 export default function EventEditView() {
-  const { state, dispatch } = useEvent();
+  const { state, actions } = useEvent();
   const router = useRouter();
 
-  const handleSubmit = async (data: any) => {
+  const handleSectionSubmit = async (data: Section) => {
     try {
-      const res = await updateEvent(state.event?.id || "", {
-        sections: data.sections,
-        backgroundImage: data.backgroundImage,
-      });
+      const res = await addEventSection(state.event?.id || "", data);
 
       if (!res.success) {
         toast.error(res.message);
         return;
       }
 
-      dispatch({ type: "SET_EVENT", payload: res.data });
-      toast.success("Event updated successfully");
-      router.push(`/events/${state.event?.id}`);
+      // Reload the event data to get the updated sections
+      await actions.loadEvent(state.event?.id || "");
+      toast.success("Section added successfully");
     } catch (error) {
-      toast.error("Failed to update event");
+      toast.error("Failed to add section");
     }
   };
 
@@ -44,9 +42,9 @@ export default function EventEditView() {
 
       <div className="max-w-4xl mx-auto">
         <EventCustomizationForm
-          onSubmit={handleSubmit}
+          onSectionSubmit={handleSectionSubmit}
           defaultValues={{
-            sections: state.event?.sections || [],
+            sections: state.event?.sections.map((section) => section.sections_id) || [],
             backgroundImage: state.event?.backgroundImage || "",
           }}
         />

@@ -1,10 +1,10 @@
-import { TDefaultFieldFilter } from "@/types/index.types";
+import { Status, TDefaultFieldFilter } from "@/types/index.types";
 
 import { Collections } from "@/constants/collections.enum";
 import { errorHandler } from "@/helpers/errorHandler";
 import createDirectusClient from "@/lib/directus";
-import { Event } from "@/types/schema/Event.schema";
-import { createItem, readItem, readItems, readMe } from "@directus/sdk";
+import { Event, Section } from "@/types/schema/Event.schema";
+import { createItem, readItem, readItems, readMe, updateItem } from "@directus/sdk";
 
 export const createEvent = async (event: Partial<Omit<Event, "id" | "rsvp"> & { rsvp?: string }>) => {
   try {
@@ -39,7 +39,7 @@ export const getMyEvents = async (props: Partial<TDefaultFieldFilter<Event>> = {
   }
 };
 
-export const getEventById = async (id: Event["id"], props: Partial<TDefaultFieldFilter<Event>> = { fields: ["*", "rsvp.*", "guests.guests_id.*"] }) => {
+export const getEventById = async (id: Event["id"], props: Partial<TDefaultFieldFilter<Event>> = { fields: ["*", "rsvp.*", "guests.guests_id.*", "sections.sections_id.*"] }) => {
   try {
     const client = createDirectusClient();
 
@@ -50,33 +50,14 @@ export const getEventById = async (id: Event["id"], props: Partial<TDefaultField
   }
 };
 
-export async function updateEvent(eventId: string, data: Partial<Event>) {
+export async function addEventSection(eventId: string, data: Partial<Section>) {
   try {
-    const response = await fetch(`/api/events/${eventId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    const client = createDirectusClient();
+    const response = (await client.request(createItem(Collections.SECTIONS, { ...data, status: Status.Enum.published }))) as unknown as Section;
 
-    const result = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        message: result.message || "Failed to update event",
-      };
-    }
-
-    return {
-      success: true,
-      data: result.data,
-    };
+    const createdEventsSection = await client.request(createItem(Collections.EVENTS_SECTIONS, { events_id: eventId, sections_id: response.id }));
+    return { success: true, data: response };
   } catch (error) {
-    return {
-      success: false,
-      message: "Failed to update event",
-    };
+    return { success: false, message: errorHandler(error) };
   }
 }

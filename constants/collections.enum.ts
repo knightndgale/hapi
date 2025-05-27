@@ -5,4 +5,6 @@ export enum Collections {
   GUESTS = "guests",
   GUEST_FILES = "guests_directus_files",
   RSVP = "rsvp",
+  SECTIONS = "sections",
+  EVENTS_SECTIONS = "events_sections",
 }
