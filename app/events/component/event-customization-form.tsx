@@ -11,9 +11,11 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Plus, Trash2 } from "lucide-react";
+import { GripVertical, Plus, Trash2, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const sectionSchema = z.object({
   id: z.string(),
@@ -35,55 +37,179 @@ interface EventCustomizationFormProps {
   defaultValues?: Partial<EventCustomizationFormData>;
 }
 
-interface SortableSectionProps {
-  id: string;
-  children: React.ReactNode;
-  dragHandleProps?: {
-    attributes: any;
-    listeners: any;
-  };
+interface SectionModalProps {
+  section?: z.infer<typeof sectionSchema>;
+  onSubmit: (data: z.infer<typeof sectionSchema>) => void;
+  onClose: () => void;
+  isOpen: boolean;
 }
 
-interface SectionContentProps {
-  section: {
-    id: string;
-    type: "content" | "image";
-  };
-  index: number;
-  onRemove: () => void;
-}
+function SectionModal({ section, onSubmit, onClose, isOpen }: SectionModalProps) {
+  const form = useForm<z.infer<typeof sectionSchema>>({
+    resolver: zodResolver(sectionSchema),
+    defaultValues: section || {
+      id: Math.random().toString(36).substr(2, 9),
+      type: "content",
+      title: "",
+      description: "",
+      image: "",
+    },
+  });
 
-function SectionContent({ section, index, onRemove }: SectionContentProps) {
-  const { attributes, listeners } = useSortable({ id: section.id });
+  // Reset form when modal opens/closes
+  React.useEffect(() => {
+    if (isOpen) {
+      if (section) {
+        form.reset(section);
+      } else {
+        form.reset({
+          id: Math.random().toString(36).substr(2, 9),
+          type: "content",
+          title: "",
+          description: "",
+          image: "",
+        });
+      }
+    }
+  }, [isOpen, section, form]);
+
+  const handleSubmit = (data: z.infer<typeof sectionSchema>) => {
+    onSubmit(data);
+    onClose();
+  };
+
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
 
   return (
-    <div className="flex items-center gap-4 mb-4">
-      <div {...attributes} {...listeners} className="cursor-grab">
-        <GripVertical className="h-4 w-4 text-muted-foreground" />
-      </div>
-      <div className="flex items-center justify-between w-full">
-        <h4 className="font-medium">{section.type === "content" ? "Content Section" : "Image Section"}</h4>
-        <Button data-testid={`remove-section`} type="button" variant="ghost" size="icon" onClick={onRemove}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </div>
-    </div>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>{section ? "Edit Section" : "Add New Section"}</DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Section Type</FormLabel>
+                  <FormControl>
+                    <select className="w-full p-2 border rounded-md" {...field} disabled={!!section}>
+                      <option value="content">Content</option>
+                      <option value="image">Image</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter section title" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {form.watch("type") === "content" && (
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Enter section description" className="min-h-[100px]" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {form.watch("type") === "image" && (
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image</FormLabel>
+                    <FormControl>
+                      <ImageUpload value={field.value} onChange={field.onChange} onRemove={() => field.onChange("")} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button type="submit">{section ? "Save Changes" : "Add Section"}</Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
-function SortableSection({ id, children }: SortableSectionProps) {
-  const { setNodeRef, transform, transition, isDragging } = useSortable({ id });
+interface SortableRowProps {
+  section: z.infer<typeof sectionSchema>;
+  onEdit: () => void;
+  onRemove: () => void;
+}
+
+function SortableRow({ section, onEdit, onRemove }: SortableRowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={cn("rounded-lg border p-4", isDragging && "border-primary shadow-lg")}>
-      {children}
-    </div>
+    <TableRow ref={setNodeRef} style={style} className={cn("group hover:bg-muted/50 transition-colors", isDragging && "bg-muted shadow-lg")}>
+      <TableCell className="w-10">
+        <div {...attributes} {...listeners} className="cursor-grab hover:text-primary transition-colors">
+          <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+        </div>
+      </TableCell>
+      <TableCell className="font-medium">
+        <div className="flex items-center gap-2">
+          {section.type === "content" ? <div className="h-2 w-2 rounded-full bg-blue-500" /> : <div className="h-2 w-2 rounded-full bg-green-500" />}
+          {section.title}
+        </div>
+      </TableCell>
+      <TableCell>
+        <span className={cn("px-2 py-1 rounded-full text-xs font-medium", section.type === "content" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700")}>
+          {section.type === "content" ? "Content" : "Image"}
+        </span>
+      </TableCell>
+      <TableCell className="w-[120px]">
+        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button variant="ghost" size="icon" onClick={onEdit} className="hover:bg-primary/10 hover:text-primary">
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={onRemove} className="hover:bg-destructive/10 hover:text-destructive">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
   );
 }
 
@@ -96,6 +222,9 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
     },
   });
 
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [editingSection, setEditingSection] = React.useState<z.infer<typeof sectionSchema> | undefined>();
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -103,25 +232,32 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
     })
   );
 
-  const addSection = (type: "content" | "image") => {
-    const currentSections = form.getValues("sections");
-    form.setValue("sections", [
-      ...currentSections,
-      {
-        id: Math.random().toString(36).substr(2, 9),
-        type,
-        title: "",
-        description: type === "content" ? "" : undefined,
-        image: type === "image" ? "" : undefined,
-      },
-    ]);
+  const handleAddSection = () => {
+    setEditingSection(undefined);
+    setIsModalOpen(true);
   };
 
-  const removeSection = (index: number) => {
-    const currentSections = form.getValues("sections");
+  const handleEditSection = (section: z.infer<typeof sectionSchema>) => {
+    setEditingSection(section);
+    setIsModalOpen(true);
+  };
+
+  const handleSectionSubmit = (data: z.infer<typeof sectionSchema>) => {
+    const sections = form.getValues("sections");
+    if (editingSection) {
+      const index = sections.findIndex((s) => s.id === editingSection.id);
+      sections[index] = data;
+    } else {
+      sections.push(data);
+    }
+    form.setValue("sections", sections);
+  };
+
+  const handleRemoveSection = (sectionId: string) => {
+    const sections = form.getValues("sections");
     form.setValue(
       "sections",
-      currentSections.filter((_, i) => i !== index)
+      sections.filter((section) => section.id !== sectionId)
     );
   };
 
@@ -156,82 +292,58 @@ export function EventCustomizationForm({ onSubmit, defaultValues }: EventCustomi
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium">Page Sections</h3>
-            <div className="flex gap-2">
-              <Button type="button" variant="outline" onClick={() => addSection("content")} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Content Section
-              </Button>
-              <Button type="button" variant="outline" onClick={() => addSection("image")} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Image Section
-              </Button>
+            <div className="space-y-1">
+              <h3 className="text-lg font-medium">Page Sections</h3>
+              <p className="text-sm text-muted-foreground">Add and organize your event sections. Drag to reorder.</p>
             </div>
+            <Button type="button" onClick={handleAddSection} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Section
+            </Button>
           </div>
 
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={form.watch("sections").map((section) => section.id)} strategy={verticalListSortingStrategy}>
-              <div className="space-y-4">
-                {form.watch("sections").map((section, index) => (
-                  <SortableSection key={section.id} id={section.id}>
-                    <SectionContent section={section} index={index} onRemove={() => removeSection(index)} />
-                    <div className="pl-8 space-y-4">
-                      <FormField
-                        control={form.control}
-                        name={`sections.${index}.title`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter section title" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {section.type === "content" && (
-                        <FormField
-                          control={form.control}
-                          name={`sections.${index}.description`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Description</FormLabel>
-                              <FormControl>
-                                <Textarea placeholder="Enter section description" className="min-h-[100px]" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-
-                      {section.type === "image" && (
-                        <FormField
-                          control={form.control}
-                          name={`sections.${index}.image`}
-                          render={({ field }) => (
-                            <FormItem data-testid={`upload-image`}>
-                              <FormLabel>Image</FormLabel>
-                              <FormControl>
-                                <ImageUpload value={field.value} onChange={field.onChange} onRemove={() => field.onChange("")} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                    </div>
-                  </SortableSection>
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
+          <div className="rounded-lg border">
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={form.watch("sections").map((section) => section.id)} strategy={verticalListSortingStrategy}>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead className="w-10"></TableHead>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead className="w-[120px]"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {form.watch("sections").length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-24 text-center">
+                          <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                            <p>No sections added yet</p>
+                            <Button type="button" variant="outline" size="sm" onClick={handleAddSection} className="gap-2">
+                              <Plus className="h-4 w-4" />
+                              Add your first section
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      form
+                        .watch("sections")
+                        .map((section) => <SortableRow key={section.id} section={section} onEdit={() => handleEditSection(section)} onRemove={() => handleRemoveSection(section.id)} />)
+                    )}
+                  </TableBody>
+                </Table>
+              </SortableContext>
+            </DndContext>
+          </div>
         </div>
 
         <Button type="submit" className="w-full">
           Create Event
         </Button>
+
+        <SectionModal section={editingSection} onSubmit={handleSectionSubmit} onClose={() => setIsModalOpen(false)} isOpen={isModalOpen} />
       </form>
     </Form>
   );
