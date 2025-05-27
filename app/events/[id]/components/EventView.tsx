@@ -58,7 +58,12 @@ function renderSection(section: Section) {
           <h2 className="text-2xl font-bold mb-4">{section.title}</h2>
           {section.image && (
             <div className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-lg group">
-              <Image src={section.image} alt={section.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+              <Image
+                src={`${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${section.image}`}
+                alt={section.title}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300" />
             </div>
           )}
@@ -250,10 +255,9 @@ const EventView = () => {
           </div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 space-y-8">
-            {event.sections.map((section, index) => {
-              console.log("🚀 ~ {event.sections.map ~ section.sections_id:", section.sections_id);
-              return <div key={index}>{renderSection(section.sections_id)}</div>;
-            })}
+            {event.sections.map((section, index) => (
+              <div key={section.sections_id.section_id}>{renderSection(section.sections_id)}</div>
+            ))}
           </motion.div>
         </div>
       </div>

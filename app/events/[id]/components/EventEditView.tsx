@@ -12,10 +12,20 @@ import { Section } from "@/types/schema/Event.schema";
 export default function EventEditView() {
   const { state, actions } = useEvent();
   const router = useRouter();
+  console.log(state.event?.sections);
 
   const handleSectionSubmit = async (data: Section) => {
     try {
-      const res = await addEventSection(state.event?.id || "", data);
+      // Ensure we have all required fields
+      const sectionData = {
+        type: data.type,
+        title: data.title,
+        description: data.description || "",
+        image: data.image || "",
+        status: "published",
+      };
+
+      const res = await addEventSection(state.event?.id || "", sectionData);
 
       if (!res.success) {
         toast.error(res.message);
@@ -29,6 +39,20 @@ export default function EventEditView() {
       toast.error("Failed to add section");
     }
   };
+
+  // Transform sections data to match the expected format
+  const transformedSections =
+    state.event?.sections.map((section) => {
+      const sectionData = section.sections_id;
+      return {
+        id: sectionData.id,
+        section_id: sectionData.id || "",
+        type: sectionData.type || "content",
+        title: sectionData.title || "",
+        description: sectionData.description || "",
+        image: sectionData.image || "",
+      };
+    }) || [];
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -44,7 +68,7 @@ export default function EventEditView() {
         <EventCustomizationForm
           onSectionSubmit={handleSectionSubmit}
           defaultValues={{
-            sections: state.event?.sections.map((section) => section.sections_id) || [],
+            sections: transformedSections,
             backgroundImage: state.event?.backgroundImage || "",
           }}
         />

@@ -67,7 +67,15 @@ function SectionModal({ section, onSubmit, onClose, isOpen }: SectionModalProps)
   }, [isOpen, section, form]);
 
   const handleSubmit = (data: z.infer<typeof SectionSchema>) => {
-    onSubmit(data);
+    // Ensure we have all required fields
+    const sectionData = {
+      section_id: data.section_id,
+      type: data.type,
+      title: data.title,
+      description: data.description || "",
+      image: data.image || "",
+    };
+    onSubmit(sectionData);
     onClose();
   };
 
@@ -290,7 +298,7 @@ export function EventCustomizationForm({ onSectionSubmit, defaultValues }: Event
 
           <div className="rounded-lg border">
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-              <SortableContext items={form.watch("sections").map((section) => section.section_id)} strategy={verticalListSortingStrategy}>
+              <SortableContext items={defaultValues?.sections?.map((section) => section.section_id) || []} strategy={verticalListSortingStrategy}>
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent">
@@ -301,7 +309,7 @@ export function EventCustomizationForm({ onSectionSubmit, defaultValues }: Event
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {form.watch("sections").length === 0 ? (
+                    {defaultValues?.sections?.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={4} className="h-24 text-center">
                           <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
@@ -314,9 +322,9 @@ export function EventCustomizationForm({ onSectionSubmit, defaultValues }: Event
                         </TableCell>
                       </TableRow>
                     ) : (
-                      form
-                        .watch("sections")
-                        .map((section) => <SortableRow key={section.section_id} section={section} onEdit={() => handleEditSection(section)} onRemove={() => handleRemoveSection(section.section_id)} />)
+                      defaultValues?.sections?.map((section) => (
+                        <SortableRow key={section.section_id} section={section} onEdit={() => handleEditSection(section)} onRemove={() => handleRemoveSection(section.section_id)} />
+                      ))
                     )}
                   </TableBody>
                 </Table>

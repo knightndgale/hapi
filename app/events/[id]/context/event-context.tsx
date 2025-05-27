@@ -73,12 +73,6 @@ function eventReducer(state: EventState, action: EventAction): EventState {
   }
 }
 
-type EventResponse = {
-  success: boolean;
-  data?: ExtendedEvent;
-  message?: string;
-};
-
 // Provider Props
 interface EventProviderProps {
   children: ReactNode;
@@ -94,6 +88,7 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
     const loadEventData = async () => {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
+
         const response = await loadEvent(eventId, {
           fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*"],
         });
@@ -106,7 +101,7 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           // Transform sections into EventsSection format
           const sections = eventData.sections.map((section: any) => ({
             events_id: eventData.id,
-            sections_id: section.sections_id,
+            sections_id: section.sections_id || section,
           }));
 
           dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections } });
@@ -139,7 +134,11 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
       loadEvent: async (id?: string, props?: Partial<TDefaultFieldFilter<Event>>) => {
         try {
           dispatch({ type: "SET_LOADING", payload: true });
-          const response = await loadEvent(id ?? eventId, props);
+          const response = await loadEvent(id ?? eventId, {
+            ...props,
+            fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*"],
+          });
+
           if (response.success && response.data) {
             const eventData = response.data;
             const guestsList = eventData.guests as unknown as { guests_id: Guest }[];
