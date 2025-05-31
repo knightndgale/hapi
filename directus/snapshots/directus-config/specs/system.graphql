@@ -266,14 +266,14 @@ type Subscription {
   speakers_mutated(event: EventEnum): speakers_mutated
   programs_mutated(event: EventEnum): programs_mutated
   events_sections_mutated(event: EventEnum): events_sections_mutated
-  icons_mutated(event: EventEnum): icons_mutated
   events_programs_mutated(event: EventEnum): events_programs_mutated
-  sections_mutated(event: EventEnum): sections_mutated
+  icons_mutated(event: EventEnum): icons_mutated
   guests_directus_files_mutated(event: EventEnum): guests_directus_files_mutated
   events_guests_mutated(event: EventEnum): events_guests_mutated
   rsvp_mutated(event: EventEnum): rsvp_mutated
   events_mutated(event: EventEnum): events_mutated
   directus_sync_id_map_mutated(event: EventEnum): directus_sync_id_map_mutated
+  sections_mutated(event: EventEnum): sections_mutated
 }
 
 """The `Boolean` scalar type represents `true` or `false`."""
@@ -1731,6 +1731,7 @@ type guests_mutated {
 
 type icons {
   id: ID!
+  name: String
 }
 
 type icons_mutated {
@@ -1807,6 +1808,8 @@ type sections {
   type: String
   description: String
   image: String
+  title: String
+  section_id: String
 }
 
 type sections_mutated {
@@ -2794,6 +2797,7 @@ input hash_filter_operators {
 
 input icons_filter {
   id: number_filter_operators
+  name: string_filter_operators
   _and: [icons_filter]
   _or: [icons_filter]
 }
@@ -2867,6 +2871,8 @@ input sections_filter {
   type: string_filter_operators
   description: string_filter_operators
   image: string_filter_operators
+  title: string_filter_operators
+  section_id: string_filter_operators
   _and: [sections_filter]
   _or: [sections_filter]
 }

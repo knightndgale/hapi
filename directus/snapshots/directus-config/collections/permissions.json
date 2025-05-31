@@ -159,6 +159,30 @@
     "_syncId": "79370758-ee79-40fc-b0a9-8d478cfc0e23"
   },
   {
+    "collection": "icons",
+    "action": "read",
+    "permissions": null,
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "*"
+    ],
+    "policy": "_sync_default_public_policy",
+    "_syncId": "524038ee-c36d-4a6a-b332-bb36351020d7"
+  },
+  {
+    "collection": "programs",
+    "action": "read",
+    "permissions": null,
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "*"
+    ],
+    "policy": "_sync_default_public_policy",
+    "_syncId": "04c5ae24-9d23-4c23-9bdd-3ad04c827f4a"
+  },
+  {
     "collection": "rsvp",
     "action": "read",
     "permissions": null,
@@ -169,6 +193,30 @@
     ],
     "policy": "_sync_default_public_policy",
     "_syncId": "4a04f617-127d-4991-ac45-4281db89c463"
+  },
+  {
+    "collection": "sections",
+    "action": "read",
+    "permissions": null,
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "*"
+    ],
+    "policy": "_sync_default_public_policy",
+    "_syncId": "41f71179-dcf2-4247-8f67-ec633e3254bc"
+  },
+  {
+    "collection": "speakers",
+    "action": "read",
+    "permissions": null,
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "*"
+    ],
+    "policy": "_sync_default_public_policy",
+    "_syncId": "8aa02fed-449c-43b7-b473-5effac66239c"
   },
   {
     "collection": "directus_files",
@@ -517,6 +565,18 @@
     ],
     "policy": "118433c2-6236-415c-a27c-50c23a23c667",
     "_syncId": "f453ec4c-276c-4c9e-8731-6175f8570ebd"
+  },
+  {
+    "collection": "sections",
+    "action": "update",
+    "permissions": null,
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "*"
+    ],
+    "policy": "118433c2-6236-415c-a27c-50c23a23c667",
+    "_syncId": "d762a76e-ef35-4383-b9ef-6e800695fb5a"
   },
   {
     "collection": "speakers",

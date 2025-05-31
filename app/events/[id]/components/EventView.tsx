@@ -2,20 +2,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
-import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart, User, Star, Trophy, Cake, Glasses, Mic, Book, Edit } from "lucide-react";
-
-import { format } from "date-fns";
+import { Calendar, Church, Utensils, Music, Camera, Gift, Heart, Star, Trophy, Cake, Glasses, Mic, Book } from "lucide-react";
 
 import { motion } from "framer-motion";
 
 import React from "react";
 import { useEvent } from "../context/event-context";
-import { toast } from "sonner";
-import EventProgram from "./EventProgram";
-import EventDetails from "./EventDetails";
+
 import Image from "next/image";
 // Dummy data following the updated schema
 

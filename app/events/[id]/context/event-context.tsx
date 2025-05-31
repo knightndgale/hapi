@@ -99,16 +99,15 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
         dispatch({ type: "SET_LOADING", payload: true });
 
         const response = await loadEvent(eventId, {
-          fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*", "programs.programs_id.*", "programs.programs_id.icon.*"],
-          filter: {
-            sections: {
-              sections_id: {
-                status: Status.Enum.published,
-              },
-            },
-          },
+          fields: ["*", "rsvp.*", "guests.*.*", "sections.*.*", "programs.*.*"],
+          // filter: {
+          //   sections: {
+          //     sections_id: {
+          //       status: Status.Enum.published,
+          //     },
+          //   },
+          // },
         });
-
         if (response.success && response.data) {
           const eventData = response.data;
           const guestsList = eventData.guests as unknown as { guests_id: Guest }[];
@@ -161,14 +160,14 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           dispatch({ type: "SET_LOADING", payload: true });
           const response = await loadEvent(id ?? eventId, {
             ...props,
-            fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*", "programs.programs_id.*", "programs.programs_id.icon.*"],
-            filter: {
-              sections: {
-                sections_id: {
-                  status: Status.Enum.published,
-                },
-              },
-            },
+            fields: ["*", "rsvp.*", "guests.*.*", "sections.*.*", "programs.*.*"],
+            // filter: {
+            //   sections: {
+            //     sections_id: {
+            //       status: Status.Enum.published,
+            //     },
+            //   },
+            // },
           });
 
           if (response.success && response.data) {

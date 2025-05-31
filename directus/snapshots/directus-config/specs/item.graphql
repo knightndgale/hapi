@@ -15,18 +15,14 @@ type Query {
   events_sections_by_id(id: ID!, version: String): events_sections
   events_sections_aggregated(groupBy: [String], filter: events_sections_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [events_sections_aggregated!]!
   events_sections_by_version(version: String!, id: ID!): version_events_sections
-  icons(filter: icons_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): [icons!]!
-  icons_by_id(id: ID!, version: String): icons
-  icons_aggregated(groupBy: [String], filter: icons_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [icons_aggregated!]!
-  icons_by_version(version: String!, id: ID!): version_icons
   events_programs(filter: events_programs_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): [events_programs!]!
   events_programs_by_id(id: ID!, version: String): events_programs
   events_programs_aggregated(groupBy: [String], filter: events_programs_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [events_programs_aggregated!]!
   events_programs_by_version(version: String!, id: ID!): version_events_programs
-  sections(filter: sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): [sections!]!
-  sections_by_id(id: ID!, version: String): sections
-  sections_aggregated(groupBy: [String], filter: sections_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [sections_aggregated!]!
-  sections_by_version(version: String!, id: ID!): version_sections
+  icons(filter: icons_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): [icons!]!
+  icons_by_id(id: ID!, version: String): icons
+  icons_aggregated(groupBy: [String], filter: icons_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [icons_aggregated!]!
+  icons_by_version(version: String!, id: ID!): version_icons
   guests_directus_files(filter: guests_directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): [guests_directus_files!]!
   guests_directus_files_by_id(id: ID!, version: String): guests_directus_files
   guests_directus_files_aggregated(groupBy: [String], filter: guests_directus_files_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [guests_directus_files_aggregated!]!
@@ -47,6 +43,10 @@ type Query {
   directus_sync_id_map_by_id(id: ID!, version: String): directus_sync_id_map
   directus_sync_id_map_aggregated(groupBy: [String], filter: directus_sync_id_map_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [directus_sync_id_map_aggregated!]!
   directus_sync_id_map_by_version(version: String!, id: ID!): version_directus_sync_id_map
+  sections(filter: sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): [sections!]!
+  sections_by_id(id: ID!, version: String): sections
+  sections_aggregated(groupBy: [String], filter: sections_filter, limit: Int, offset: Int, page: Int, search: String, sort: [String]): [sections_aggregated!]!
+  sections_by_version(version: String!, id: ID!): version_sections
 }
 
 type Mutation {
@@ -58,12 +58,10 @@ type Mutation {
   create_programs_item(data: create_programs_input!): programs
   create_events_sections_items(filter: events_sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_events_sections_input!]): [events_sections!]!
   create_events_sections_item(data: create_events_sections_input!): events_sections
-  create_icons_items(filter: icons_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_icons_input!]): [icons!]!
-  create_icons_item(data: create_icons_input!): icons
   create_events_programs_items(filter: events_programs_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_events_programs_input!]): [events_programs!]!
   create_events_programs_item(data: create_events_programs_input!): events_programs
-  create_sections_items(filter: sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_sections_input!]): [sections!]!
-  create_sections_item(data: create_sections_input!): sections
+  create_icons_items(filter: icons_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_icons_input!]): [icons!]!
+  create_icons_item(data: create_icons_input!): icons
   create_guests_directus_files_items(filter: guests_directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_guests_directus_files_input!]): [guests_directus_files!]!
   create_guests_directus_files_item(data: create_guests_directus_files_input!): guests_directus_files
   create_events_guests_items(filter: events_guests_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_events_guests_input!]): [events_guests!]!
@@ -74,6 +72,8 @@ type Mutation {
   create_events_item(data: create_events_input!): events
   create_directus_sync_id_map_items(filter: directus_sync_id_map_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_directus_sync_id_map_input!]): [directus_sync_id_map!]!
   create_directus_sync_id_map_item(data: create_directus_sync_id_map_input!): directus_sync_id_map
+  create_sections_items(filter: sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [create_sections_input!]): [sections!]!
+  create_sections_item(data: create_sections_input!): sections
   update_guests_items(filter: guests_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_guests_input!): [guests!]!
   update_guests_batch(filter: guests_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_guests_input!]): [guests!]!
   update_guests_item(id: ID!, data: update_guests_input!): guests
@@ -86,15 +86,12 @@ type Mutation {
   update_events_sections_items(filter: events_sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_events_sections_input!): [events_sections!]!
   update_events_sections_batch(filter: events_sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_events_sections_input!]): [events_sections!]!
   update_events_sections_item(id: ID!, data: update_events_sections_input!): events_sections
-  update_icons_items(filter: icons_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_icons_input!): [icons!]!
-  update_icons_batch(filter: icons_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_icons_input!]): [icons!]!
-  update_icons_item(id: ID!, data: update_icons_input!): icons
   update_events_programs_items(filter: events_programs_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_events_programs_input!): [events_programs!]!
   update_events_programs_batch(filter: events_programs_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_events_programs_input!]): [events_programs!]!
   update_events_programs_item(id: ID!, data: update_events_programs_input!): events_programs
-  update_sections_items(filter: sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_sections_input!): [sections!]!
-  update_sections_batch(filter: sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_sections_input!]): [sections!]!
-  update_sections_item(id: ID!, data: update_sections_input!): sections
+  update_icons_items(filter: icons_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_icons_input!): [icons!]!
+  update_icons_batch(filter: icons_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_icons_input!]): [icons!]!
+  update_icons_item(id: ID!, data: update_icons_input!): icons
   update_guests_directus_files_items(filter: guests_directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_guests_directus_files_input!): [guests_directus_files!]!
   update_guests_directus_files_batch(filter: guests_directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_guests_directus_files_input!]): [guests_directus_files!]!
   update_guests_directus_files_item(id: ID!, data: update_guests_directus_files_input!): guests_directus_files
@@ -110,6 +107,9 @@ type Mutation {
   update_directus_sync_id_map_items(filter: directus_sync_id_map_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_directus_sync_id_map_input!): [directus_sync_id_map!]!
   update_directus_sync_id_map_batch(filter: directus_sync_id_map_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_directus_sync_id_map_input!]): [directus_sync_id_map!]!
   update_directus_sync_id_map_item(id: ID!, data: update_directus_sync_id_map_input!): directus_sync_id_map
+  update_sections_items(filter: sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, ids: [ID]!, data: update_sections_input!): [sections!]!
+  update_sections_batch(filter: sections_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String, data: [update_sections_input!]): [sections!]!
+  update_sections_item(id: ID!, data: update_sections_input!): sections
   delete_guests_items(ids: [ID]!): delete_many
   delete_guests_item(id: ID!): delete_one
   delete_speakers_items(ids: [ID]!): delete_many
@@ -118,12 +118,10 @@ type Mutation {
   delete_programs_item(id: ID!): delete_one
   delete_events_sections_items(ids: [ID]!): delete_many
   delete_events_sections_item(id: ID!): delete_one
-  delete_icons_items(ids: [ID]!): delete_many
-  delete_icons_item(id: ID!): delete_one
   delete_events_programs_items(ids: [ID]!): delete_many
   delete_events_programs_item(id: ID!): delete_one
-  delete_sections_items(ids: [ID]!): delete_many
-  delete_sections_item(id: ID!): delete_one
+  delete_icons_items(ids: [ID]!): delete_many
+  delete_icons_item(id: ID!): delete_one
   delete_guests_directus_files_items(ids: [ID]!): delete_many
   delete_guests_directus_files_item(id: ID!): delete_one
   delete_events_guests_items(ids: [ID]!): delete_many
@@ -134,6 +132,8 @@ type Mutation {
   delete_events_item(id: ID!): delete_one
   delete_directus_sync_id_map_items(ids: [ID]!): delete_many
   delete_directus_sync_id_map_item(id: ID!): delete_one
+  delete_sections_items(ids: [ID]!): delete_many
+  delete_sections_item(id: ID!): delete_one
 }
 
 type Subscription {
@@ -162,14 +162,14 @@ type Subscription {
   speakers_mutated(event: EventEnum): speakers_mutated
   programs_mutated(event: EventEnum): programs_mutated
   events_sections_mutated(event: EventEnum): events_sections_mutated
-  icons_mutated(event: EventEnum): icons_mutated
   events_programs_mutated(event: EventEnum): events_programs_mutated
-  sections_mutated(event: EventEnum): sections_mutated
+  icons_mutated(event: EventEnum): icons_mutated
   guests_directus_files_mutated(event: EventEnum): guests_directus_files_mutated
   events_guests_mutated(event: EventEnum): events_guests_mutated
   rsvp_mutated(event: EventEnum): rsvp_mutated
   events_mutated(event: EventEnum): events_mutated
   directus_sync_id_map_mutated(event: EventEnum): directus_sync_id_map_mutated
+  sections_mutated(event: EventEnum): sections_mutated
 }
 
 """The `Boolean` scalar type represents `true` or `false`."""
@@ -1097,6 +1097,7 @@ type guests_mutated {
 
 type icons {
   id: ID!
+  name: String
 }
 
 type icons_aggregated {
@@ -1114,6 +1115,7 @@ type icons_aggregated {
 
 type icons_aggregated_count {
   id: Int
+  name: Int
 }
 
 type icons_aggregated_fields {
@@ -1254,6 +1256,8 @@ type sections {
   type: String
   description: String
   image: String
+  title: String
+  section_id: String
 }
 
 type sections_aggregated {
@@ -1279,6 +1283,8 @@ type sections_aggregated_count {
   type: Int
   description: Int
   image: Int
+  title: Int
+  section_id: Int
 }
 
 type sections_aggregated_fields {
@@ -1421,6 +1427,7 @@ type version_guests_directus_files {
 """"""
 type version_icons {
   id: ID
+  name: String
 }
 
 """"""
@@ -1468,6 +1475,8 @@ type version_sections {
   type: String
   description: String
   image: String
+  title: String
+  section_id: String
 }
 
 """"""
@@ -1697,6 +1706,7 @@ input create_guests_input {
 
 input create_icons_input {
   id: ID
+  name: String
 }
 
 input create_programs_input {
@@ -1741,6 +1751,8 @@ input create_sections_input {
   type: String
   description: String
   image: String
+  title: String
+  section_id: String
 }
 
 input create_speakers_input {
@@ -2172,6 +2184,7 @@ input hash_filter_operators {
 
 input icons_filter {
   id: number_filter_operators
+  name: string_filter_operators
   _and: [icons_filter]
   _or: [icons_filter]
 }
@@ -2245,6 +2258,8 @@ input sections_filter {
   type: string_filter_operators
   description: string_filter_operators
   image: string_filter_operators
+  title: string_filter_operators
+  section_id: string_filter_operators
   _and: [sections_filter]
   _or: [sections_filter]
 }
@@ -2481,6 +2496,7 @@ input update_guests_input {
 
 input update_icons_input {
   id: ID
+  name: String
 }
 
 input update_programs_input {
@@ -2525,6 +2541,8 @@ input update_sections_input {
   type: String
   description: String
   image: String
+  title: String
+  section_id: String
 }
 
 input update_speakers_input {

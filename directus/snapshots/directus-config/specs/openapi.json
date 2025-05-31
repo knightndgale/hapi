@@ -9059,393 +9059,6 @@
         ]
       }
     },
-    "/items/icons": {
-      "post": {
-        "summary": "Create an Item",
-        "description": "Create a new icons item.",
-        "tags": [
-          "Items",
-          "ItemsIcons"
-        ],
-        "operationId": "createItemsIcons",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Meta"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "oneOf": [
-                  {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/ItemsIcons"
-                    }
-                  },
-                  {
-                    "$ref": "#/components/schemas/ItemsIcons"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "items": {
-                        "$ref": "#/components/schemas/ItemsIcons"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      },
-      "get": {
-        "summary": "List Items",
-        "description": "List the icons items.",
-        "tags": [
-          "Items",
-          "ItemsIcons"
-        ],
-        "operationId": "readItemsIcons",
-        "security": [
-          {
-            "Auth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Fields"
-          },
-          {
-            "$ref": "#/components/parameters/Limit"
-          },
-          {
-            "$ref": "#/components/parameters/Meta"
-          },
-          {
-            "$ref": "#/components/parameters/Offset"
-          },
-          {
-            "$ref": "#/components/parameters/Sort"
-          },
-          {
-            "$ref": "#/components/parameters/Filter"
-          },
-          {
-            "$ref": "#/components/parameters/Search"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "$ref": "#/components/schemas/ItemsIcons"
-                      }
-                    },
-                    "meta": {
-                      "$ref": "#/components/schemas/x-metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      },
-      "patch": {
-        "summary": "Update Multiple Items",
-        "description": "Update multiple icons items at the same time.",
-        "tags": [
-          "Items",
-          "ItemsIcons"
-        ],
-        "operationId": "updateItemsIcons",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Fields"
-          },
-          {
-            "$ref": "#/components/parameters/Limit"
-          },
-          {
-            "$ref": "#/components/parameters/Meta"
-          },
-          {
-            "$ref": "#/components/parameters/Offset"
-          },
-          {
-            "$ref": "#/components/parameters/Sort"
-          },
-          {
-            "$ref": "#/components/parameters/Filter"
-          },
-          {
-            "$ref": "#/components/parameters/Search"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "oneOf": [
-                  {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/ItemsIcons"
-                    }
-                  },
-                  {
-                    "$ref": "#/components/schemas/ItemsIcons"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "items": {
-                        "$ref": "#/components/schemas/ItemsIcons"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete Multiple Items",
-        "description": "Delete multiple existing icons items.",
-        "tags": [
-          "Items",
-          "ItemsIcons"
-        ],
-        "operationId": "deleteItemsIcons",
-        "responses": {
-          "200": {
-            "description": "Successful request"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        },
-        "parameters": []
-      }
-    },
-    "/items/icons/{id}": {
-      "get": {
-        "summary": "Retrieve an Item",
-        "description": "Retrieve a single icons item by unique identifier.",
-        "tags": [
-          "Items",
-          "ItemsIcons"
-        ],
-        "operationId": "readSingleItemsIcons",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Fields"
-          },
-          {
-            "$ref": "#/components/parameters/Meta"
-          },
-          {
-            "$ref": "#/components/parameters/Version"
-          },
-          {
-            "name": "id",
-            "description": "Index of the item.",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "integer",
-                  "description": "Incremental index of the item.",
-                  "example": 1
-                },
-                {
-                  "type": "string",
-                  "description": "Unique identifier of the item.",
-                  "example": "8cbb43fe-4cdf-4991-8352-c461779cec02"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/ItemsIcons"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFoundError"
-          }
-        }
-      },
-      "patch": {
-        "summary": "Update an Item",
-        "description": "Update an existing icons item.",
-        "tags": [
-          "Items",
-          "ItemsIcons"
-        ],
-        "operationId": "updateSingleItemsIcons",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Fields"
-          },
-          {
-            "$ref": "#/components/parameters/Meta"
-          },
-          {
-            "name": "id",
-            "description": "Index of the item.",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "integer",
-                  "description": "Incremental index of the item.",
-                  "example": 1
-                },
-                {
-                  "type": "string",
-                  "description": "Unique identifier of the item.",
-                  "example": "8cbb43fe-4cdf-4991-8352-c461779cec02"
-                }
-              ]
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "$ref": "#/components/schemas/ItemsIcons"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/ItemsIcons"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFoundError"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete an Item",
-        "description": "Delete an existing icons item.",
-        "tags": [
-          "Items",
-          "ItemsIcons"
-        ],
-        "operationId": "deleteSingleItemsIcons",
-        "responses": {
-          "200": {
-            "description": "Successful request"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFoundError"
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Index of the item.",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "integer",
-                  "description": "Incremental index of the item.",
-                  "example": 1
-                },
-                {
-                  "type": "string",
-                  "description": "Unique identifier of the item.",
-                  "example": "8cbb43fe-4cdf-4991-8352-c461779cec02"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
     "/items/events_programs": {
       "post": {
         "summary": "Create an Item",
@@ -9833,15 +9446,15 @@
         ]
       }
     },
-    "/items/sections": {
+    "/items/icons": {
       "post": {
         "summary": "Create an Item",
-        "description": "Create a new sections item.",
+        "description": "Create a new icons item.",
         "tags": [
           "Items",
-          "ItemsSections"
+          "ItemsIcons"
         ],
-        "operationId": "createItemsSections",
+        "operationId": "createItemsIcons",
         "parameters": [
           {
             "$ref": "#/components/parameters/Meta"
@@ -9855,11 +9468,11 @@
                   {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/ItemsSections"
+                      "$ref": "#/components/schemas/ItemsIcons"
                     }
                   },
                   {
-                    "$ref": "#/components/schemas/ItemsSections"
+                    "$ref": "#/components/schemas/ItemsIcons"
                   }
                 ]
               }
@@ -9876,7 +9489,7 @@
                   "properties": {
                     "data": {
                       "items": {
-                        "$ref": "#/components/schemas/ItemsSections"
+                        "$ref": "#/components/schemas/ItemsIcons"
                       }
                     }
                   }
@@ -9891,12 +9504,12 @@
       },
       "get": {
         "summary": "List Items",
-        "description": "List the sections items.",
+        "description": "List the icons items.",
         "tags": [
           "Items",
-          "ItemsSections"
+          "ItemsIcons"
         ],
-        "operationId": "readItemsSections",
+        "operationId": "readItemsIcons",
         "security": [
           {
             "Auth": []
@@ -9937,7 +9550,7 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/components/schemas/ItemsSections"
+                        "$ref": "#/components/schemas/ItemsIcons"
                       }
                     },
                     "meta": {
@@ -9955,12 +9568,12 @@
       },
       "patch": {
         "summary": "Update Multiple Items",
-        "description": "Update multiple sections items at the same time.",
+        "description": "Update multiple icons items at the same time.",
         "tags": [
           "Items",
-          "ItemsSections"
+          "ItemsIcons"
         ],
-        "operationId": "updateItemsSections",
+        "operationId": "updateItemsIcons",
         "parameters": [
           {
             "$ref": "#/components/parameters/Fields"
@@ -9992,11 +9605,11 @@
                   {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/ItemsSections"
+                      "$ref": "#/components/schemas/ItemsIcons"
                     }
                   },
                   {
-                    "$ref": "#/components/schemas/ItemsSections"
+                    "$ref": "#/components/schemas/ItemsIcons"
                   }
                 ]
               }
@@ -10012,7 +9625,7 @@
                   "properties": {
                     "data": {
                       "items": {
-                        "$ref": "#/components/schemas/ItemsSections"
+                        "$ref": "#/components/schemas/ItemsIcons"
                       }
                     }
                   }
@@ -10024,12 +9637,12 @@
       },
       "delete": {
         "summary": "Delete Multiple Items",
-        "description": "Delete multiple existing sections items.",
+        "description": "Delete multiple existing icons items.",
         "tags": [
           "Items",
-          "ItemsSections"
+          "ItemsIcons"
         ],
-        "operationId": "deleteItemsSections",
+        "operationId": "deleteItemsIcons",
         "responses": {
           "200": {
             "description": "Successful request"
@@ -10041,15 +9654,15 @@
         "parameters": []
       }
     },
-    "/items/sections/{id}": {
+    "/items/icons/{id}": {
       "get": {
         "summary": "Retrieve an Item",
-        "description": "Retrieve a single sections item by unique identifier.",
+        "description": "Retrieve a single icons item by unique identifier.",
         "tags": [
           "Items",
-          "ItemsSections"
+          "ItemsIcons"
         ],
-        "operationId": "readSingleItemsSections",
+        "operationId": "readSingleItemsIcons",
         "parameters": [
           {
             "$ref": "#/components/parameters/Fields"
@@ -10091,7 +9704,7 @@
                   "properties": {
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/ItemsSections"
+                      "$ref": "#/components/schemas/ItemsIcons"
                     }
                   }
                 }
@@ -10108,12 +9721,12 @@
       },
       "patch": {
         "summary": "Update an Item",
-        "description": "Update an existing sections item.",
+        "description": "Update an existing icons item.",
         "tags": [
           "Items",
-          "ItemsSections"
+          "ItemsIcons"
         ],
-        "operationId": "updateSingleItemsSections",
+        "operationId": "updateSingleItemsIcons",
         "parameters": [
           {
             "$ref": "#/components/parameters/Fields"
@@ -10147,7 +9760,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "$ref": "#/components/schemas/ItemsSections"
+                "$ref": "#/components/schemas/ItemsIcons"
               }
             }
           }
@@ -10162,7 +9775,7 @@
                   "properties": {
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/ItemsSections"
+                      "$ref": "#/components/schemas/ItemsIcons"
                     }
                   }
                 }
@@ -10179,12 +9792,12 @@
       },
       "delete": {
         "summary": "Delete an Item",
-        "description": "Delete an existing sections item.",
+        "description": "Delete an existing icons item.",
         "tags": [
           "Items",
-          "ItemsSections"
+          "ItemsIcons"
         ],
-        "operationId": "deleteSingleItemsSections",
+        "operationId": "deleteSingleItemsIcons",
         "responses": {
           "200": {
             "description": "Successful request"
@@ -12154,6 +11767,393 @@
           }
         ]
       }
+    },
+    "/items/sections": {
+      "post": {
+        "summary": "Create an Item",
+        "description": "Create a new sections item.",
+        "tags": [
+          "Items",
+          "ItemsSections"
+        ],
+        "operationId": "createItemsSections",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Meta"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ItemsSections"
+                    }
+                  },
+                  {
+                    "$ref": "#/components/schemas/ItemsSections"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/ItemsSections"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "get": {
+        "summary": "List Items",
+        "description": "List the sections items.",
+        "tags": [
+          "Items",
+          "ItemsSections"
+        ],
+        "operationId": "readItemsSections",
+        "security": [
+          {
+            "Auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Fields"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Meta"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
+          },
+          {
+            "$ref": "#/components/parameters/Sort"
+          },
+          {
+            "$ref": "#/components/parameters/Filter"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/ItemsSections"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/x-metadata"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Multiple Items",
+        "description": "Update multiple sections items at the same time.",
+        "tags": [
+          "Items",
+          "ItemsSections"
+        ],
+        "operationId": "updateItemsSections",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Fields"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Meta"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
+          },
+          {
+            "$ref": "#/components/parameters/Sort"
+          },
+          {
+            "$ref": "#/components/parameters/Filter"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ItemsSections"
+                    }
+                  },
+                  {
+                    "$ref": "#/components/schemas/ItemsSections"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/ItemsSections"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Multiple Items",
+        "description": "Delete multiple existing sections items.",
+        "tags": [
+          "Items",
+          "ItemsSections"
+        ],
+        "operationId": "deleteItemsSections",
+        "responses": {
+          "200": {
+            "description": "Successful request"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/items/sections/{id}": {
+      "get": {
+        "summary": "Retrieve an Item",
+        "description": "Retrieve a single sections item by unique identifier.",
+        "tags": [
+          "Items",
+          "ItemsSections"
+        ],
+        "operationId": "readSingleItemsSections",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Fields"
+          },
+          {
+            "$ref": "#/components/parameters/Meta"
+          },
+          {
+            "$ref": "#/components/parameters/Version"
+          },
+          {
+            "name": "id",
+            "description": "Index of the item.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "description": "Incremental index of the item.",
+                  "example": 1
+                },
+                {
+                  "type": "string",
+                  "description": "Unique identifier of the item.",
+                  "example": "8cbb43fe-4cdf-4991-8352-c461779cec02"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/ItemsSections"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update an Item",
+        "description": "Update an existing sections item.",
+        "tags": [
+          "Items",
+          "ItemsSections"
+        ],
+        "operationId": "updateSingleItemsSections",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Fields"
+          },
+          {
+            "$ref": "#/components/parameters/Meta"
+          },
+          {
+            "name": "id",
+            "description": "Index of the item.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "description": "Incremental index of the item.",
+                  "example": 1
+                },
+                {
+                  "type": "string",
+                  "description": "Unique identifier of the item.",
+                  "example": "8cbb43fe-4cdf-4991-8352-c461779cec02"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/ItemsSections"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/ItemsSections"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an Item",
+        "description": "Delete an existing sections item.",
+        "tags": [
+          "Items",
+          "ItemsSections"
+        ],
+        "operationId": "deleteSingleItemsSections",
+        "responses": {
+          "200": {
+            "description": "Successful request"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Index of the item.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "description": "Incremental index of the item.",
+                  "example": 1
+                },
+                {
+                  "type": "string",
+                  "description": "Unique identifier of the item.",
+                  "example": "8cbb43fe-4cdf-4991-8352-c461779cec02"
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
   },
   "tags": [
@@ -12296,16 +12296,12 @@
       "x-collection": "events_sections"
     },
     {
-      "name": "ItemsIcons",
-      "x-collection": "icons"
-    },
-    {
       "name": "ItemsEventsPrograms",
       "x-collection": "events_programs"
     },
     {
-      "name": "ItemsSections",
-      "x-collection": "sections"
+      "name": "ItemsIcons",
+      "x-collection": "icons"
     },
     {
       "name": "ItemsGuestsDirectusFiles",
@@ -12326,6 +12322,10 @@
     {
       "name": "ItemsDirectusSyncIDMap",
       "x-collection": "directus_sync_id_map"
+    },
+    {
+      "name": "ItemsSections",
+      "x-collection": "sections"
     }
   ],
   "components": {
@@ -14499,16 +14499,6 @@
         },
         "x-collection": "events_sections"
       },
-      "ItemsIcons": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "nullable": false,
-            "type": "integer"
-          }
-        },
-        "x-collection": "icons"
-      },
       "ItemsEventsPrograms": {
         "type": "object",
         "properties": {
@@ -14543,65 +14533,19 @@
         },
         "x-collection": "events_programs"
       },
-      "ItemsSections": {
+      "ItemsIcons": {
         "type": "object",
         "properties": {
           "id": {
             "nullable": false,
             "type": "integer"
           },
-          "status": {
-            "nullable": false,
-            "type": "string"
-          },
-          "user_created": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "$ref": "#/components/schemas/Users"
-              }
-            ]
-          },
-          "date_created": {
-            "nullable": true,
-            "type": "string",
-            "format": "timestamp"
-          },
-          "user_updated": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "$ref": "#/components/schemas/Users"
-              }
-            ]
-          },
-          "date_updated": {
-            "nullable": true,
-            "type": "string",
-            "format": "timestamp"
-          },
-          "type": {
-            "nullable": true,
-            "type": "string"
-          },
-          "description": {
-            "nullable": true,
-            "type": "string"
-          },
-          "image": {
+          "name": {
             "nullable": true,
             "type": "string"
           }
         },
-        "x-collection": "sections"
+        "x-collection": "icons"
       },
       "ItemsGuestsDirectusFiles": {
         "type": "object",
@@ -14970,6 +14914,74 @@
           "sync_id",
           "local_id"
         ]
+      },
+      "ItemsSections": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "nullable": false,
+            "type": "integer"
+          },
+          "status": {
+            "nullable": false,
+            "type": "string"
+          },
+          "user_created": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "date_created": {
+            "nullable": true,
+            "type": "string",
+            "format": "timestamp"
+          },
+          "user_updated": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "date_updated": {
+            "nullable": true,
+            "type": "string",
+            "format": "timestamp"
+          },
+          "type": {
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "image": {
+            "nullable": true,
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "type": "string"
+          },
+          "section_id": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "x-collection": "sections"
       }
     },
     "parameters": {
