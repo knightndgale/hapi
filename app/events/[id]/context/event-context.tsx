@@ -108,6 +108,7 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           //   },
           // },
         });
+
         if (response.success && response.data) {
           const eventData = response.data;
           const guestsList = eventData.guests as unknown as { guests_id: Guest }[];
