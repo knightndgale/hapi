@@ -19,6 +19,8 @@ export const programIcons = {
 
 export type ProgramIcon = keyof typeof programIcons;
 
+export const IconsListSchema = z.enum(Object.keys(programIcons) as [ProgramIcon, ...ProgramIcon[]]);
+export type IconsListType = z.infer<typeof IconsListSchema>;
 export const ProgramIconSchema = z.object({
   name: z.enum(Object.keys(programIcons) as [ProgramIcon, ...ProgramIcon[]]),
 });

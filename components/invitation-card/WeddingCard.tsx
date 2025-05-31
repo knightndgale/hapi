@@ -1,9 +1,9 @@
-import { Event } from "@/types/schema/Event.schema";
+import { ExtendedEvent } from "@/app/events/[id]/context/event-context";
 import { Guest } from "@/types/schema/Guest.schema";
 import { QRCodeCanvas } from "qrcode.react";
 
 interface WeddingCardProps {
-  event: Event;
+  event: ExtendedEvent;
   guest: Guest;
   qrCodeUrl: string;
 }

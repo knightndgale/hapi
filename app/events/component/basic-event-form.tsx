@@ -28,7 +28,7 @@ const BasicFormEventSchema = EventSchema.pick({
   endDate: true,
   startTime: true,
   endTime: true,
-  program: true,
+  programs: true,
   pageBanner: true,
   maxAttendees: true,
   status: true,
@@ -53,7 +53,7 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
       endDate: defaultValues?.endDate ? new Date(defaultValues.endDate) : new Date(),
       startTime: defaultValues?.startTime || dayjs().format("HH:mm"),
       endTime: defaultValues?.endTime || dayjs().format("HH:mm"),
-      program: defaultValues?.program || [],
+      programs: defaultValues?.programs || [],
       pageBanner: defaultValues?.pageBanner || "",
       maxAttendees: defaultValues?.maxAttendees || 0,
       status: defaultValues?.status || "draft",
@@ -61,14 +61,14 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
   });
 
   const handleProgramItemSubmit = (item: ProgramItem) => {
-    const currentProgram = form.getValues("program") || [];
-    form.setValue("program", [...currentProgram, item], { shouldValidate: true });
+    const currentProgram = form.getValues("programs") || [];
+    form.setValue("programs", [...currentProgram, item], { shouldValidate: true });
   };
 
   const removeProgramItem = (index: number) => {
-    const currentProgram = form.getValues("program") || [];
+    const currentProgram = form.getValues("programs") || [];
     form.setValue(
-      "program",
+      "programs",
       currentProgram.filter((_, i) => i !== index),
       { shouldValidate: true }
     );
@@ -270,12 +270,12 @@ export function BasicEventForm({ onSubmit, defaultValues }: BasicEventFormProps)
           </div>
 
           <div className="space-y-4">
-            {!form.watch("program")?.length ? (
+            {!form.watch("programs")?.length ? (
               <div className="text-center p-8 border-2 border-dashed rounded-lg">
                 <div className="text-muted-foreground">No program items added yet</div>
               </div>
             ) : (
-              form.watch("program")?.map((item: ProgramItem, index: number) => (
+              form.watch("programs")?.map((item: ProgramItem, index: number) => (
                 <Card key={index} className="group relative hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
                     <div className="flex flex-col space-y-4">

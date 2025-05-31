@@ -22,8 +22,16 @@ const EventProgram = () => {
               <div key={index} className="relative flex gap-6 group">
                 {/* Timeline dot */}
                 <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center relative z-10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
-                  {item.programs_id && programIcons[item.programs_id.icon.name as keyof typeof programIcons] ? (
-                    React.createElement(programIcons[item.programs_id.icon.name as keyof typeof programIcons], { className: "h-7 w-7 text-primary" })
+                  {item.programs_id &&
+                  (typeof item.programs_id.icon === "string"
+                    ? programIcons[item.programs_id.icon as keyof typeof programIcons]
+                    : programIcons[item.programs_id.icon.name as keyof typeof programIcons]) ? (
+                    React.createElement(
+                      typeof item.programs_id.icon === "string"
+                        ? programIcons[item.programs_id.icon as keyof typeof programIcons]
+                        : programIcons[item.programs_id.icon.name as keyof typeof programIcons],
+                      { className: "h-7 w-7 text-primary" }
+                    )
                   ) : (
                     <Calendar className="h-7 w-7 text-primary" />
                   )}

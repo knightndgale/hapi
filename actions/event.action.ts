@@ -16,7 +16,7 @@ const mockEventData: Event = {
   type: "wedding",
   templateId: "template-1",
   sections: [],
-  program: [
+  programs: [
     {
       title: "Welcome",
       description: "Welcome ceremony",
@@ -26,7 +26,9 @@ const mockEventData: Event = {
         bio: "Event Host",
         image: "",
       },
-      icon: "church",
+      icon: {
+        name: "church",
+      },
     },
   ],
   guests: [],
@@ -65,7 +67,7 @@ const dummyEvents: Event[] = [
       accept_text: "I'll be there",
       decline_text: "Sorry, can't make it",
     },
-    program: [],
+    programs: [],
     guests: [],
     maxAttendees: 100,
     sections: [],
@@ -90,7 +92,7 @@ const dummyEvents: Event[] = [
       accept_text: "Count me in",
       decline_text: "Maybe next time",
     },
-    program: [],
+    programs: [],
     guests: [],
     maxAttendees: 500,
     sections: [],
@@ -116,7 +118,7 @@ const generateDummyEvents = (): Event[] => {
     type: types[Math.floor(Math.random() * types.length)],
     templateId: `template-${(i % 5) + 1}`,
     sections: [],
-    program: [
+    programs: [
       {
         title: "Welcome Session",
         description: "Opening remarks and welcome speech",
@@ -126,7 +128,9 @@ const generateDummyEvents = (): Event[] => {
           image: `https://i.pravatar.cc/150?u=${i}`,
           bio: "Event host and coordinator",
         },
-        icon: "church",
+        icon: {
+          name: "church",
+        },
       },
     ],
     guests: [],

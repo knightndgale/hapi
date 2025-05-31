@@ -8,9 +8,10 @@ import { toast } from "sonner";
 import html2canvas from "html2canvas";
 import { Download, FileImage, Printer, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ExtendedEvent } from "@/app/events/[id]/context/event-context";
 
 interface PrintPreviewProps {
-  event: Event;
+  event: ExtendedEvent;
   guest: Guest;
   qrCodeUrl: string;
   onClose: () => void;

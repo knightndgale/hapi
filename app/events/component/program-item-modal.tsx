@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProgramIcon, programIcons } from "@/constants/program-icons";
+import { ProgramIcon, programIcons, IconsListSchema, IconsListType } from "@/constants/program-icons";
 
 interface ProgramItemModalProps {
   open: boolean;
@@ -20,12 +20,12 @@ interface ProgramItemModalProps {
 
 export function ProgramItemModal({ open, onOpenChange, onSubmit }: ProgramItemModalProps) {
   const form = useForm<ProgramItem>({
-    resolver: zodResolver(ProgramItemSchema),
+    resolver: zodResolver(ProgramItemSchema.omit({ icon: true }).extend({ icon: IconsListSchema })),
     defaultValues: {
       title: undefined,
       description: undefined,
       dateTime: undefined,
-      icon: undefined,
+      icon: "church",
       speaker: undefined,
     },
   });
@@ -65,14 +65,14 @@ export function ProgramItemModal({ open, onOpenChange, onSubmit }: ProgramItemMo
                 render={({ field }) => (
                   <FormItem data-testid="program-icon">
                     <FormLabel>Icon</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value as IconsListType}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select an icon">
                             {field.value && (
                               <div className="flex items-center gap-2">
                                 {React.createElement(programIcons[field.value as ProgramIcon], { className: "h-4 w-4" })}
-                                <span>{field.value.toLocaleUpperCase()}</span>
+                                <span>{(field.value as IconsListType).toLocaleUpperCase()}</span>
                               </div>
                             )}
                           </SelectValue>

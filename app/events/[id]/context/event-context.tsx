@@ -16,7 +16,7 @@ type EventsProgram = {
   events_id: string;
   programs_id: ProgramItem;
 };
-interface ExtendedEvent extends Omit<Event, "sections" | "programs"> {
+export interface ExtendedEvent extends Omit<Event, "sections" | "programs"> {
   sections: EventsSection[];
   programs: EventsProgram[];
 }

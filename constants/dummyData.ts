@@ -20,6 +20,7 @@ export const dummyEvent: Event = {
   sections: [
     {
       id: "1",
+      section_id: "1",
       type: "content",
       title: "Our Love Story",
       description: `
@@ -30,12 +31,14 @@ export const dummyEvent: Event = {
     },
     {
       id: "2",
+      section_id: "1",
       type: "image",
       title: "Our Journey Together",
       image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800",
     },
     {
       id: "3",
+      section_id: "1",
       type: "content",
       title: "Wedding Details",
       description: `
@@ -61,6 +64,7 @@ export const dummyEvent: Event = {
     },
     {
       id: "4",
+      section_id: "1",
       type: "content",
       title: "What to Expect",
       description: `
@@ -97,7 +101,7 @@ export const dummyEvent: Event = {
       `,
     },
   ],
-  program: [
+  programs: [
     {
       title: "Ceremony",
       description: "Wedding ceremony",
