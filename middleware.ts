@@ -45,7 +45,7 @@ const debug = (message: string, data?: any) => {
  */
 
 // Paths that require authentication
-const protectedPaths = ["/dashboard", "/profile", "/api/guests", "/events/create", "/events/[id]", "/events/[id]/guests", "/invite/[eventId]/[guestId]"];
+const protectedPaths = ["/dashboard", "/profile", "/api/guests", "/events/create", "/events/[id]/guests", "/invite/[eventId]/[guestId]"];
 
 // Helper function to handle token refresh
 async function handleTokenRefresh(request: NextRequest, refreshToken: string | undefined) {

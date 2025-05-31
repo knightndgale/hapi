@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { submitRSVP } from "@/actions/guest.action";
 import { InvitationForm } from "./invitation-form";
 import { Guest } from "@/types/schema/Guest.schema";
+import { useRouter } from "next/navigation";
 
 interface InvitationDataFetcherProps {
   eventId: string;
@@ -34,6 +35,7 @@ export function InvitationDataFetcher({ eventId, guestId }: InvitationDataFetche
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const isCreatorView = guestId === "creatorView";
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,6 +112,10 @@ export function InvitationDataFetcher({ eventId, guestId }: InvitationDataFetche
         </div>
       </div>
     );
+  }
+
+  if (guestData.status === "accepted") {
+    router.push(`/events/${eventId}`);
   }
 
   return <InvitationForm eventData={eventData} guestData={guestData} onSubmitRSVP={submitRSVP} isCreatorView={isCreatorView} />;

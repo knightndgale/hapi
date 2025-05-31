@@ -35,7 +35,7 @@ const programIcons = {
 
 const EventView = () => {
   const { state } = useEvent();
-  const { event, loading, error } = state;
+  const { event, loading, error, user } = state;
 
   const router = useRouter();
 
@@ -185,31 +185,35 @@ const EventView = () => {
               )}
             </div>
 
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.8 }} className="space-y-6">
-              <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
-                <CardHeader className="text-lg font-semibold">Quick Actions</CardHeader>
-                <CardContent className="space-y-4">
-                  <Button className="w-full" onClick={() => router.push(`/events/${state.event?.id}/guests`)}>
-                    Manage Guests
-                  </Button>
-                  <Button variant="outline" className="w-full" onClick={() => toast.error("This feature is not available yet")}>
-                    Edit Event
-                  </Button>
-                </CardContent>
-              </Card>
+            {!!user && (
+              <>
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.8 }} className="space-y-6">
+                  <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+                    <CardHeader className="text-lg font-semibold">Quick Actions</CardHeader>
+                    <CardContent className="space-y-4">
+                      <Button className="w-full" onClick={() => router.push(`/events/${state.event?.id}/guests`)}>
+                        Manage Guests
+                      </Button>
+                      <Button variant="outline" className="w-full" onClick={() => toast.error("This feature is not available yet")}>
+                        Edit Event
+                      </Button>
+                    </CardContent>
+                  </Card>
 
-              {event.rsvp && (
-                <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => router.push(`/invite/${event.id}/creatorView`)}>
-                  <CardHeader className="text-lg font-semibold">RSVP Details</CardHeader>
-                  <CardContent className="space-y-2">
-                    <p className="font-medium">{event.rsvp.title}</p>
-                    <p className="text-sm text-muted-foreground">{event.rsvp.subtitle}</p>
-                    {event.rsvp.deadline && <p className="text-sm">Deadline: {format(new Date(event.rsvp.deadline), "MMMM d, yyyy")}</p>}
-                    <p className="text-sm text-blue-600 mt-2">Click to view your RSVP</p>
-                  </CardContent>
-                </Card>
-              )}
-            </motion.div>
+                  {event.rsvp && (
+                    <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => router.push(`/invite/${event.id}/creatorView`)}>
+                      <CardHeader className="text-lg font-semibold">RSVP Details</CardHeader>
+                      <CardContent className="space-y-2">
+                        <p className="font-medium">{event.rsvp.title}</p>
+                        <p className="text-sm text-muted-foreground">{event.rsvp.subtitle}</p>
+                        {event.rsvp.deadline && <p className="text-sm">Deadline: {format(new Date(event.rsvp.deadline), "MMMM d, yyyy")}</p>}
+                        <p className="text-sm text-blue-600 mt-2">Click to view your RSVP</p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </motion.div>
+              </>
+            )}
           </div>
           {/* TODO Implement sections */}
           {/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 space-y-8">
