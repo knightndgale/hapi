@@ -6,12 +6,19 @@ import { getEventById, archiveEventSection } from "@/requests/event.request";
 import { Status, TDefaultFieldFilter } from "@/types/index.types";
 import { getMe } from "@/requests/auth.request";
 import { Guest } from "@/types/schema/Guest.schema";
+import { ProgramItem } from "@/types/schema/Program.schema";
 type EventsSection = {
   events_id: string;
   sections_id: Section;
 };
-interface ExtendedEvent extends Omit<Event, "sections"> {
+
+type EventsProgram = {
+  events_id: string;
+  programs_id: ProgramItem;
+};
+interface ExtendedEvent extends Omit<Event, "sections" | "programs"> {
   sections: EventsSection[];
+  programs: EventsProgram[];
 }
 interface EventState {
   event: ExtendedEvent | null;
@@ -92,7 +99,7 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
         dispatch({ type: "SET_LOADING", payload: true });
 
         const response = await loadEvent(eventId, {
-          fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*"],
+          fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*", "programs.programs_id.*", "programs.programs_id.icon.*"],
           filter: {
             sections: {
               sections_id: {
@@ -115,7 +122,14 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
               sections_id: section.sections_id || section,
             }));
 
-          dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections } });
+          const programs = eventData.programs
+            .filter((program: any) => program.programs_id.status !== Status.Enum.archived)
+            .map((program: any) => ({
+              events_id: eventData.id,
+              programs_id: program.programs_id || program,
+            }));
+
+          dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections, programs } });
         } else {
           dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
         }
@@ -147,7 +161,7 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           dispatch({ type: "SET_LOADING", payload: true });
           const response = await loadEvent(id ?? eventId, {
             ...props,
-            fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*"],
+            fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*", "programs.programs_id.*", "programs.programs_id.icon.*"],
             filter: {
               sections: {
                 sections_id: {
@@ -170,7 +184,14 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
                 sections_id: section.sections_id || section,
               }));
 
-            dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections } });
+            const programs = eventData.programs
+              .filter((program: any) => program.programs_id.status !== Status.Enum.archived)
+              .map((program: any) => ({
+                events_id: eventData.id,
+                programs_id: program.programs_id || program,
+              }));
+
+            dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections, programs } });
           } else {
             dispatch({ type: "SET_ERROR", payload: response.message || "Failed to load event" });
           }

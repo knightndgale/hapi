@@ -53,7 +53,7 @@ export const EventSchema = z.object({
   sections: z.array(SectionSchema).default([]),
   theme: ThemeSchema.optional(),
   backgroundImage: z.string().url().optional(),
-  program: z.array(ProgramItemSchema).default([]),
+  programs: z.array(ProgramItemSchema).default([]),
   created_by: z.string(),
 });
 

@@ -36,7 +36,6 @@ const programIcons = {
 const EventView = () => {
   const { state } = useEvent();
   const { event, loading, error, user } = state;
-
   const router = useRouter();
 
   if (loading) {
@@ -128,7 +127,7 @@ const EventView = () => {
                 </Card>
               </motion.div>
 
-              {event.program && event.program.length > 0 && (
+              {event.programs && event.programs.length > 0 && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
                   <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
                     <CardHeader className="text-xl font-semibold flex items-center gap-3 pb-2">
@@ -137,12 +136,12 @@ const EventView = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-10">
-                        {event.program.map((item, index) => (
+                        {event.programs.map((item, index) => (
                           <div key={index} className="relative flex gap-6 group">
                             {/* Timeline dot */}
                             <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center relative z-10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
-                              {item.icon && programIcons[item.icon as keyof typeof programIcons] ? (
-                                React.createElement(programIcons[item.icon as keyof typeof programIcons], { className: "h-7 w-7 text-primary" })
+                              {item.programs_id && programIcons[item.programs_id.icon.name as keyof typeof programIcons] ? (
+                                React.createElement(programIcons[item.programs_id.icon.name as keyof typeof programIcons], { className: "h-7 w-7 text-primary" })
                               ) : (
                                 <Calendar className="h-7 w-7 text-primary" />
                               )}
@@ -150,16 +149,16 @@ const EventView = () => {
 
                             <div className="flex-grow bg-white/60 rounded-xl p-6 shadow-sm transition-all duration-300 group-hover:bg-white/80 group-hover:shadow-md">
                               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                                <h3 className="font-semibold text-xl text-primary">{item.title}</h3>
+                                <h3 className="font-semibold text-xl text-primary">{item.programs_id.title}</h3>
                                 <div className="flex items-center gap-2 bg-primary/5 px-3 py-1 rounded-full">
                                   <Clock className="h-4 w-4 text-primary" />
-                                  <p className="text-sm font-medium text-primary">{format(new Date(item.dateTime), "h:mm a")}</p>
+                                  <p className="text-sm font-medium text-primary">{format(new Date(item.programs_id.dateTime), "h:mm a")}</p>
                                 </div>
                               </div>
 
-                              <p className="text-base mt-3 text-muted-foreground leading-relaxed">{item.description}</p>
+                              <p className="text-base mt-3 text-muted-foreground leading-relaxed">{item.programs_id.description}</p>
 
-                              {item.speaker && (
+                              {item.programs_id.speaker && (
                                 <div className="mt-4 pt-4 border-t border-primary/10">
                                   <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -168,9 +167,9 @@ const EventView = () => {
                                     <div>
                                       <p className="text-sm font-medium flex items-center gap-2">
                                         <span className="text-primary">Speaker:</span>
-                                        {item.speaker.name}
+                                        {item.programs_id.speaker.name}
                                       </p>
-                                      {item.speaker.bio && <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{item.speaker.bio}</p>}
+                                      {item.programs_id.speaker.bio && <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{item.programs_id.speaker.bio}</p>}
                                     </div>
                                   </div>
                                 </div>
@@ -185,7 +184,7 @@ const EventView = () => {
               )}
             </div>
 
-            {!!user && (
+            {!!user && !!user.id && (
               <>
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.8 }} className="space-y-6">
                   <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">

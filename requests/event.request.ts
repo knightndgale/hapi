@@ -39,7 +39,10 @@ export const getMyEvents = async (props: Partial<TDefaultFieldFilter<Event>> = {
   }
 };
 
-export const getEventById = async (id: Event["id"], props: Partial<TDefaultFieldFilter<Event>> = { fields: ["*", "rsvp.*", "guests.guests_id.*", "sections.sections_id.*"] }) => {
+export const getEventById = async (
+  id: Event["id"],
+  props: Partial<TDefaultFieldFilter<Event>> = { fields: ["*", "rsvp.*", "guests.guests_id.*", "sections.sections_id.*", "programs.programs_id.*", "programs.programs_id.icon.*"] }
+) => {
   try {
     const client = createDirectusClient();
 
@@ -47,7 +50,6 @@ export const getEventById = async (id: Event["id"], props: Partial<TDefaultField
       readItem(Collections.EVENTS, id, { ...props, filter: { ...props.filter, sections: { sections_id: { status: { _neq: Status.Enum.archived } } } } })
     )) as unknown as Event;
 
-    console.log("🚀 ~ getEventById ~ response:", response);
     return { success: true, data: response };
   } catch (error) {
     return { success: false, message: errorHandler(error) };

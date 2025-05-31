@@ -19,6 +19,8 @@ export const programIcons = {
 
 export type ProgramIcon = keyof typeof programIcons;
 
-export const ProgramIconSchema = z.enum(Object.keys(programIcons) as [ProgramIcon, ...ProgramIcon[]]);
+export const ProgramIconSchema = z.object({
+  name: z.enum(Object.keys(programIcons) as [ProgramIcon, ...ProgramIcon[]]),
+});
 
 export const getProgramIcon = (icon: ProgramIcon): LucideIcon => programIcons[icon];

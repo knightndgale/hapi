@@ -12,7 +12,6 @@ import { Section } from "@/types/schema/Event.schema";
 export default function EventEditView() {
   const { state, actions } = useEvent();
   const router = useRouter();
-  console.log(state.event?.sections);
 
   const handleSectionSubmit = async (data: Section) => {
     try {
