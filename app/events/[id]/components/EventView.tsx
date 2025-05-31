@@ -16,7 +16,7 @@ import { useEvent } from "../context/event-context";
 import { toast } from "sonner";
 import EventProgram from "./EventProgram";
 import EventDetails from "./EventDetails";
-
+import Image from "next/image";
 // Dummy data following the updated schema
 
 const programIcons = {
@@ -34,6 +34,40 @@ const programIcons = {
   book: Book,
   calendar: Calendar,
 } as const;
+
+const EventDetailsSection = () => {
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="space-y-8">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.8 }} className="space-y-4">
+        <h3 className="text-2xl font-medium">JUNE 30, 2025 | MONDAY | 2:00 PM</h3>
+      </motion.div>
+
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }} className="space-y-8">
+        <div className="space-y-4  bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
+          <div className="flex items-center gap-3 mb-2">
+            <Church className="w-6 h-6 text-primary" />
+            <h4 className="text-lg font-medium text-primary">Ceremony</h4>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xl font-medium">ST. MICHAEL THE ARCHANGEL PARISH</p>
+            <p className="text-lg">Barangay Heights, General Santos City</p>
+          </div>
+        </div>
+
+        <div className="space-y-4  bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
+          <div className="flex items-center gap-3 mb-2">
+            <Utensils className="w-6 h-6 text-primary" />
+            <h4 className="text-lg font-medium text-primary">Reception</h4>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xl font-medium">GRAND PALMERA HOTEL</p>
+            <p className="text-lg">Barangay Baluan, General Santos</p>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 const EventView = () => {
   const { state } = useEvent();
@@ -100,50 +134,87 @@ const EventView = () => {
           </motion.div>
         </motion.div>
 
-        <div className="container mx-auto py-12 px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
-              {/* TODO: Disabled for creator customized view */}
-              {/* <EventDetails />
-              <EventProgram /> */}
+        <div className="container mx-auto py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <EventDetailsSection />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="relative h-[400px] rounded-lg overflow-hidden">
+                <Image
+                  src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/ee183a58-6be2-410a-91f7-d0f046a8a837"
+                  alt="Wedding Decoration 1"
+                  width={1000}
+                  height={1000}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="relative h-[400px] rounded-lg overflow-hidden">
+                <Image
+                  src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/c8b99cdb-dbfe-44ec-992b-1638d815ba59"
+                  alt="Wedding Decoration 2"
+                  width={1000}
+                  height={1000}
+                  className="object-cover w-full h-full"
+                />
+              </div>
             </div>
-
-            {!!user && (
-              <>
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.8 }} className="space-y-6">
-                  <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
-                    <CardHeader className="text-lg font-semibold">Quick Actions</CardHeader>
-                    <CardContent className="space-y-4">
-                      <Button className="w-full" onClick={() => router.push(`/events/${state.event?.id}/guests`)}>
-                        Manage Guests
-                      </Button>
-                      <Button variant="outline" className="w-full" onClick={() => toast.error("This feature is not available yet")}>
-                        Edit Event
-                      </Button>
-                    </CardContent>
-                  </Card>
-
-                  {event.rsvp && (
-                    <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => router.push(`/invite/${event.id}/creatorView`)}>
-                      <CardHeader className="text-lg font-semibold">RSVP Details</CardHeader>
-                      <CardContent className="space-y-2">
-                        <p className="font-medium">{event.rsvp.title}</p>
-                        <p className="text-sm text-muted-foreground">{event.rsvp.subtitle}</p>
-                        {event.rsvp.deadline && <p className="text-sm">Deadline: {format(new Date(event.rsvp.deadline), "MMMM d, yyyy")}</p>}
-                        <p className="text-sm text-blue-600 mt-2">Click to view your RSVP</p>
-                      </CardContent>
-                    </Card>
-                  )}
-                </motion.div>
-              </>
-            )}
           </div>
-          {/* TODO Implement sections */}
-          {/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 space-y-8">
-            {event.sections.map((section, index) => (
-              <div key={section.sections_id.section_id + index}>{renderSection(section.sections_id)}</div>
-            ))}
-          </motion.div> */}
+
+          <div className="container mx-auto py-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div>
+                <h2 className="text-3xl font-medium mb-8 ">Wedding Timeline</h2>
+                <div className="grid grid-cols-1 gap-8">
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-24 text-sm font-medium">2:00 PM</div>
+                      <div className="w-auto">
+                        <p className="font-medium">Church Ceremony Begins</p>
+                        <p className="text-sm text-muted-foreground">ST. MICHAEL THE ARCHANGEL PARISH</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <div className="w-24 text-sm font-medium">3:30 PM</div>
+                      <div>
+                        <p className="font-medium">Photo Session</p>
+                        <p className="text-sm text-muted-foreground">Church Grounds</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <div className="w-24 text-sm font-medium">4:00 PM</div>
+                      <div>
+                        <p className="font-medium">Reception</p>
+                        <p className="text-sm text-muted-foreground">GRAND PALMERA HOTEL</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <div className="w-24 text-sm font-medium">6:00 PM</div>
+                      <div>
+                        <p className="font-medium">Dinner</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <div className="w-24 text-sm font-medium">7:00 PM</div>
+                      <div>
+                        <p className="font-medium">Party</p>
+                        <p className="text-sm text-muted-foreground">Dance and celebrate with the newlyweds</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="relative h-[300px] md:h-[400px] col-span-2 w-full rounded-lg overflow-hidden">
+                  <Image
+                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/ad8d70e5-a6bc-49a3-a25a-f799b969d26d"
+                    alt="Wedding Decoration 1"
+                    width={1920}
+                    height={1080}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
