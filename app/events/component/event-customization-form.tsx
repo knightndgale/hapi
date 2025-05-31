@@ -14,9 +14,11 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, Trash2, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { SectionSchema } from "@/types/schema/Event.schema";
+import { toast } from "sonner";
+import { useEvent } from "@/app/events/[id]/context/event-context";
 
 const formSchema = z.object({
   backgroundImage: z.string().optional(),
@@ -171,7 +173,7 @@ function SectionModal({ section, onSubmit, onClose, isOpen }: SectionModalProps)
 interface SortableRowProps {
   section: z.infer<typeof SectionSchema>;
   onEdit: () => void;
-  onRemove: () => void;
+  onRemove: (e: React.MouseEvent) => void;
 }
 
 function SortableRow({ section, onEdit, onRemove }: SortableRowProps) {
@@ -202,10 +204,10 @@ function SortableRow({ section, onEdit, onRemove }: SortableRowProps) {
       </TableCell>
       <TableCell className="w-[120px]">
         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button variant="ghost" size="icon" onClick={onEdit} className="hover:bg-primary/10 hover:text-primary">
+          <Button type="button" variant="ghost" size="icon" onClick={onEdit} className="hover:bg-primary/10 hover:text-primary">
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={onRemove} className="hover:bg-destructive/10 hover:text-destructive">
+          <Button type="button" variant="ghost" size="icon" onClick={onRemove} className="hover:bg-destructive/10 hover:text-destructive">
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
@@ -215,6 +217,7 @@ function SortableRow({ section, onEdit, onRemove }: SortableRowProps) {
 }
 
 export function EventCustomizationForm({ onSectionSubmit, defaultValues }: EventCustomizationFormProps) {
+  const { actions } = useEvent();
   const form = useForm<EventCustomizationFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -225,6 +228,8 @@ export function EventCustomizationForm({ onSectionSubmit, defaultValues }: Event
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingSection, setEditingSection] = React.useState<z.infer<typeof SectionSchema> | undefined>();
+  const [sectionToDelete, setSectionToDelete] = React.useState<z.infer<typeof SectionSchema> | undefined>();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -247,12 +252,22 @@ export function EventCustomizationForm({ onSectionSubmit, defaultValues }: Event
     onSectionSubmit(data);
   };
 
-  const handleRemoveSection = (sectionId: string) => {
-    const sections = form.getValues("sections");
-    form.setValue(
-      "sections",
-      sections.filter((section) => section.section_id !== sectionId)
-    );
+  const handleRemoveSection = async (section: z.infer<typeof SectionSchema>) => {
+    setSectionToDelete(section);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteSection = async () => {
+    if (!sectionToDelete) return;
+
+    const res = await actions.deleteSection(sectionToDelete.section_id);
+    if (res.success) {
+      toast.success("Section deleted successfully");
+    } else {
+      toast.error(res.message || "Failed to delete section");
+    }
+    setIsDeleteDialogOpen(false);
+    setSectionToDelete(undefined);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -323,7 +338,7 @@ export function EventCustomizationForm({ onSectionSubmit, defaultValues }: Event
                       </TableRow>
                     ) : (
                       defaultValues?.sections?.map((section) => (
-                        <SortableRow key={section.section_id} section={section} onEdit={() => handleEditSection(section)} onRemove={() => handleRemoveSection(section.section_id)} />
+                        <SortableRow key={section.section_id} section={section} onEdit={() => handleEditSection(section)} onRemove={() => handleRemoveSection(section)} />
                       ))
                     )}
                   </TableBody>
@@ -334,6 +349,24 @@ export function EventCustomizationForm({ onSectionSubmit, defaultValues }: Event
         </div>
 
         <SectionModal section={editingSection} onSubmit={handleSectionSubmit} onClose={() => setIsModalOpen(false)} isOpen={isModalOpen} />
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Section</DialogTitle>
+              <DialogDescription>Are you sure you want to delete this section? This action cannot be undone.</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDeleteSection}>
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </form>
     </Form>
   );

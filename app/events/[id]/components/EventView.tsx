@@ -4,15 +4,16 @@
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Event, Section } from "@/types/schema/Event.schema";
+
 import { Users, Calendar, MapPin, Clock, Church, Utensils, Music, Camera, Gift, Heart, User, Star, Trophy, Cake, Glasses, Mic, Book, Edit } from "lucide-react";
-import Image from "next/image";
+
 import { format } from "date-fns";
 
 import { motion } from "framer-motion";
-import { fadeIn, slideIn } from "@/lib/animations";
+
 import React from "react";
 import { useEvent } from "../context/event-context";
+import { toast } from "sonner";
 
 // Dummy data following the updated schema
 
@@ -31,49 +32,6 @@ const programIcons = {
   book: Book,
   calendar: Calendar,
 } as const;
-
-function renderSection(section: Section) {
-  switch (section.type) {
-    case "content":
-      return (
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeIn}
-          className="py-12 px-6 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-          <h2 className="text-2xl font-bold mb-4">{section.title}</h2>
-          {section.description && (
-            <div
-              className="prose max-w-none prose-lg prose-pink prose-headings:text-primary prose-a:text-primary hover:prose-a:text-primary/80"
-              dangerouslySetInnerHTML={{ __html: section.description }}
-            />
-          )}
-        </motion.div>
-      );
-
-    case "image":
-      return (
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideIn} className="py-12 px-6">
-          <h2 className="text-2xl font-bold mb-4">{section.title}</h2>
-          {section.image && (
-            <div className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-lg group">
-              <Image
-                src={`${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${section.image}`}
-                alt={section.title}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300" />
-            </div>
-          )}
-        </motion.div>
-      );
-
-    default:
-      return null;
-  }
-}
 
 const EventView = () => {
   const { state } = useEvent();
@@ -234,7 +192,7 @@ const EventView = () => {
                   <Button className="w-full" onClick={() => router.push(`/events/${state.event?.id}/guests`)}>
                     Manage Guests
                   </Button>
-                  <Button variant="outline" className="w-full" onClick={() => router.push(`/events/${state.event?.id}/edit`)}>
+                  <Button variant="outline" className="w-full" onClick={() => toast.error("This feature is not available yet")}>
                     Edit Event
                   </Button>
                 </CardContent>
@@ -253,12 +211,12 @@ const EventView = () => {
               )}
             </motion.div>
           </div>
-
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 space-y-8">
+          {/* TODO Implement sections */}
+          {/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 space-y-8">
             {event.sections.map((section, index) => (
-              <div key={section.sections_id.section_id}>{renderSection(section.sections_id)}</div>
+              <div key={section.sections_id.section_id + index}>{renderSection(section.sections_id)}</div>
             ))}
-          </motion.div>
+          </motion.div> */}
         </div>
       </div>
     </>

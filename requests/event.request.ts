@@ -43,7 +43,11 @@ export const getEventById = async (id: Event["id"], props: Partial<TDefaultField
   try {
     const client = createDirectusClient();
 
-    const response = (await client.request(readItem(Collections.EVENTS, id, props))) as unknown as Event;
+    const response = (await client.request(
+      readItem(Collections.EVENTS, id, { ...props, filter: { ...props.filter, sections: { sections_id: { status: { _neq: Status.Enum.archived } } } } })
+    )) as unknown as Event;
+
+    console.log("🚀 ~ getEventById ~ response:", response);
     return { success: true, data: response };
   } catch (error) {
     return { success: false, message: errorHandler(error) };
@@ -55,7 +59,18 @@ export async function addEventSection(eventId: string, data: Partial<Section>) {
     const client = createDirectusClient();
     const response = (await client.request(createItem(Collections.SECTIONS, { ...data, status: Status.Enum.published }))) as unknown as Section;
 
-    const createdEventsSection = await client.request(createItem(Collections.EVENTS_SECTIONS, { events_id: eventId, sections_id: response.id }));
+    await client.request(createItem(Collections.EVENTS_SECTIONS, { events_id: eventId, sections_id: response.id }));
+    return { success: true, data: response };
+  } catch (error) {
+    return { success: false, message: errorHandler(error) };
+  }
+}
+
+export async function archiveEventSection(sectionId: string) {
+  try {
+    const client = createDirectusClient();
+    const response = (await client.request(updateItem(Collections.SECTIONS, sectionId, { status: Status.Enum.archived }))) as unknown as Section;
+
     return { success: true, data: response };
   } catch (error) {
     return { success: false, message: errorHandler(error) };

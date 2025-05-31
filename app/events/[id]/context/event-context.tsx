@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, ReactNode, useEffect, useMemo } from "react";
 import { Event, Section } from "@/types/schema/Event.schema";
-import { getEventById } from "@/requests/event.request";
+import { getEventById, archiveEventSection } from "@/requests/event.request";
 import { Status, TDefaultFieldFilter } from "@/types/index.types";
 import { getMe } from "@/requests/auth.request";
 import { Guest } from "@/types/schema/Guest.schema";
@@ -39,6 +39,7 @@ interface EventContextType {
   state: EventState;
   actions: {
     loadEvent: (id: string, props?: Partial<TDefaultFieldFilter<ExtendedEvent>>) => Promise<void>;
+    deleteSection: (sectionId: string) => Promise<{ success: boolean; message?: string }>;
   };
   dispatch: React.Dispatch<EventAction>;
 }
@@ -48,6 +49,7 @@ const EventContext = createContext<EventContextType>({
   state: initialState,
   actions: {
     loadEvent: async (id: string, props?: Partial<TDefaultFieldFilter<ExtendedEvent>>) => {},
+    deleteSection: async (sectionId: string) => ({ success: false }),
   },
   dispatch: () => {},
 });
@@ -91,6 +93,13 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
 
         const response = await loadEvent(eventId, {
           fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*"],
+          filter: {
+            sections: {
+              sections_id: {
+                status: Status.Enum.published,
+              },
+            },
+          },
         });
 
         if (response.success && response.data) {
@@ -99,10 +108,12 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           const guests = guestsList.map((guest) => guest.guests_id).filter((guest) => guest?.status !== Status.Enum.archived);
 
           // Transform sections into EventsSection format
-          const sections = eventData.sections.map((section: any) => ({
-            events_id: eventData.id,
-            sections_id: section.sections_id || section,
-          }));
+          const sections = eventData.sections
+            .filter((section: any) => section.sections_id.status !== Status.Enum.archived)
+            .map((section: any) => ({
+              events_id: eventData.id,
+              sections_id: section.sections_id || section,
+            }));
 
           dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections } });
         } else {
@@ -137,6 +148,13 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           const response = await loadEvent(id ?? eventId, {
             ...props,
             fields: ["*", "guests.guests_id.*", "rsvp.*", "sections.sections_id.*"],
+            filter: {
+              sections: {
+                sections_id: {
+                  status: Status.Enum.published,
+                },
+              },
+            },
           });
 
           if (response.success && response.data) {
@@ -145,10 +163,12 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
             const guests = guestsList.map((guest) => guest.guests_id).filter((guest) => guest?.status !== Status.Enum.archived);
 
             // Transform sections into EventsSection format
-            const sections = eventData.sections.map((section: any) => ({
-              events_id: eventData.id,
-              sections_id: section.sections_id,
-            }));
+            const sections = eventData.sections
+              .filter((section: any) => section.sections_id.status !== Status.Enum.archived)
+              .map((section: any) => ({
+                events_id: eventData.id,
+                sections_id: section.sections_id || section,
+              }));
 
             dispatch({ type: "SET_EVENT", payload: { ...eventData, guests, sections } });
           } else {
@@ -156,6 +176,19 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           }
         } catch (error) {
           dispatch({ type: "SET_ERROR", payload: error instanceof Error ? error.message : "An error occurred" });
+        }
+      },
+      deleteSection: async (sectionId: string) => {
+        try {
+          const response = await archiveEventSection(sectionId);
+
+          if (response.success) {
+            // Reload the event data to get the updated sections
+            await actions.loadEvent(eventId);
+          }
+          return response;
+        } catch (error) {
+          return { success: false, message: error instanceof Error ? error.message : "Failed to delete section" };
         }
       },
     }),
