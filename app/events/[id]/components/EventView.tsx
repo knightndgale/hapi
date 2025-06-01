@@ -135,7 +135,7 @@ const EventView = () => {
         <div className="container mx-auto py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <EventDetailsSection />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className={`grid grid-cols-1 md:grid-cols-${!!user ? "3" : "2"} gap-4`}>
               <div className="relative h-[400px] rounded-lg overflow-hidden">
                 <Image
                   src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/ee183a58-6be2-410a-91f7-d0f046a8a837"
