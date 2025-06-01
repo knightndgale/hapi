@@ -93,10 +93,10 @@ function GuestListContent({ eventId }: { eventId: string }) {
           <AddGuestForm
             eventId={eventId}
             editGuest={selectedGuest}
-            onSuccess={() => {
+            onSuccess={async () => {
               setSelectedGuest(null);
               guestForm.onClose();
-              eventActions.loadEvent(eventId);
+              await eventActions.loadEvent(eventId);
             }}
           />
         </DialogContent>

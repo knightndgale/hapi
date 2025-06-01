@@ -45,8 +45,6 @@ export const createGuest = async (data: Omit<Guest, "id" | "token" | "response" 
 
     const response = (await client.request(createItem(Collections.GUESTS, data))) as unknown as Guest;
 
-    await client.request(createItem(Collections.EVENT_GUESTS, { guests_id: response.id, events_id: eventId }));
-
     // Generate JWT token with guest and event information
     const tokenPayload = {
       guestId: response.id,
@@ -56,6 +54,8 @@ export const createGuest = async (data: Omit<Guest, "id" | "token" | "response" 
     const secret = new TextEncoder().encode(JWT_SECRET);
 
     const token = await new jose.SignJWT(tokenPayload).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime(TOKEN_EXPIRATION).sign(secret);
+
+    await client.request(createItem(Collections.EVENT_GUESTS, { guests_id: response.id, events_id: eventId }));
 
     const updatedGuest = (await client.request(updateItem(Collections.GUESTS, response.id, { token }))) as unknown as Guest;
     return { success: true, data: updatedGuest };
