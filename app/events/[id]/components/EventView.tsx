@@ -11,6 +11,10 @@ import React from "react";
 import { useEvent } from "../context/event-context";
 
 import Image from "next/image";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { toast } from "sonner";
 // Dummy data following the updated schema
 
 const programIcons = {
@@ -131,7 +135,7 @@ const EventView = () => {
         <div className="container mx-auto py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <EventDetailsSection />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative h-[400px] rounded-lg overflow-hidden">
                 <Image
                   src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/ee183a58-6be2-410a-91f7-d0f046a8a837"
@@ -150,6 +154,36 @@ const EventView = () => {
                   className="object-cover w-full h-full"
                 />
               </div>
+
+              {!!user && (
+                <>
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.8 }} className="space-y-6">
+                    <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+                      <CardHeader className="text-lg font-semibold">Quick Actions</CardHeader>
+                      <CardContent className="space-y-4">
+                        <Button className="w-full" onClick={() => router.push(`/events/${state.event?.id}/guests`)}>
+                          Manage Guests
+                        </Button>
+                        <Button variant="outline" className="w-full" onClick={() => toast.error("This feature is not available yet")}>
+                          Edit Event
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    {event.rsvp && (
+                      <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => router.push(`/invite/${event.id}/creatorView`)}>
+                        <CardHeader className="text-lg font-semibold">RSVP Details</CardHeader>
+                        <CardContent className="space-y-2">
+                          <p className="font-medium">{event.rsvp.title}</p>
+                          <p className="text-sm text-muted-foreground">{event.rsvp.subtitle}</p>
+                          {event.rsvp.deadline && <p className="text-sm">Deadline: {format(new Date(event.rsvp.deadline), "MMMM d, yyyy")}</p>}
+                          <p className="text-sm text-blue-600 mt-2">Click to view your RSVP</p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </motion.div>
+                </>
+              )}
             </div>
           </div>
 
