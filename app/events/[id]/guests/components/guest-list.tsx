@@ -239,6 +239,8 @@ function GuestListContent({ eventId }: { eventId: string }) {
 export function GuestList({ eventId }: { eventId: string }) {
   const { state } = useEvent();
   const guests = state.event?.guests || [];
+  console.log("🚀 ~ GuestList ~ guests:", guests);
+  console.log("🚀 ~ GuestList ~ guests.length:", guests.length);
 
   return (
     <GuestListProvider guests={guests}>
