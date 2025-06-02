@@ -100,6 +100,7 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
 
         const response = await loadEvent(eventId, {
           fields: ["*", "rsvp.*", "guests.*.*", "sections.*.*", "programs.*.*"],
+          limit: 300,
           // filter: {
           //   sections: {
           //     sections_id: {
@@ -162,6 +163,7 @@ export function EventProvider({ children, eventId, loadEvent = getEventById }: E
           const response = await loadEvent(id ?? eventId, {
             ...props,
             fields: ["*", "rsvp.*", "guests.*.*", "sections.*.*", "programs.*.*"],
+            limit: 300,
             // filter: {
             //   sections: {
             //     sections_id: {
