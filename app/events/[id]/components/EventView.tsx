@@ -41,25 +41,25 @@ const EventDetailsSection = () => {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }} className="space-y-6 md:space-y-8">
-        <div className="space-y-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-4 md:p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Church className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-            <h4 className="text-base md:text-lg font-medium text-primary">Ceremony</h4>
+        <div className="space-y-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-6 md:p-8">
+          <div className="flex items-center gap-4 mb-4">
+            <Church className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+            <h4 className="text-xl md:text-2xl font-semibold text-primary">Ceremony</h4>
           </div>
-          <div className="space-y-2">
-            <p className="text-lg md:text-xl font-medium">ST. MICHAEL THE ARCHANGEL PARISH</p>
-            <p className="text-base md:text-lg">Barangay Heights, General Santos City</p>
+          <div className="space-y-3">
+            <p className="text-xl md:text-2xl font-semibold tracking-wide">ST. MICHAEL THE ARCHANGEL PARISH</p>
+            <p className="text-lg md:text-xl text-muted-foreground">Barangay Heights, General Santos City</p>
           </div>
         </div>
 
-        <div className="space-y-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-4 md:p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Utensils className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-            <h4 className="text-base md:text-lg font-medium text-primary">Reception</h4>
+        <div className="space-y-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-6 md:p-8">
+          <div className="flex items-center gap-4 mb-4">
+            <Utensils className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+            <h4 className="text-xl md:text-2xl font-semibold text-primary">Reception</h4>
           </div>
-          <div className="space-y-2">
-            <p className="text-lg md:text-xl font-medium">GRAND PALMERA HOTEL</p>
-            <p className="text-base md:text-lg">Barangay Baluan, General Santos</p>
+          <div className="space-y-3">
+            <p className="text-xl md:text-2xl font-semibold tracking-wide">GRAND PALMERA HOTEL</p>
+            <p className="text-lg md:text-xl text-muted-foreground">Barangay Baluan, General Santos</p>
           </div>
         </div>
       </motion.div>
@@ -125,8 +125,8 @@ const EventView = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="absolute bottom-0 left-0 right-0 p-4 md:p-8 text-white">
             <div className="container mx-auto">
               <div>
-                <h1 className="text-3xl md:text-5xl font-bold mb-2 md:mb-4 text-shadow-lg text-center md:text-left">{event.title}</h1>
-                <p className="text-base md:text-xl opacity-90 max-w-2xl text-shadow text-center md:text-left">{event.description}</p>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 md:mb-6 text-shadow-lg text-center md:text-left tracking-tight">{event.title}</h1>
+                <p className="text-lg md:text-2xl opacity-90 max-w-3xl text-shadow text-center md:text-left leading-relaxed">{event.description}</p>
               </div>
             </div>
           </motion.div>
@@ -190,41 +190,41 @@ const EventView = () => {
           <div className="container mx-auto py-6 md:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
               <div>
-                <h2 className="text-2xl md:text-3xl font-medium mb-6 md:mb-8 text-center md:text-left">Wedding Timeline</h2>
-                <div className="grid grid-cols-1 gap-6 md:gap-8">
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3 md:gap-4">
-                      <div className="w-20 md:w-24 text-sm font-medium">2:00 PM</div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center md:text-left tracking-tight">Wedding Timeline</h2>
+                <div className="grid grid-cols-1 gap-8 md:gap-10">
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4 md:gap-6">
+                      <div className="w-24 md:w-28 text-base font-semibold text-primary">2:00 PM</div>
                       <div className="w-auto">
-                        <p className="font-medium">Church Ceremony Begins</p>
-                        <p className="text-sm text-muted-foreground">ST. MICHAEL THE ARCHANGEL PARISH</p>
+                        <p className="text-lg md:text-xl font-semibold mb-1">Church Ceremony Begins</p>
+                        <p className="text-base text-muted-foreground">ST. MICHAEL THE ARCHANGEL PARISH</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3 md:gap-4">
-                      <div className="w-20 md:w-24 text-sm font-medium">3:30 PM</div>
+                    <div className="flex items-start gap-4 md:gap-6">
+                      <div className="w-24 md:w-28 text-base font-semibold text-primary">3:30 PM</div>
                       <div>
-                        <p className="font-medium">Photo Session</p>
-                        <p className="text-sm text-muted-foreground">Church Grounds</p>
+                        <p className="text-lg md:text-xl font-semibold mb-1">Photo Session</p>
+                        <p className="text-base text-muted-foreground">Church Grounds</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3 md:gap-4">
-                      <div className="w-20 md:w-24 text-sm font-medium">4:00 PM</div>
+                    <div className="flex items-start gap-4 md:gap-6">
+                      <div className="w-24 md:w-28 text-base font-semibold text-primary">4:00 PM</div>
                       <div>
-                        <p className="font-medium">Reception</p>
-                        <p className="text-sm text-muted-foreground">GRAND PALMERA HOTEL</p>
+                        <p className="text-lg md:text-xl font-semibold mb-1">Reception</p>
+                        <p className="text-base text-muted-foreground">GRAND PALMERA HOTEL</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3 md:gap-4">
-                      <div className="w-20 md:w-24 text-sm font-medium">6:00 PM</div>
+                    <div className="flex items-start gap-4 md:gap-6">
+                      <div className="w-24 md:w-28 text-base font-semibold text-primary">6:00 PM</div>
                       <div>
-                        <p className="font-medium">Dinner</p>
+                        <p className="text-lg md:text-xl font-semibold mb-1">Dinner</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3 md:gap-4">
-                      <div className="w-20 md:w-24 text-sm font-medium">7:00 PM</div>
+                    <div className="flex items-start gap-4 md:gap-6">
+                      <div className="w-24 md:w-28 text-base font-semibold text-primary">7:00 PM</div>
                       <div>
-                        <p className="font-medium">Party</p>
-                        <p className="text-sm text-muted-foreground">Dance and celebrate with the newlyweds</p>
+                        <p className="text-lg md:text-xl font-semibold mb-1">Party</p>
+                        <p className="text-base text-muted-foreground">Dance and celebrate with the newlyweds</p>
                       </div>
                     </div>
                   </div>
@@ -246,40 +246,28 @@ const EventView = () => {
 
           {/* Attire Guide Section */}
           <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
-            <div className="max-w-4xl mx-auto text-center space-y-8">
-              <div className="space-y-4">
-                <h2 className="text-2xl md:text-3xl font-medium mb-6 md:mb-8 text-center ">Attire Guide</h2>
-                <h3 className="text-xl md:text-2xl font-medium text-primary">For Sponsors</h3>
-                <p className="text-base md:text-lg text-muted-foreground">We would love to see you in your semi-formal / formal that suits in our color motif</p>
-              </div>
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">Attire Guide</h2>
+              <h3 className="text-2xl md:text-3xl font-semibold text-primary mb-4 text-center">For Sponsors</h3>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed text-center">
+                We would love to see you in your semi-formal / formal that suits in our color motif
+              </p>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                <div className="relative h-[300px] md:h-[400px] rounded-lg overflow-hidden">
-                  <Image
-                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/ee183a58-6be2-410a-91f7-d0f046a8a837"
-                    alt="Attire Guide Example 1"
-                    width={1000}
-                    height={1000}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <div className="relative h-[300px] md:h-[400px] rounded-lg overflow-hidden">
-                  <Image
-                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/c8b99cdb-dbfe-44ec-992b-1638d815ba59"
-                    alt="Attire Guide Example 2"
-                    width={1000}
-                    height={1000}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              <div className="relative  rounded-lg overflow-hidden">
+                <Image src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/f47dce48-fcfa-461b-b3dd-c600aeeeaabc" alt="Attire Guide Example 1" width={800} height={1200} />
               </div>
+              <div className="relative rounded-lg overflow-hidden">
+                <Image src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/da027bd1-8796-4fe6-a446-99355d31f874" alt="Attire Guide Example 2" width={800} height={1200} />
+              </div>
+            </div>
 
-              <div className="space-y-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-6 md:p-8">
-                <h3 className="text-xl md:text-2xl font-medium">A Note on Gifts</h3>
-                <p className="text-base md:text-lg text-muted-foreground italic">
-                  With all that we have, we&apos;ve been truly blessed, your present and prayers are all that we request, but if you desire to give us nonetheless, monetary gift is one we suggest.
-                </p>
-              </div>
+            <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-8 md:p-10 text-center">
+              <h3 className="text-2xl md:text-3xl font-semibold mb-4">A Note on Gifts</h3>
+              <p className="text-lg md:text-xl text-muted-foreground italic leading-relaxed">
+                With all that we have, we&apos;ve been truly blessed, your present and prayers are all that we request, but if you desire to give us nonetheless, monetary gift is one we suggest.
+              </p>
             </div>
           </div>
         </div>
