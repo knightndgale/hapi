@@ -37,7 +37,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
   const [createdToken, setCreatedToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [createdGuest, setCreatedGuest] = useState<Guest | null>(null);
-  const { state } = useEvent();
+  const { state, actions } = useEvent();
 
   const form = useForm<AddGuestFormData>({
     resolver: zodResolver(AddGuestFormSchema),
@@ -65,9 +65,11 @@ export function AddGuestForm({ eventId, onSuccess, editGuest }: AddGuestFormProp
           setCreatedToken(res.data.token);
           setShowQR(true);
         }
+        await actions.loadEvent(eventId);
         return;
       }
 
+      await actions.loadEvent(eventId);
       onSuccess();
     } finally {
       setLoading(false);
