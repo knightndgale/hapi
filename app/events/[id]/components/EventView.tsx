@@ -243,6 +243,45 @@ const EventView = () => {
               </div>
             </div>
           </div>
+
+          {/* Attire Guide Section */}
+          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <div className="max-w-4xl mx-auto text-center space-y-8">
+              <div className="space-y-4">
+                <h2 className="text-2xl md:text-3xl font-medium mb-6 md:mb-8 text-center ">Attire Guide</h2>
+                <h3 className="text-xl md:text-2xl font-medium text-primary">For Sponsors</h3>
+                <p className="text-base md:text-lg text-muted-foreground">We would love to see you in your semi-formal / formal that suits in our color motif</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <div className="relative h-[300px] md:h-[400px] rounded-lg overflow-hidden">
+                  <Image
+                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/ee183a58-6be2-410a-91f7-d0f046a8a837"
+                    alt="Attire Guide Example 1"
+                    width={1000}
+                    height={1000}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="relative h-[300px] md:h-[400px] rounded-lg overflow-hidden">
+                  <Image
+                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/c8b99cdb-dbfe-44ec-992b-1638d815ba59"
+                    alt="Attire Guide Example 2"
+                    width={1000}
+                    height={1000}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-6 md:p-8">
+                <h3 className="text-xl md:text-2xl font-medium">A Note on Gifts</h3>
+                <p className="text-base md:text-lg text-muted-foreground italic">
+                  With all that we have, we&apos;ve been truly blessed, your present and prayers are all that we request, but if you desire to give us nonetheless, monetary gift is one we suggest.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

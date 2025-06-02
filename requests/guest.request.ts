@@ -3,7 +3,7 @@ import { errorHandler } from "@/helpers/errorHandler";
 import { createDirectusClient } from "@/lib/directus";
 import { Status, TDefaultFieldFilter } from "@/types/index.types";
 import { Guest } from "@/types/schema/Guest.schema";
-import { createItem, readItem, readItems, updateItem } from "@directus/sdk";
+import { createItem, readItem, readItems, updateItem, deleteItem } from "@directus/sdk";
 import * as jose from "jose";
 
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || "your-secret-key";
@@ -43,6 +43,7 @@ export const createGuest = async (data: Omit<Guest, "id" | "token" | "response" 
   try {
     const client = createDirectusClient();
 
+    // Create the guest first
     const response = (await client.request(createItem(Collections.GUESTS, data))) as unknown as Guest;
 
     // Generate JWT token with guest and event information
@@ -52,13 +53,25 @@ export const createGuest = async (data: Omit<Guest, "id" | "token" | "response" 
     };
 
     const secret = new TextEncoder().encode(JWT_SECRET);
-
     const token = await new jose.SignJWT(tokenPayload).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime(TOKEN_EXPIRATION).sign(secret);
 
-    await client.request(createItem(Collections.EVENT_GUESTS, { guests_id: response.id, events_id: eventId }));
+    try {
+      // Create the event_guest relationship
+      await client.request(
+        createItem(Collections.EVENT_GUESTS, {
+          guests_id: response.id,
+          events_id: eventId,
+        })
+      );
 
-    const updatedGuest = (await client.request(updateItem(Collections.GUESTS, response.id, { token }))) as unknown as Guest;
-    return { success: true, data: updatedGuest };
+      // Update the guest with the token
+      const updatedGuest = (await client.request(updateItem(Collections.GUESTS, response.id, { token }))) as unknown as Guest;
+      return { success: true, data: updatedGuest };
+    } catch (error) {
+      // If event_guest creation fails, delete the guest to maintain consistency
+      await client.request(deleteItem(Collections.GUESTS, response.id));
+      throw error;
+    }
   } catch (error) {
     return { success: false, message: errorHandler(error) };
   }
