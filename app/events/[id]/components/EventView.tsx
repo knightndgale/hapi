@@ -174,8 +174,8 @@ const EventView = () => {
                       <Card className="bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => router.push(`/invite/${event.id}/creatorView`)}>
                         <CardHeader className="text-base md:text-lg font-semibold">RSVP Details</CardHeader>
                         <CardContent className="space-y-2">
-                          <p className="font-medium">{event.rsvp.title}</p>
-                          <p className="text-sm text-muted-foreground">{event.rsvp.subtitle}</p>
+                          {/* <p className="font-medium">{event.rsvp.title}</p>
+                          <p className="text-sm text-muted-foreground">{event.rsvp.subtitle}</p> */}
                           {event.rsvp.deadline && <p className="text-sm">Deadline: {format(new Date(event.rsvp.deadline), "MMMM d, yyyy")}</p>}
                           <p className="text-sm text-blue-600 mt-2">Click to view your RSVP</p>
                         </CardContent>
