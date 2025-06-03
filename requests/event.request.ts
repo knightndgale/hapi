@@ -5,6 +5,7 @@ import { errorHandler } from "@/helpers/errorHandler";
 import createDirectusClient from "@/lib/directus";
 import { Event, Section } from "@/types/schema/Event.schema";
 import { createItem, readItem, readItems, readMe, updateItem } from "@directus/sdk";
+import { Guest } from "@/types/schema/Guest.schema";
 
 export const createEvent = async (event: Partial<Omit<Event, "id" | "rsvp"> & { rsvp?: string }>) => {
   try {
@@ -68,6 +69,19 @@ export async function archiveEventSection(sectionId: string) {
     const response = (await client.request(updateItem(Collections.SECTIONS, sectionId, { status: Status.Enum.archived }))) as unknown as Section;
 
     return { success: true, data: response };
+  } catch (error) {
+    return { success: false, message: errorHandler(error) };
+  }
+}
+
+export async function getEventGuests(eventId: string) {
+  try {
+    const client = createDirectusClient();
+    const response = await client.request(
+      readItems(Collections.EVENT_GUESTS, { filter: { events_id: { _eq: eventId }, guests_id: { status: { _neq: "archived" } } }, fields: ["*", "guests_id.*"], limit: 300 })
+    );
+    const guests = response.map((guest) => guest.guests_id) as unknown as Guest[];
+    return { success: true, data: guests };
   } catch (error) {
     return { success: false, message: errorHandler(error) };
   }

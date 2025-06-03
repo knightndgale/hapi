@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Edit2, Trash2, Share2 } from "lucide-react";
+import { Edit2, Trash2, Share2, Loader2 } from "lucide-react";
 import { archiveGuest } from "@/requests/guest.request";
 import { AddGuestForm } from "./add-guest-form";
 import { toast } from "sonner";
@@ -20,26 +20,43 @@ const pageSizes = [10, 20, 50, 100];
 
 function GuestListContent({ eventId }: { eventId: string }) {
   const { state, actions, filteredGuests, totalPages } = useGuestList();
-  const { state: eventState, actions: eventActions } = useEvent();
+  const { state: eventState } = useEvent();
 
   const guestForm = useDisclosure();
   const deleteDialog = useDisclosure();
+  const qrDialog = useDisclosure();
 
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
   const [selectedGuestForPrint, setSelectedGuestForPrint] = useState<Guest | null>(null);
+  const [createdGuest, setCreatedGuest] = useState<Guest | null>(null);
+  const [createdToken, setCreatedToken] = useState<string | null>(null);
 
   const handleDelete = async (guestId: string) => {
     const res = await archiveGuest(guestId);
     if (res.success) {
       toast.success("Guest removed");
-      eventActions.loadEvent(eventId);
+      await actions.loadGuests(eventId);
     } else {
       toast.error(res.message || "Failed to remove guest");
     }
     setGuestToDelete(null);
     deleteDialog.onClose();
+  };
+
+  const handleGuestCreated = (guest: Guest, token: string | null) => {
+    setCreatedGuest(guest);
+    setCreatedToken(token);
+    if (token) {
+      qrDialog.onOpen();
+    }
+  };
+
+  const handleQRClose = () => {
+    qrDialog.onClose();
+    setCreatedGuest(null);
+    setCreatedToken(null);
   };
 
   const getResponseColor = (response: GuestResponse) => {
@@ -55,6 +72,14 @@ function GuestListContent({ eventId }: { eventId: string }) {
 
   // Calculate paginated guests
   const paginatedGuests = filteredGuests.slice((state.currentPage - 1) * state.pageSize, state.currentPage * state.pageSize);
+
+  if (state.error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-red-500">Error: {state.error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4" data-testid="guest-list">
@@ -73,8 +98,9 @@ function GuestListContent({ eventId }: { eventId: string }) {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={guestForm.onOpen} variant="default">
+        <Button onClick={guestForm.onOpen} disabled={state.loading} variant="default">
           Add Guest
+          {state.loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
         </Button>
       </div>
 
@@ -91,13 +117,15 @@ function GuestListContent({ eventId }: { eventId: string }) {
             <DialogTitle>{selectedGuest ? "Edit Guest" : "Add Guest"}</DialogTitle>
           </DialogHeader>
           <AddGuestForm
+            guestForm={guestForm}
             eventId={eventId}
             editGuest={selectedGuest}
             onSuccess={async () => {
               setSelectedGuest(null);
               guestForm.onClose();
-              await eventActions.loadEvent(eventId);
+              await actions.loadGuests(eventId);
             }}
+            onGuestCreated={handleGuestCreated}
           />
         </DialogContent>
       </Dialog>
@@ -122,27 +150,18 @@ function GuestListContent({ eventId }: { eventId: string }) {
       </Dialog>
 
       <Dialog
-        open={showPrintPreview}
+        open={qrDialog.isOpen}
         onOpenChange={(open) => {
           if (!open) {
-            setShowPrintPreview(false);
-            setSelectedGuestForPrint(null);
+            handleQRClose();
           }
         }}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="sm:max-w-1xl">
           <DialogHeader>
-            <DialogTitle>Guest Invitation Card</DialogTitle>
+            <DialogTitle>Guest QR Code</DialogTitle>
           </DialogHeader>
-          {selectedGuestForPrint && eventState.event && (
-            <PrintPreview
-              event={eventState.event}
-              guest={selectedGuestForPrint}
-              qrCodeUrl={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${selectedGuestForPrint.token}`}
-              onClose={() => {
-                setShowPrintPreview(false);
-                setSelectedGuestForPrint(null);
-              }}
-            />
+          {eventState.event && createdGuest && (
+            <PrintPreview event={eventState.event} guest={createdGuest} qrCodeUrl={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${createdToken}`} onClose={handleQRClose} />
           )}
         </DialogContent>
       </Dialog>
@@ -237,13 +256,8 @@ function GuestListContent({ eventId }: { eventId: string }) {
 }
 
 export function GuestList({ eventId }: { eventId: string }) {
-  const { state } = useEvent();
-  const guests = state.event?.guests || [];
-  console.log("🚀 ~ GuestList ~ guests:", guests);
-  console.log("🚀 ~ GuestList ~ guests.length:", guests.length);
-
   return (
-    <GuestListProvider guests={guests}>
+    <GuestListProvider eventId={eventId}>
       <GuestListContent eventId={eventId} />
     </GuestListProvider>
   );
