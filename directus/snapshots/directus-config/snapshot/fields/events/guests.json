@@ -5,14 +5,18 @@
   "meta": {
     "collection": "events",
     "conditions": null,
-    "display": null,
-    "display_options": null,
+    "display": "related-values",
+    "display_options": {
+      "template": "{{guests_id.first_name}}{{guests_id.last_name}}"
+    },
     "field": "guests",
     "group": null,
     "hidden": false,
-    "interface": null,
+    "interface": "list-m2m",
     "note": null,
-    "options": null,
+    "options": {
+      "template": "{{guests_id.first_name}}{{guests_id.last_name}}"
+    },
     "readonly": false,
     "required": false,
     "sort": 23,
