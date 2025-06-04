@@ -5,16 +5,16 @@ import { Guest, GuestResponse } from "@/types/schema/Guest.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Edit2, Trash2, Share2, Loader2 } from "lucide-react";
 import { archiveGuest } from "@/requests/guest.request";
 import { AddGuestForm } from "./add-guest-form";
 import { toast } from "sonner";
 import { useEvent } from "../../context/event-context";
 import useDisclosure from "@/hooks/useDisclosure";
-import { PrintPreview } from "@/components/invitation-card/PrintPreview";
 import { GuestListProvider, useGuestList } from "../context/guest-list-context";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { GuestQRDialog } from "./guest-qr-dialog";
 
 const pageSizes = [10, 20, 50, 100];
 
@@ -28,10 +28,8 @@ function GuestListContent({ eventId }: { eventId: string }) {
 
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
-  const [showPrintPreview, setShowPrintPreview] = useState(false);
-  const [selectedGuestForPrint, setSelectedGuestForPrint] = useState<Guest | null>(null);
-  const [createdGuest, setCreatedGuest] = useState<Guest | null>(null);
-  const [createdToken, setCreatedToken] = useState<string | null>(null);
+  const [qrDialogGuest, setQrDialogGuest] = useState<Guest | null>(null);
+  const [qrDialogToken, setQrDialogToken] = useState<string | null>(null);
 
   const handleDelete = async (guestId: string) => {
     const res = await archiveGuest(guestId);
@@ -46,8 +44,8 @@ function GuestListContent({ eventId }: { eventId: string }) {
   };
 
   const handleGuestCreated = (guest: Guest, token: string | null) => {
-    setCreatedGuest(guest);
-    setCreatedToken(token);
+    setQrDialogGuest(guest);
+    setQrDialogToken(token);
     if (token) {
       qrDialog.onOpen();
     }
@@ -55,8 +53,14 @@ function GuestListContent({ eventId }: { eventId: string }) {
 
   const handleQRClose = () => {
     qrDialog.onClose();
-    setCreatedGuest(null);
-    setCreatedToken(null);
+    setQrDialogGuest(null);
+    setQrDialogToken(null);
+  };
+
+  const handleShowQR = (guest: Guest) => {
+    setQrDialogGuest(guest);
+    setQrDialogToken(guest.token || null);
+    qrDialog.onOpen();
   };
 
   const getResponseColor = (response: GuestResponse) => {
@@ -149,22 +153,7 @@ function GuestListContent({ eventId }: { eventId: string }) {
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={qrDialog.isOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            handleQRClose();
-          }
-        }}>
-        <DialogContent className="sm:max-w-1xl">
-          <DialogHeader>
-            <DialogTitle>Guest QR Code</DialogTitle>
-          </DialogHeader>
-          {eventState.event && createdGuest && (
-            <PrintPreview event={eventState.event} guest={createdGuest} qrCodeUrl={`${process.env.NEXT_PUBLIC_URL}/invite/validate/${createdToken}`} onClose={handleQRClose} />
-          )}
-        </DialogContent>
-      </Dialog>
+      <GuestQRDialog event={eventState.event} guest={qrDialogGuest} token={qrDialogToken} isOpen={qrDialog.isOpen} onClose={handleQRClose} />
 
       <div className="border rounded-lg">
         <Table>
@@ -188,13 +177,7 @@ function GuestListContent({ eventId }: { eventId: string }) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setSelectedGuestForPrint(guest);
-                        setShowPrintPreview(true);
-                      }}>
+                    <Button variant="ghost" size="icon" onClick={() => handleShowQR(guest)}>
                       <Share2 className="h-4 w-4" />
                     </Button>
                     <Button
