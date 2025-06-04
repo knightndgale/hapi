@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { upload } from "@/requests/file.request";
 import { toast } from "sonner";
 
@@ -16,6 +16,7 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({ value, onChange, onRemove, maxFiles = 1 }: ImageUploadProps) {
+  const [isLoading, setIsLoading] = useState(false);
   // Normalize value to array for internal logic
   const valueArray: string[] = typeof value === "string" ? (value ? [value] : []) : Array.isArray(value) ? value : [];
 
@@ -26,6 +27,7 @@ export function ImageUpload({ value, onChange, onRemove, maxFiles = 1 }: ImageUp
         return;
       }
       try {
+        setIsLoading(true);
         const file = acceptedFiles[0];
         const formData = new FormData();
         formData.append("file", file);
@@ -47,6 +49,8 @@ export function ImageUpload({ value, onChange, onRemove, maxFiles = 1 }: ImageUp
       } catch (error) {
         console.error("Error uploading image:", error);
         toast.error("Failed to upload image");
+      } finally {
+        setIsLoading(false);
       }
     },
     [onChange, valueArray, maxFiles]
@@ -82,10 +86,12 @@ export function ImageUpload({ value, onChange, onRemove, maxFiles = 1 }: ImageUp
           {...getRootProps()}
           className={`relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 transition-colors ${
             isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary"
-          }`}>
-          <input {...getInputProps()} />
-          <Upload className="h-8 w-8 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">{isDragActive ? `Drop the image here` : `Drag and drop an image, or click to select${maxFiles > 1 ? ` (max ${maxFiles})` : ""}`}</p>
+          } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}>
+          <input {...getInputProps()} disabled={isLoading} />
+          {isLoading ? <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" /> : <Upload className="h-8 w-8 text-muted-foreground" />}
+          <p className="text-sm text-muted-foreground">
+            {isLoading ? "Uploading..." : isDragActive ? `Drop the image here` : `Drag and drop an image, or click to select${maxFiles > 1 ? ` (max ${maxFiles})` : ""}`}
+          </p>
           <p className="text-xs text-muted-foreground">PNG, JPG, JPEG, GIF up to 10MB</p>
         </div>
       )}
