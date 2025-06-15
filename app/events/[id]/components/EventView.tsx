@@ -270,6 +270,113 @@ const EventView = () => {
               </p>
             </div>
           </div>
+
+          {/* The Finer Section */}
+          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <h2 className="text-3xl md:text-4xl font-bold  text-center tracking-tight">The Finer Details</h2>
+            <div className="relative w-full rounded-lg ">
+              <Image src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/7f1e8413-db4a-4711-adde-a40bd5122cb2" alt="The Finer Details" width={1280} height={650} />
+            </div>
+          </div>
+
+          {/* Reception Section */}
+          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-center tracking-tight">Reception</h2>
+            <div className="space-y-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-6 md:p-8">
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <h4 className="text-xl md:text-2xl font-semibold text-primary">Grand Palmera Hotel</h4>
+              </div>
+              <div className="space-y-3 text-center">
+                <p className="text-lg md:text-xl text-muted-foreground">Purok San Vicente, Barangay Baluan, General Santos</p>
+              </div>
+              <div className="w-full h-[450px] rounded-lg overflow-hidden mt-6">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3967.08927828654!2d125.21566!3d6.118684!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f775ab46710899%3A0x4ac3bb7c65ff79f6!2sGrand%20Palmera%20Hotel!5e0!3m2!1sen!2sph!4v1750000223346!5m2!1sen!2sph"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Grand Palmera Hotel Location"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Dress Code Section */}
+          <div className="container mx-auto py-6 md:py-8 px-4 md:px-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">Dress Code</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+              <div className="space-y-4">
+                <div className="space-y-4">
+                  <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+                    We kindly encourage our guests to wear semi-formal attire with these colors on our special day. Let&apos;s create a harmonious and elegant atmosphere together by incorporating our
+                    chosen color palette into your outfits.
+                  </p>
+                  <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+                    For our gentlemen, we suggest a well-tailored suit or a crisp barong paired with dress shoes. Ladies, you may opt for cocktail dresses, elegant skirts, or formal Filipiniana attire
+                    that complements our color scheme.
+                  </p>
+                  <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+                    Your presence and participation in our color theme will make our celebration even more special and create beautiful memories captured in our photographs. We can&apos;t wait to see
+                    everyone looking their best in our chosen colors!
+                  </p>
+                </div>
+                <div className="relative w-full rounded-lg">
+                  <Image
+                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/137d0225-d255-4259-ae07-41768a384dcd"
+                    alt="Dress Code Colors"
+                    width={1105}
+                    height={100}
+                    className="w-[1105px] h-[140px]"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-row gap-4">
+                <div className="w-full rounded-lg">
+                  <Image
+                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/64ef708b-a592-4fa7-8b1a-e46a907a9d78"
+                    alt="Dress Code Example 2"
+                    width={422}
+                    height={100}
+                    className="w-full h-auto"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* A Note on Gifts Section */}
+          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-8 md:p-10 text-center">
+              <h3 className="text-2xl md:text-3xl font-semibold mb-4">A Note on Gifts</h3>
+              <div className="space-y-4">
+                <p className="text-lg md:text-xl text-muted-foreground italic leading-relaxed">
+                  With all that we have, we&apos;ve been truly blessed, your present and prayers are all that we request, but if you desire to give us nonetheless, monetary gift is one we suggest.
+                </p>
+                <p className="text-lg md:text-xl text-muted-foreground italic leading-relaxed">
+                  Your presence at our celebration is the greatest gift we could ask for. However, if you wish to give us something more, a monetary gift would be greatly appreciated as we begin our
+                  journey together.
+                </p>
+                <p className="text-lg md:text-xl text-muted-foreground italic leading-relaxed">
+                  We are grateful for your love and support as we start this new chapter in our lives. Your blessings and well wishes mean the world to us.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* RSVP Section */}
+          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">RSVP</h2>
+              <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-8 md:p-10 text-center">
+                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-4">We have reserved _seats(s) for you.</p>
+                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-4">A favor of your reply is request on or before June 21, 2025.</p>
+                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">Message at +639 984-998-393 or message as thru Facebook or messenger</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
