@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Edit2, Trash2, Share2, Loader2 } from "lucide-react";
+import { Edit2, Trash2, Share2, Loader2, CheckCircle2, MoreHorizontal } from "lucide-react";
 import { archiveGuest } from "@/requests/guest.request";
 import { AddGuestForm } from "./add-guest-form";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import useDisclosure from "@/hooks/useDisclosure";
 import { GuestListProvider, useGuestList } from "../context/guest-list-context";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GuestQRDialog } from "./guest-qr-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const pageSizes = [10, 20, 50, 100];
 
@@ -25,9 +26,11 @@ function GuestListContent({ eventId }: { eventId: string }) {
   const guestForm = useDisclosure();
   const deleteDialog = useDisclosure();
   const qrDialog = useDisclosure();
+  const forceAcceptDialog = useDisclosure();
 
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
+  const [guestToForceAccept, setGuestToForceAccept] = useState<Guest | null>(null);
   const [qrDialogGuest, setQrDialogGuest] = useState<Guest | null>(null);
   const [qrDialogToken, setQrDialogToken] = useState<string | null>(null);
 
@@ -61,6 +64,12 @@ function GuestListContent({ eventId }: { eventId: string }) {
     setQrDialogGuest(guest);
     setQrDialogToken(guest.token || null);
     qrDialog.onOpen();
+  };
+
+  const handleForceAccept = async (guestId: string) => {
+    await actions.forceAcceptGuest(guestId);
+    setGuestToForceAccept(null);
+    forceAcceptDialog.onClose();
   };
 
   const getResponseColor = (response: GuestResponse) => {
@@ -153,6 +162,25 @@ function GuestListContent({ eventId }: { eventId: string }) {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={forceAcceptDialog.isOpen} onOpenChange={forceAcceptDialog.onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Force Accept Guest</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to force accept {guestToForceAccept?.first_name} {guestToForceAccept?.last_name}? This will mark them as accepted without requiring them to use the RSVP system.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex space-x-2 justify-end">
+            <Button variant="outline" onClick={forceAcceptDialog.onClose}>
+              Cancel
+            </Button>
+            <Button variant="default" onClick={() => guestToForceAccept && handleForceAccept(guestToForceAccept.id)}>
+              Force Accept
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <GuestQRDialog event={eventState.event} guest={qrDialogGuest} token={qrDialogToken} isOpen={qrDialog.isOpen} onClose={handleQRClose} />
 
       <div className="border rounded-lg">
@@ -176,28 +204,45 @@ function GuestListContent({ eventId }: { eventId: string }) {
                   <span className={getResponseColor(guest?.response)}>{guest?.response ? guest?.response.charAt(0).toUpperCase() + guest?.response.slice(1) : "Pending"}</span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="icon" onClick={() => handleShowQR(guest)}>
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setSelectedGuest(guest);
-                        guestForm.onOpen();
-                      }}>
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setGuestToDelete(guest);
-                        deleteDialog.onOpen();
-                      }}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
+                  <div className="flex items-center justify-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleShowQR(guest)}>
+                          <Share2 className="h-4 w-4 mr-2" />
+                          Share QR Code
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedGuest(guest);
+                            guestForm.onOpen();
+                          }}>
+                          <Edit2 className="h-4 w-4 mr-2" />
+                          Edit Guest
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setGuestToForceAccept(guest);
+                            forceAcceptDialog.onOpen();
+                          }}>
+                          <CheckCircle2 className="h-4 w-4 mr-2 text-green-600" />
+                          Force Accept
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => {
+                            setGuestToDelete(guest);
+                            deleteDialog.onOpen();
+                          }}>
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Remove Guest
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </TableCell>
               </TableRow>

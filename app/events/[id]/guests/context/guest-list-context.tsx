@@ -3,6 +3,7 @@
 import { createContext, useContext, useReducer, ReactNode, useMemo, useEffect } from "react";
 import { Guest, GuestResponse } from "@/types/schema/Guest.schema";
 import { getEventGuests } from "@/requests/event.request";
+import { updateGuest } from "@/requests/guest.request";
 
 // Types
 interface GuestListState {
@@ -23,6 +24,7 @@ interface GuestListContextType {
     setSearch: (search: string) => void;
     setResponseFilter: (response: GuestResponse | "all") => void;
     loadGuests: (eventId: string) => Promise<void>;
+    forceAcceptGuest: (guestId: string) => Promise<void>;
   };
   filteredGuests: Guest[];
   totalPages: number;
@@ -48,6 +50,7 @@ const GuestListContext = createContext<GuestListContextType>({
     setSearch: () => {},
     setResponseFilter: () => {},
     loadGuests: async () => {},
+    forceAcceptGuest: async () => {},
   },
   filteredGuests: [],
   totalPages: 0,
@@ -133,8 +136,21 @@ export function GuestListProvider({ children, eventId }: GuestListProviderProps)
           dispatch({ type: "SET_ERROR", payload: error instanceof Error ? error.message : "An error occurred" });
         }
       },
+      forceAcceptGuest: async (guestId: string) => {
+        try {
+          dispatch({ type: "SET_LOADING", payload: true });
+          const response = await updateGuest(guestId, { response: "accepted" });
+          if (response.success) {
+            await actions.loadGuests(eventId);
+          } else {
+            dispatch({ type: "SET_ERROR", payload: response.message || "Failed to force accept guest" });
+          }
+        } catch (error) {
+          dispatch({ type: "SET_ERROR", payload: error instanceof Error ? error.message : "An error occurred" });
+        }
+      },
     }),
-    []
+    [eventId]
   );
 
   // Memoize context value

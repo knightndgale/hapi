@@ -77,7 +77,7 @@ export const createGuest = async (data: Omit<Guest, "id" | "token" | "response" 
   }
 };
 
-export const updateGuest = async (id: string, data: Partial<Omit<Guest, "token" | "response" | "phoneNumber" | "dietaryRequirements" | "message">>) => {
+export const updateGuest = async (id: string, data: Partial<Omit<Guest, "token" | "phoneNumber" | "dietaryRequirements" | "message">>) => {
   try {
     const client = createDirectusClient();
     const { images, ...payload } = data;
