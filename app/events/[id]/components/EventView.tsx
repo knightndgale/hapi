@@ -33,6 +33,24 @@ const programIcons = {
   calendar: Calendar,
 } as const;
 
+// Update animation variants at the top of the file
+const fadeInUp = {
+  initial: { opacity: 0, y: 50 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: "easeOut" },
+};
+
+const staggerContainer = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
 const EventDetailsSection = () => {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="space-y-6 md:space-y-8">
@@ -109,7 +127,7 @@ const EventView = () => {
           backgroundPosition: "center",
         }}
         data-testid="main-container">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative h-[300px] md:h-[500px] w-full">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} className="relative h-[300px] md:h-[500px] w-full">
           <img
             role="banner"
             data-testid="event-banner"
@@ -132,7 +150,7 @@ const EventView = () => {
           </motion.div>
         </motion.div>
 
-        <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             <EventDetailsSection />
             <div className={`grid grid-cols-1 ${!!user ? "md:grid-cols-3" : "md:grid-cols-2"} gap-4`}>
@@ -245,7 +263,7 @@ const EventView = () => {
           </div>
 
           {/* Attire Guide Section */}
-          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">Attire Guide</h2>
               <h3 className="text-2xl md:text-3xl font-semibold text-primary mb-4 text-center">For Sponsors</h3>
@@ -269,18 +287,18 @@ const EventView = () => {
                 With all that we have, we&apos;ve been truly blessed, your present and prayers are all that we request, but if you desire to give us nonetheless, monetary gift is one we suggest.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* The Finer Section */}
-          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
             <h2 className="text-3xl md:text-4xl font-bold  text-center tracking-tight">The Finer Details</h2>
             <div className="relative w-full rounded-lg ">
               <Image src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/7f1e8413-db4a-4711-adde-a40bd5122cb2" alt="The Finer Details" width={1280} height={650} />
             </div>
-          </div>
+          </motion.div>
 
           {/* Reception Section */}
-          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
             <h2 className="text-3xl md:text-4xl font-bold text-center tracking-tight">Reception</h2>
             <div className="space-y-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-6 md:p-8">
               <div className="flex items-center justify-center gap-4 mb-4">
@@ -302,10 +320,10 @@ const EventView = () => {
                 />
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Dress Code Section */}
-          <div className="container mx-auto py-6 md:py-8 px-4 md:px-6">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-8 px-4 md:px-6">
             <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">Dress Code</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
               <div className="space-y-4">
@@ -345,10 +363,10 @@ const EventView = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* A Note on Gifts Section */}
-          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
             <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-8 md:p-10 text-center">
               <h3 className="text-2xl md:text-3xl font-semibold mb-4">A Note on Gifts</h3>
               <div className="space-y-4">
@@ -364,10 +382,10 @@ const EventView = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* RSVP Section */}
-          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">RSVP</h2>
               <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-8 md:p-10 text-center">
@@ -376,20 +394,19 @@ const EventView = () => {
                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">Message at +639 984-998-393 or message as thru Facebook or messenger</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bride - Groom Nuptials */}
-
-          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">Bride - Groom Nuptials</h2>
               <h4 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">To guide us in our way</h4>
             </div>
-          </div>
+          </motion.div>
 
           {/* Principal Sponsors Section */}
-          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
-            <div className="space-y-8">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <motion.div variants={fadeInUp} className="space-y-8">
               <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">Principal Sponsors</h3>
               <p className="text-lg md:text-xl text-center text-muted-foreground mb-8">To stand as principal witness in our exchange of vows</p>
 
@@ -436,11 +453,11 @@ const EventView = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Secondary Sponsors */}
-          <div className="space-y-8 mb-12">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="space-y-8 mb-12">
             <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">Secondary Sponsors</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
@@ -465,10 +482,10 @@ const EventView = () => {
                 <p className="text-lg md:text-xl">Rodel Gonzales</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Love, Treasure, and Faith */}
-          <div className="space-y-8 mb-12">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="space-y-8 mb-12">
             <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">To carry our symbol of Love, Treasure, and Faith</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
@@ -497,10 +514,10 @@ const EventView = () => {
                 <p className="text-lg md:text-xl">Vonne Trishia Mendoza</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Entourage Section */}
-          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
             <div className="space-y-8">
               <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">Entourage</h3>
               <div className="max-w-2xl mx-auto">
@@ -522,8 +539,8 @@ const EventView = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </>
   );
