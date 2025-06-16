@@ -190,7 +190,7 @@ function GuestListContent({ eventId }: { eventId: string }) {
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Response</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -204,7 +204,7 @@ function GuestListContent({ eventId }: { eventId: string }) {
                   <span className={getResponseColor(guest?.response)}>{guest?.response ? guest?.response.charAt(0).toUpperCase() + guest?.response.slice(1) : "Pending"}</span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
