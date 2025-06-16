@@ -18,6 +18,8 @@ import { PrintPreview } from "@/components/invitation-card/PrintPreview";
 import { useEvent } from "../../context/event-context";
 import { useGuestList } from "../context/guest-list-context";
 import useDisclosure, { IUseDisclosure } from "@/hooks/useDisclosure";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const AddGuestFormSchema = GuestSchema.pick({
   first_name: true,
@@ -72,74 +74,119 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
     }
   };
 
+  const getResponseColor = (response: string) => {
+    switch (response) {
+      case "accepted":
+        return "bg-green-100 text-green-800";
+      case "declined":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-yellow-100 text-yellow-800";
+    }
+  };
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4" data-testid="add-guest-form">
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Attendee Type</FormLabel>
-              <FormControl>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select guest type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="regular">Regular Attendee</SelectItem>
-                    <SelectItem value="entourage">Entourage</SelectItem>
-                    <SelectItem value="sponsor">Sponsor</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="first_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>First Name</FormLabel>
-              <FormControl>
-                <Input {...field} required />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="last_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last Name</FormLabel>
-              <FormControl>
-                <Input {...field} required />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email (Optional)</FormLabel>
-              <FormControl>
-                <Input type="email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full" disabled={loading}>
-          {editGuest ? "Update Attendee" : "Add Attendee"}
-        </Button>
-      </form>
-    </Form>
+    <div className={editGuest && editGuest.response !== "pending" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "w-full"}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4" data-testid="add-guest-form">
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Attendee Type</FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select guest type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="regular">Regular Attendee</SelectItem>
+                      <SelectItem value="entourage">Entourage</SelectItem>
+                      <SelectItem value="sponsor">Sponsor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="first_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input {...field} required />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="last_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input {...field} required />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email (Optional)</FormLabel>
+                <FormControl>
+                  <Input type="email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full" disabled={loading}>
+            {editGuest ? "Update Attendee" : "Add Attendee"}
+          </Button>
+        </form>
+      </Form>
+
+      {editGuest && editGuest.response !== "pending" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>RSVP Response</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="font-medium">Status:</span>
+              <Badge className={getResponseColor(editGuest.response)}>{editGuest.response.charAt(0).toUpperCase() + editGuest.response.slice(1)}</Badge>
+            </div>
+            {editGuest.phone_number && (
+              <div>
+                <span className="font-medium">Phone Number:</span>
+                <p className="text-sm text-gray-600">{editGuest.phone_number}</p>
+              </div>
+            )}
+            {editGuest.dietary_requirements && (
+              <div>
+                <span className="font-medium">Dietary Requirements:</span>
+                <p className="text-sm text-gray-600">{editGuest.dietary_requirements}</p>
+              </div>
+            )}
+            {editGuest.message && (
+              <div>
+                <span className="font-medium">Message:</span>
+                <p className="text-sm text-gray-600">{editGuest.message}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }
