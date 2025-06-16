@@ -91,5 +91,14 @@ export const createDirectusClient = () => {
   return client;
 };
 
+// Function to get asset URL from Directus
+export const getAssetURL = (client: ReturnType<typeof createDirectusClient>, assetId: string) => {
+  const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL;
+  if (!directusUrl) {
+    throw new Error("NEXT_PUBLIC_DIRECTUS_BASE_URL is not defined");
+  }
+  return `${directusUrl}/assets/${assetId}`;
+};
+
 // Export the function to create a new instance
 export default createDirectusClient;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,6 +20,9 @@ import { useGuestList } from "../context/guest-list-context";
 import useDisclosure, { IUseDisclosure } from "@/hooks/useDisclosure";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { createDirectusClient } from "@/lib/directus";
+import { getAssetURL } from "@/lib/directus";
 
 const AddGuestFormSchema = GuestSchema.pick({
   first_name: true,
@@ -42,6 +45,18 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
   const [loading, setLoading] = useState(false);
   const { state } = useEvent();
   const { actions: guestListActions } = useGuestList();
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadImages = async () => {
+      if (editGuest?.images && editGuest.images.length > 0) {
+        const client = createDirectusClient();
+        const urls = editGuest.images.map((imageId) => getAssetURL(client, imageId));
+        setImageUrls(urls);
+      }
+    };
+    loadImages();
+  }, [editGuest?.images]);
 
   const form = useForm<AddGuestFormData>({
     resolver: zodResolver(AddGuestFormSchema),
@@ -182,6 +197,19 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
               <div>
                 <span className="font-medium">Message:</span>
                 <p className="text-sm text-gray-600">{editGuest.message}</p>
+              </div>
+            )}
+            {imageUrls.length > 0 && (
+              <div>
+                <span className="font-medium mb-2 block">Attached Images:</span>
+                <div className="grid grid-cols-3 gap-2">
+                  {imageUrls.map((url, index) => (
+                    <Avatar key={index} className="h-20 w-20">
+                      <AvatarImage src={url} alt={`Guest image ${index + 1}`} />
+                      <AvatarFallback>IMG</AvatarFallback>
+                    </Avatar>
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>

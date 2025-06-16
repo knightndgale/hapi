@@ -77,7 +77,7 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
   const messages = eventData.rsvp || DEFAULT_MESSAGES[eventData.type];
   const isPhoneRequired = guestData.type === "entourage" || guestData.type === "sponsor";
 
-  if (!hasAccepted && !isCreatorView) {
+  if (guestData.response !== "declined" && !isCreatorView) {
     return (
       <div
         className="min-h-screen flex items-center justify-center p-8"
