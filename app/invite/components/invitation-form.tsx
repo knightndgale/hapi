@@ -31,6 +31,14 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
   const [loading, setLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const router = useRouter();
+  const hasAccepted = guestData.response === "accepted";
+
+  // Handle redirect before any rendering
+  if (hasAccepted && !isCreatorView) {
+    router.replace(`/events/${eventData.id}`);
+    return null;
+  }
+
   const handleImagesChange = (images: string | string[]) => {
     setUploadedImages(Array.isArray(images) ? images : images ? [images] : []);
   };
@@ -68,13 +76,38 @@ export function InvitationForm({ eventData, guestData, onSubmitRSVP, isCreatorVi
   const theme = THEME_COLORS[eventData.type];
   const messages = eventData.rsvp || DEFAULT_MESSAGES[eventData.type];
   const isPhoneRequired = guestData.type === "entourage" || guestData.type === "sponsor";
-  const hasResponded = guestData.response !== "pending";
 
-  useEffect(() => {
-    if (hasResponded && !isCreatorView) {
-      router.push(`/events/${eventData.id}`);
-    }
-  }, [hasResponded, isCreatorView, eventData.id, router]);
+  if (!hasAccepted && !isCreatorView) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center p-8"
+        style={{
+          backgroundImage: eventData.rsvp?.backgroundImage ? `url(${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp.backgroundImage})` : `url(${BACKGROUND_IMAGES[eventData.type]})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}>
+        <div className="max-w-2xl w-full bg-white/95 backdrop-blur-md p-8 rounded-lg shadow-lg space-y-8">
+          <div className="space-y-6 text-center">
+            {eventData.rsvp?.logo && (
+              <div className="relative w-16 h-16 mx-auto">
+                <Image src={`${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${eventData.rsvp.logo}`} alt="Logo" fill className="object-contain" sizes="64px" />
+              </div>
+            )}
+
+            <h1 className="text-3xl font-bold text-black">Thank you for your response!</h1>
+            <p className="text-lg text-black">
+              Dear {guestData.first_name} {guestData.last_name},
+            </p>
+            <p className="text-lg text-black">
+              We truly appreciate you taking the time to respond to our invitation. While we&apos;ll miss having you with us, we completely understand and respect your decision. Your presence in our
+              lives is valued, and we hope to celebrate with you on another occasion.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
