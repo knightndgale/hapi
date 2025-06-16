@@ -377,6 +377,124 @@ const EventView = () => {
               </div>
             </div>
           </div>
+
+          {/* Bride - Groom Nuptials */}
+
+          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">Bride - Groom Nuptials</h2>
+              <h4 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center tracking-tight">To guide us in our way</h4>
+            </div>
+          </div>
+
+          {/* Principal Sponsors */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="space-y-4">
+              <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary">Groomsmen</h3>
+              <div className="space-y-2 text-center">
+                <p className="text-lg md:text-xl">Justin M. Soriano</p>
+                <p className="text-lg md:text-xl">Gerald Prudente</p>
+                <p className="text-lg md:text-xl">Jeffrey Vidal</p>
+                <p className="text-lg md:text-xl">Warlito Balabagno</p>
+                <p className="text-lg md:text-xl">Karlo Asturias</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary">Bridesmaid</h3>
+              <div className="space-y-2 text-center">
+                <p className="text-lg md:text-xl">Meralous Colano</p>
+                <p className="text-lg md:text-xl">Charity E. Onato</p>
+                <p className="text-lg md:text-xl">Valirei Dionio</p>
+                <p className="text-lg md:text-xl">Lyzellyn Demetillo</p>
+                <p className="text-lg md:text-xl">Althea Kaye M. Soriano</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Secondary Sponsors */}
+          <div className="space-y-8 mb-12">
+            <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">Secondary Sponsors</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h4 className="text-xl md:text-2xl font-semibold text-center">Candle</h4>
+                <div className="space-y-2 text-center">
+                  <p className="text-lg md:text-xl">Rosarie D. Bantolo</p>
+                  <p className="text-lg md:text-xl">Billy Soriano</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-xl md:text-2xl font-semibold text-center">Cord</h4>
+                <div className="space-y-2 text-center">
+                  <p className="text-lg md:text-xl">Ronalyn B. Ortiz</p>
+                  <p className="text-lg md:text-xl">Mark Ortiz</p>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h4 className="text-xl md:text-2xl font-semibold text-center">Veil</h4>
+              <div className="space-y-2 text-center">
+                <p className="text-lg md:text-xl">Mary Roxanne S. Gonzales</p>
+                <p className="text-lg md:text-xl">Rodel Gonzales</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Love, Treasure, and Faith */}
+          <div className="space-y-8 mb-12">
+            <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">To carry our symbol of Love, Treasure, and Faith</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h4 className="text-xl md:text-2xl font-semibold text-center">Ring Bearer</h4>
+                <div className="space-y-2 text-center">
+                  <p className="text-lg md:text-xl">George Phil M. Bobon</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-xl md:text-2xl font-semibold text-center">Coin Bearer</h4>
+                <div className="space-y-2 text-center">
+                  <p className="text-lg md:text-xl">Mekael B. Ortiz</p>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h4 className="text-xl md:text-2xl font-semibold text-center">Bible Bearer</h4>
+              <div className="space-y-2 text-center">
+                <p className="text-lg md:text-xl">Rongelo B. Ortiz</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h4 className="text-xl md:text-2xl font-semibold text-center">Flower Girls</h4>
+              <div className="space-y-2 text-center">
+                <p className="text-lg md:text-xl">Gelyn Vankate M. Bobon</p>
+                <p className="text-lg md:text-xl">Vonne Trishia Mendoza</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Entourage Section */}
+          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <div className="space-y-8">
+              <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">Entourage</h3>
+              <div className="max-w-2xl mx-auto">
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <h4 className="text-xl md:text-2xl font-semibold text-center">Parents of the Groom</h4>
+                    <div className="space-y-2 text-center">
+                      <p className="text-lg md:text-xl">Billy Soriano Sr.</p>
+                      <p className="text-lg md:text-xl">Virgencita J. Soriano</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="text-xl md:text-2xl font-semibold text-center">Parents of the Bride</h4>
+                    <div className="space-y-2 text-center">
+                      <p className="text-lg md:text-xl">Nelfa D. Bantolo</p>
+                      <p className="text-lg md:text-xl">Romeo M. Bantolo</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
