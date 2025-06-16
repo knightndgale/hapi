@@ -387,26 +387,54 @@ const EventView = () => {
             </div>
           </div>
 
-          {/* Principal Sponsors */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div className="space-y-4">
-              <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary">Groomsmen</h3>
-              <div className="space-y-2 text-center">
-                <p className="text-lg md:text-xl">Justin M. Soriano</p>
-                <p className="text-lg md:text-xl">Gerald Prudente</p>
-                <p className="text-lg md:text-xl">Jeffrey Vidal</p>
-                <p className="text-lg md:text-xl">Warlito Balabagno</p>
-                <p className="text-lg md:text-xl">Karlo Asturias</p>
+          {/* Principal Sponsors Section */}
+          <div className="container mx-auto py-6 md:py-12 px-4 md:px-6">
+            <div className="space-y-8">
+              <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">Principal Sponsors</h3>
+              <p className="text-lg md:text-xl text-center text-muted-foreground mb-8">To stand as principal witness in our exchange of vows</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div className="space-y-4">
+                  <div className="space-y-3 text-center">
+                    <p className="text-base md:text-lg">Hazel S. Baccarro</p>
+                    <p className="text-base md:text-lg">Nita B. Sambile</p>
+                    <p className="text-base md:text-lg">Mary Verna Gimena</p>
+                    <p className="text-base md:text-lg">Genevhra E. Climaco</p>
+                    <p className="text-base md:text-lg">Elva Palma</p>
+                    <p className="text-base md:text-lg">Ma. Elena Villanueva</p>
+                    <p className="text-base md:text-lg">Joji Huliganga</p>
+                    <p className="text-base md:text-lg">Belen Y. Bacongco</p>
+                    <p className="text-base md:text-lg">Arlen A. Bañaga</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="space-y-3 text-center">
+                    <p className="text-base md:text-lg">Chirstian Mondero</p>
+                    <p className="text-base md:text-lg">Dee Tan</p>
+                    <p className="text-base md:text-lg">Teofilo Palma</p>
+                    <p className="text-base md:text-lg">Edwin Bacarro</p>
+                    <p className="text-base md:text-lg">Rolly Villanueva</p>
+                    <p className="text-base md:text-lg">Leo Huliganga</p>
+                    <p className="text-base md:text-lg">Armando Gimena</p>
+                    <p className="text-base md:text-lg">Jessie D. Bacongco</p>
+                    <p className="text-base md:text-lg">Michel Balabagno</p>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary">Bridesmaid</h3>
-              <div className="space-y-2 text-center">
-                <p className="text-lg md:text-xl">Meralous Colano</p>
-                <p className="text-lg md:text-xl">Charity E. Onato</p>
-                <p className="text-lg md:text-xl">Valirei Dionio</p>
-                <p className="text-lg md:text-xl">Lyzellyn Demetillo</p>
-                <p className="text-lg md:text-xl">Althea Kaye M. Soriano</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <h4 className="text-xl md:text-2xl font-semibold text-center">Best Man</h4>
+                  <div className="space-y-2 text-center">
+                    <p className="text-base md:text-lg">Billy Soriano</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-xl md:text-2xl font-semibold text-center">Maid of Honor</h4>
+                  <div className="space-y-2 text-center">
+                    <p className="text-base md:text-lg">Rosarie D. Bantolo</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
