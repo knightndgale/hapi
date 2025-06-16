@@ -78,7 +78,7 @@ export async function getEventGuests(eventId: string) {
   try {
     const client = createDirectusClient();
     const response = await client.request(
-      readItems(Collections.EVENT_GUESTS, { filter: { events_id: { _eq: eventId }, guests_id: { status: { _neq: "archived" } } }, fields: ["*", "guests_id.*"], limit: 300 })
+      readItems(Collections.EVENT_GUESTS, { filter: { events_id: { _eq: eventId }, guests_id: { status: { _neq: "archived" } } }, fields: ["*", "guests_id.*.*"], limit: 300 })
     );
     const guests = response.map((guest) => guest.guests_id) as unknown as Guest[];
     return { success: true, data: guests };

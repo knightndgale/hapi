@@ -23,6 +23,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createDirectusClient } from "@/lib/directus";
 import { getAssetURL } from "@/lib/directus";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const AddGuestFormSchema = GuestSchema.pick({
   first_name: true,
@@ -41,22 +43,18 @@ interface AddGuestFormProps {
   onGuestCreated: (guest: Guest, token: string | null) => void;
 }
 
+type GuestImage = {
+  id: number;
+  guests_id: number;
+  directus_files_id: string;
+};
+
 export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuestCreated }: AddGuestFormProps) {
   const [loading, setLoading] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { state } = useEvent();
   const { actions: guestListActions } = useGuestList();
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-
-  useEffect(() => {
-    const loadImages = async () => {
-      if (editGuest?.images && editGuest.images.length > 0) {
-        const client = createDirectusClient();
-        const urls = editGuest.images.map((imageId) => getAssetURL(client, imageId));
-        setImageUrls(urls);
-      }
-    };
-    loadImages();
-  }, [editGuest?.images]);
 
   const form = useForm<AddGuestFormData>({
     resolver: zodResolver(AddGuestFormSchema),
@@ -99,6 +97,19 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
         return "bg-yellow-100 text-yellow-800";
     }
   };
+
+  const handleImageClick = (index: number) => {
+    setSelectedImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const slides =
+    editGuest?.images?.map((image) => {
+      const imageObj = image as unknown as GuestImage;
+      return {
+        src: `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${imageObj.directus_files_id}`,
+      };
+    }) || [];
 
   return (
     <div className={editGuest && editGuest.response !== "pending" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "w-full"}>
@@ -174,7 +185,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
       {editGuest && editGuest.response !== "pending" && (
         <Card>
           <CardHeader>
-            <CardTitle>RSVP Response</CardTitle>
+            <CardTitle>Response</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
@@ -199,22 +210,28 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
                 <p className="text-sm text-gray-600">{editGuest.message}</p>
               </div>
             )}
-            {imageUrls.length > 0 && (
+            {editGuest.images && editGuest.images.length > 0 && (
               <div>
                 <span className="font-medium mb-2 block">Attached Images:</span>
                 <div className="grid grid-cols-3 gap-2">
-                  {imageUrls.map((url, index) => (
-                    <Avatar key={index} className="h-20 w-20">
-                      <AvatarImage src={url} alt={`Guest image ${index + 1}`} />
-                      <AvatarFallback>IMG</AvatarFallback>
-                    </Avatar>
-                  ))}
+                  {editGuest.images.map((image, index) => {
+                    const imageObj = image as unknown as GuestImage;
+                    const url = `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${imageObj.directus_files_id}`;
+
+                    return (
+                      <div key={index} className="relative aspect-square cursor-pointer overflow-hidden rounded-md border" onClick={() => handleImageClick(index)}>
+                        <img src={url} alt={`Guest image ${index + 1}`} className="h-full w-full object-cover transition-transform hover:scale-105" />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </CardContent>
         </Card>
       )}
+
+      <Lightbox open={lightboxOpen} close={() => setLightboxOpen(false)} slides={slides} index={selectedImageIndex} carousel={{ finite: true }} />
     </div>
   );
 }
