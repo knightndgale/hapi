@@ -347,14 +347,14 @@ const EventView = () => {
                     alt="Dress Code Colors"
                     width={1105}
                     height={100}
-                    className="w-[1105px] h-[140px]"
+                    className="w-[1105px] h-auto"
                   />
                 </div>
               </div>
               <div className="flex flex-row gap-4">
                 <div className="w-full rounded-lg">
                   <Image
-                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/64ef708b-a592-4fa7-8b1a-e46a907a9d78"
+                    src="https://hapi.j9apyz9bfea84.ap-southeast-1.cs.amazonlightsail.com/hapi/assets/759faa70-035a-456d-8036-2d356bca646a"
                     alt="Dress Code Example 2"
                     width={422}
                     height={100}
@@ -413,7 +413,7 @@ const EventView = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <div className="space-y-4">
                   <div className="space-y-3 text-center">
-                    <p className="text-base md:text-lg">Hazel S. Baccarro</p>
+                    <p className="text-base md:text-lg">Hazel Bacarro</p>
                     <p className="text-base md:text-lg">Nita B. Sambile</p>
                     <p className="text-base md:text-lg">Mary Verna Gimena</p>
                     <p className="text-base md:text-lg">Genevhra E. Climaco</p>
@@ -508,6 +508,12 @@ const EventView = () => {
               </div>
             </div>
             <div className="space-y-4">
+              <h4 className="text-xl md:text-2xl font-semibold text-center">Little Bride</h4>
+              <div className="space-y-2 text-center">
+                <p className="text-lg md:text-xl">Gerlane Jecz Sotero</p>
+              </div>
+            </div>
+            <div className="space-y-4">
               <h4 className="text-xl md:text-2xl font-semibold text-center">Flower Girls</h4>
               <div className="space-y-2 text-center">
                 <p className="text-lg md:text-xl">Gelyn Vankate M. Bobon</p>
@@ -519,7 +525,6 @@ const EventView = () => {
           {/* Entourage Section */}
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.3 }} className="container mx-auto py-6 md:py-12 px-4 md:px-6">
             <div className="space-y-8">
-              <h3 className="text-2xl md:text-3xl font-semibold text-center text-primary mb-6">Entourage</h3>
               <div className="max-w-2xl mx-auto">
                 <div className="space-y-8">
                   <div className="space-y-4">
