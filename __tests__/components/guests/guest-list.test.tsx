@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { vi } from "vitest";
-import { GuestList } from "@/components/guest/guest-list";
+import { GuestList } from "@/app/events/[id]/guests/components/guest-list";
 
 describe("GuestList", () => {
   const mockGuests = [

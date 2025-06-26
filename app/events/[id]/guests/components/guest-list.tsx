@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Edit2, Trash2, Share2, Loader2, CheckCircle2, MoreHorizontal } from "lucide-react";
+import { Edit2, Trash2, Share2, Loader2, CheckCircle2, MoreHorizontal, Image } from "lucide-react";
 import { archiveGuest } from "@/requests/guest.request";
 import { AddGuestForm } from "./add-guest-form";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import useDisclosure from "@/hooks/useDisclosure";
 import { GuestListProvider, useGuestList } from "../context/guest-list-context";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GuestQRDialog } from "./guest-qr-dialog";
+import { GuestImageUploadDialog } from "./guest-image-upload-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const pageSizes = [10, 20, 50, 100];
@@ -27,12 +28,14 @@ function GuestListContent({ eventId }: { eventId: string }) {
   const deleteDialog = useDisclosure();
   const qrDialog = useDisclosure();
   const forceAcceptDialog = useDisclosure();
+  const imageUploadDialog = useDisclosure();
 
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
   const [guestToForceAccept, setGuestToForceAccept] = useState<Guest | null>(null);
   const [qrDialogGuest, setQrDialogGuest] = useState<Guest | null>(null);
   const [qrDialogToken, setQrDialogToken] = useState<string | null>(null);
+  const [guestToUploadImages, setGuestToUploadImages] = useState<Guest | null>(null);
 
   const handleDelete = async (guestId: string) => {
     const res = await archiveGuest(guestId);
@@ -70,6 +73,21 @@ function GuestListContent({ eventId }: { eventId: string }) {
     await actions.forceAcceptGuest(guestId);
     setGuestToForceAccept(null);
     forceAcceptDialog.onClose();
+  };
+
+  const handleUploadImages = (guest: Guest) => {
+    setGuestToUploadImages(guest);
+    imageUploadDialog.onOpen();
+  };
+
+  const handleImageUploadSuccess = async () => {
+    await actions.loadGuests(eventId);
+    setGuestToUploadImages(null);
+  };
+
+  const handleImageUploadClose = () => {
+    setGuestToUploadImages(null);
+    imageUploadDialog.onClose();
   };
 
   const getResponseColor = (response: GuestResponse) => {
@@ -183,6 +201,8 @@ function GuestListContent({ eventId }: { eventId: string }) {
 
       <GuestQRDialog event={eventState.event} guest={qrDialogGuest} token={qrDialogToken} isOpen={qrDialog.isOpen} onClose={handleQRClose} />
 
+      <GuestImageUploadDialog guest={guestToUploadImages} isOpen={imageUploadDialog.isOpen} onClose={handleImageUploadClose} onSuccess={handleImageUploadSuccess} />
+
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
@@ -215,6 +235,10 @@ function GuestListContent({ eventId }: { eventId: string }) {
                         <DropdownMenuItem onClick={() => handleShowQR(guest)}>
                           <Share2 className="h-4 w-4 mr-2" />
                           Share QR Code
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleUploadImages(guest)}>
+                          <Image className="h-4 w-4 mr-2" />
+                          Upload Images
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => {
