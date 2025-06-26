@@ -134,9 +134,6 @@ export function DashboardContent() {
             // Safe fallback for image URL
             const imageUrl = event.pageBanner ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL || ""}/assets/${event.pageBanner}` : `https://picsum.photos/seed/${event.id}/400/300`;
 
-            // Safe guest count calculation
-            const guestsQuantity = event?.guests?.filter((guest) => guest?.guests_id?.status === Status.PUBLISHED)?.length || 0;
-
             return (
               <Link href={`/events/${event.id}`} key={event.id}>
                 <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
@@ -166,7 +163,7 @@ export function DashboardContent() {
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4" />
                         <span>
-                          {guestsQuantity} / {event?.maxAttendees || 0} guests
+                          {event?.guest_count || 0} / {event?.maxAttendees || 0} guests
                         </span>
                       </div>
                     </div>

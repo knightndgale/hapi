@@ -3,7 +3,7 @@
 import { createContext, useContext, useReducer, useEffect, useMemo, ReactNode } from "react";
 import { Event, EventType, EventStatus } from "@/types/schema/Event.schema";
 import { TDefaultFieldFilter } from "@/types/index.types";
-import { getEvents, getMyEvents } from "@/requests/event.request";
+import { getEvents, getMyEvents, getTotalGuestCount } from "@/requests/event.request";
 
 // Types
 type EventResponse = {
@@ -146,7 +146,26 @@ export function DashboardProvider({ children, loadEvents = getMyEvents }: Dashbo
           console.log("🚀 ~ loadEvents: ~ response:", response);
 
           if (response.success && response.data) {
-            dispatch({ type: "SET_EVENTS", payload: response.data });
+            // Fetch guest counts for each event
+            const eventsWithGuestCounts = await Promise.all(
+              response.data.map(async (event) => {
+                try {
+                  const guestCountResponse = await getTotalGuestCount(event.id);
+                  return {
+                    ...event,
+                    guest_count: guestCountResponse.success ? guestCountResponse.data || 0 : 0,
+                  };
+                } catch (error) {
+                  console.error(`Failed to fetch guest count for event ${event.id}:`, error);
+                  return {
+                    ...event,
+                    guest_count: 0,
+                  };
+                }
+              })
+            );
+
+            dispatch({ type: "SET_EVENTS", payload: eventsWithGuestCounts });
           } else {
             dispatch({
               type: "SET_ERROR",

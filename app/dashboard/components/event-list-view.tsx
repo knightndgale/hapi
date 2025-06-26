@@ -36,9 +36,9 @@ export function EventListView({ events }: EventListViewProps) {
               <TableCell>{formatDate(String(event.startDate))}</TableCell>
               <TableCell>{event.location}</TableCell>
               <TableCell className="capitalize">{event.status}</TableCell>
-              {/* <TableCell>
-                {event.guests.length}/{event.maxAttendees}
-              </TableCell> */}
+              <TableCell>
+                {event.guest_count}/{event.maxAttendees}
+              </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button variant="ghost" size="icon" onClick={() => router.push(`/events/${event.id}`)}>

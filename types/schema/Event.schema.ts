@@ -47,6 +47,7 @@ export const EventSchema = z.object({
   templateId: z.string(),
   guests: z.array(GuestSchema).default([]),
   maxAttendees: z.number(),
+  guest_count: z.number().default(0),
   rsvp: RSVPSchema.optional(),
   status: EventStatusSchema,
   pageBanner: z.string().uuid().optional(),

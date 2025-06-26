@@ -4,7 +4,7 @@ import { Collections } from "@/constants/collections.enum";
 import { errorHandler } from "@/helpers/errorHandler";
 import createDirectusClient from "@/lib/directus";
 import { Event, Section } from "@/types/schema/Event.schema";
-import { createItem, readItem, readItems, readMe, updateItem } from "@directus/sdk";
+import { aggregate, createItem, readItem, readItems, readMe, updateItem } from "@directus/sdk";
 import { Guest } from "@/types/schema/Guest.schema";
 
 export const createEvent = async (event: Partial<Omit<Event, "id" | "rsvp"> & { rsvp?: string }>) => {
@@ -12,6 +12,30 @@ export const createEvent = async (event: Partial<Omit<Event, "id" | "rsvp"> & { 
     const client = createDirectusClient();
     const response = (await client.request(createItem(Collections.EVENTS, event))) as unknown as Event;
     return { success: true, data: response };
+  } catch (error) {
+    return { success: false, message: errorHandler(error) };
+  }
+};
+
+export const getTotalGuestCount = async (eventId: string) => {
+  try {
+    const client = createDirectusClient();
+    const response = await client.request(
+      aggregate(Collections.EVENT_GUESTS, {
+        aggregate: {
+          count: "*",
+        },
+        query: {
+          filter: {
+            events_id: { _eq: eventId },
+            guests_id: {
+              status: { _neq: "archived" },
+            },
+          },
+        },
+      })
+    );
+    return { success: true, data: parseInt(response[0].count || "0") };
   } catch (error) {
     return { success: false, message: errorHandler(error) };
   }
