@@ -119,9 +119,10 @@ export function DashboardProvider({ children, loadEvents = getMyEvents }: Dashbo
       const matchesType = state.filters.type === "all" || event.type === state.filters.type;
       const matchesStatus = state.filters.status === "all" || event.status === state.filters.status;
       const matchesSearch =
-        event.title.toLowerCase().includes(state.filters.search.toLowerCase()) ||
-        event.description.toLowerCase().includes(state.filters.search.toLowerCase()) ||
-        event.location.toLowerCase().includes(state.filters.search.toLowerCase());
+        !state.filters.search ||
+        event.title?.toLowerCase().includes(state.filters.search.toLowerCase()) ||
+        event.description?.toLowerCase().includes(state.filters.search.toLowerCase()) ||
+        event.location?.toLowerCase().includes(state.filters.search.toLowerCase());
 
       return matchesType && matchesStatus && matchesSearch;
     });

@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { Status } from "@/constants/status.enum";
 import { Guest } from "@/types/schema/Guest.schema";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 const eventTypes = ["all", "wedding", "birthday", "seminar"];
 const eventStatuses = ["all", "draft", "published", "archived"];
@@ -38,12 +39,47 @@ export function DashboardContent() {
   const {
     state: { loading, error, currentPage, pageSize, viewMode, filters },
     totalPages,
-
     filteredEvents,
     actions,
   } = useDashboard();
   const router = useRouter();
-  if (error) return <div>Error: {error}</div>;
+
+  // Handle loading state
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner />
+        </div>
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="text-red-600 mb-4">Error: {error}</div>
+          <Button onClick={() => actions.loadEvents()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle empty state
+  if (!filteredEvents || filteredEvents.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="text-gray-500 mb-4">No events found</div>
+          <Button onClick={() => router.push("/events/create")}>
+            <Plus /> Create Your First Event
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -94,28 +130,38 @@ export function DashboardContent() {
       {/* Events Display */}
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(filteredEvents as unknown as ExtendedEvent[]).map(async (event) => {
-            const imageUrl = event.pageBanner ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL}/assets/${event.pageBanner}` : `https://picsum.photos/seed/${event.id}/400/300`;
+          {(filteredEvents as unknown as ExtendedEvent[]).map((event) => {
+            // Safe fallback for image URL
+            const imageUrl = event.pageBanner ? `${process.env.NEXT_PUBLIC_DIRECTUS_BASE_URL || ""}/assets/${event.pageBanner}` : `https://picsum.photos/seed/${event.id}/400/300`;
 
-            const guestsQuantity = event?.guests.filter((guest) => guest.guests_id.status === Status.PUBLISHED)?.length || 0;
+            // Safe guest count calculation
+            const guestsQuantity = event?.guests?.filter((guest) => guest?.guests_id?.status === Status.PUBLISHED)?.length || 0;
 
             return (
               <Link href={`/events/${event.id}`} key={event.id}>
                 <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
                   <CardHeader className="relative h-48 p-0">
-                    <img src={imageUrl} alt={event.title} className="object-cover rounded-t-lg w-full h-full" />
-                    <Badge className={`${statusColors[event.status]} absolute top-4 right-4`}>{event.status}</Badge>
+                    <img
+                      src={imageUrl}
+                      alt={event.title || "Event image"}
+                      className="object-cover rounded-t-lg w-full h-full"
+                      onError={(e) => {
+                        // Fallback to placeholder image on error
+                        e.currentTarget.src = `https://picsum.photos/seed/${event.id}/400/300`;
+                      }}
+                    />
+                    <Badge className={`${statusColors[event.status] || "bg-gray-100 text-gray-800"} absolute top-4 right-4`}>{event.status}</Badge>
                   </CardHeader>
                   <CardContent className="p-4">
                     <CardTitle className="text-lg mb-4">{event.title}</CardTitle>
                     <div className="space-y-2 text-sm text-gray-500">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        <span>{format(new Date(event.startDate), "PPP")}</span>
+                        <span>{event.startDate ? format(new Date(event.startDate), "PPP") : "Date TBD"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4" />
-                        <span>{event.location}</span>
+                        <span>{event.location || "Location TBD"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4" />
@@ -149,12 +195,12 @@ export function DashboardContent() {
                   <TableCell>{event.title}</TableCell>
                   <TableCell>{event.type}</TableCell>
                   <TableCell>
-                    <Badge className={statusColors[event.status]}>{event.status}</Badge>
+                    <Badge className={statusColors[event.status] || "bg-gray-100 text-gray-800"}>{event.status}</Badge>
                   </TableCell>
-                  <TableCell>{format(new Date(event.startDate), "PPP")}</TableCell>
-                  <TableCell>{event.location}</TableCell>
+                  <TableCell>{event.startDate ? format(new Date(event.startDate), "PPP") : "Date TBD"}</TableCell>
+                  <TableCell>{event.location || "Location TBD"}</TableCell>
                   <TableCell>
-                    {event.guests.length} / {event.maxAttendees}
+                    {event.guests?.length || 0} / {event.maxAttendees || 0}
                   </TableCell>
                 </TableRow>
               ))}
