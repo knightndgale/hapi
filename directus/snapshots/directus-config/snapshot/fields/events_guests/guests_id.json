@@ -5,13 +5,11 @@
   "meta": {
     "collection": "events_guests",
     "conditions": null,
-    "display": "related-values",
-    "display_options": {
-      "template": "{{first_name}}{{last_name}}"
-    },
+    "display": null,
+    "display_options": null,
     "field": "guests_id",
     "group": null,
-    "hidden": false,
+    "hidden": true,
     "interface": null,
     "note": null,
     "options": null,

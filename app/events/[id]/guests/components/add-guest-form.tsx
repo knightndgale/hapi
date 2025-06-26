@@ -69,7 +69,16 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
   const handleSubmit = async (data: AddGuestFormData) => {
     setLoading(true);
     try {
-      const res = editGuest ? await updateGuest(editGuest.id, data) : await createGuest({ ...data, status: Status.Enum.published }, eventId);
+      const res = editGuest
+        ? await updateGuest(editGuest.id, data)
+        : await createGuest(
+            {
+              ...data,
+              status: Status.Enum.published,
+              attendance_status: "not_admitted",
+            },
+            eventId
+          );
 
       if (!res.success) {
         toast.error(res.message);

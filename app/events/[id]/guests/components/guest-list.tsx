@@ -17,12 +17,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { GuestQRDialog } from "./guest-qr-dialog";
 import { GuestImageUploadDialog } from "./guest-image-upload-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 const pageSizes = [10, 20, 50, 100];
 
 function GuestListContent({ eventId }: { eventId: string }) {
   const { state, actions, filteredGuests, totalPages } = useGuestList();
   const { state: eventState } = useEvent();
+  const router = useRouter();
 
   const guestForm = useDisclosure();
   const deleteDialog = useDisclosure();
@@ -129,10 +131,15 @@ function GuestListContent({ eventId }: { eventId: string }) {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={guestForm.onOpen} disabled={state.loading} variant="default">
-          Add Guest
-          {state.loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => router.push(`/events/${eventId}/guests/attendance`)} disabled={state.loading} variant="outline">
+            Track Attendance
+          </Button>
+          <Button onClick={guestForm.onOpen} disabled={state.loading} variant="default">
+            Add Guest
+            {state.loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+          </Button>
+        </div>
       </div>
 
       <Dialog

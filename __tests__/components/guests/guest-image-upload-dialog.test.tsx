@@ -34,6 +34,7 @@ vi.mock("next/image", () => ({
 }));
 
 const mockGuest: Guest = {
+  attendance_status: "not_admitted",
   id: "1",
   first_name: "John",
   last_name: "Doe",

@@ -98,14 +98,26 @@ export async function archiveEventSection(sectionId: string) {
   }
 }
 
-export async function getEventGuests(eventId: string) {
+export async function getEventGuests(
+  eventId: string,
+  props: Partial<TDefaultFieldFilter<Guest>> = { filter: { events_id: { _eq: eventId }, guests_id: { status: { _neq: "archived" } } }, fields: ["*", "guests_id.*.*"], limit: 300 }
+) {
   try {
     const client = createDirectusClient();
-    const response = await client.request(
-      readItems(Collections.EVENT_GUESTS, { filter: { events_id: { _eq: eventId }, guests_id: { status: { _neq: "archived" } } }, fields: ["*", "guests_id.*.*"], limit: 300 })
-    );
+    const response = await client.request(readItems(Collections.EVENT_GUESTS, props));
     const guests = response.map((guest) => guest.guests_id) as unknown as Guest[];
+
     return { success: true, data: guests };
+  } catch (error) {
+    return { success: false, message: errorHandler(error) };
+  }
+}
+
+export async function getGuestByToken(token: string) {
+  try {
+    const client = createDirectusClient();
+    const response = await client.request(readItems(Collections.GUESTS, { filter: { token: { _eq: token } }, fields: ["*", "guests_id.*.*"] }));
+    return { success: true, data: response };
   } catch (error) {
     return { success: false, message: errorHandler(error) };
   }

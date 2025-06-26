@@ -3,6 +3,8 @@ import { Status } from "../index.types";
 
 export const GuestResponseSchema = z.enum(["pending", "accepted", "declined"]);
 
+export const GuestAttendanceStatusSchema = z.enum(["not_admitted", "admitted"]);
+
 export const GuestSchema = z.object({
   id: z.string().readonly(),
   first_name: z.string(),
@@ -16,7 +18,9 @@ export const GuestSchema = z.object({
   token: z.string().optional(),
   images: z.array(z.string()).optional(),
   status: z.enum(Status.options as [string, ...string[]]),
+  attendance_status: GuestAttendanceStatusSchema.optional().default("not_admitted"),
 });
 
 export type GuestResponse = z.infer<typeof GuestResponseSchema>;
+export type GuestAttendanceStatus = z.infer<typeof GuestAttendanceStatusSchema>;
 export type Guest = z.infer<typeof GuestSchema>;

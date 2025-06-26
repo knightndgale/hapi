@@ -127,6 +127,7 @@ export function GuestListProvider({ children, eventId }: GuestListProviderProps)
         try {
           dispatch({ type: "SET_LOADING", payload: true });
           const response = await getEventGuests(eventId);
+
           if (response.success && response.data) {
             dispatch({ type: "SET_GUESTS", payload: response.data });
           } else {
