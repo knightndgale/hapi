@@ -5,6 +5,7 @@ import { getEventById, getEvents } from "@/requests/event.request";
 import { Event, EventStatus, EventType } from "@/types/schema/Event.schema";
 // Mock data for development
 const mockEventData: Event = {
+  guest_count: 10,
   id: "event-1",
   title: "Sample Event",
   description: "Sample Description",
@@ -49,6 +50,7 @@ const mockEventData: Event = {
 // Dummy data for events
 const dummyEvents: Event[] = [
   {
+    guest_count: 10,
     id: "1",
     title: "Summer Wedding",
     description: "A beautiful summer wedding celebration",
@@ -74,6 +76,7 @@ const dummyEvents: Event[] = [
     created_by: "1",
   },
   {
+    guest_count: 10,
     id: "2",
     title: "Tech Conference 2024",
     description: "Annual technology conference",
@@ -107,6 +110,7 @@ const generateDummyEvents = (): Event[] => {
   const locations = ["New York", "London", "Tokyo", "Paris", "Berlin", "Sydney"];
 
   return Array.from({ length: 100 }, (_, i) => ({
+    guest_count: 10,
     id: `event-${i + 1}`,
     title: `Event ${i + 1}`,
     description: `Description for Event ${i + 1}. This is a sample event description.`,
