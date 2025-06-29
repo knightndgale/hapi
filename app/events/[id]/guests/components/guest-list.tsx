@@ -216,6 +216,7 @@ function GuestListContent({ eventId }: { eventId: string }) {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Seat Number</TableHead>
               <TableHead>Response</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
@@ -227,6 +228,7 @@ function GuestListContent({ eventId }: { eventId: string }) {
                   {guest?.first_name} {guest?.last_name}
                 </TableCell>
                 <TableCell>{guest?.email}</TableCell>
+                <TableCell>{guest?.seat_number || "-"}</TableCell>
                 <TableCell>
                   <span className={getResponseColor(guest?.response)}>{guest?.response ? guest?.response.charAt(0).toUpperCase() + guest?.response.slice(1) : "Pending"}</span>
                 </TableCell>

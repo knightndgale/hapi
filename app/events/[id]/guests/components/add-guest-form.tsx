@@ -31,6 +31,7 @@ const AddGuestFormSchema = GuestSchema.pick({
   last_name: true,
   type: true,
   email: true,
+  seat_number: true,
 });
 
 type AddGuestFormData = z.infer<typeof AddGuestFormSchema>;
@@ -63,6 +64,7 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
       last_name: editGuest?.last_name || "",
       email: editGuest?.email || "",
       type: editGuest?.type || "regular",
+      seat_number: editGuest?.seat_number || "",
     },
   });
 
@@ -180,6 +182,19 @@ export function AddGuestForm({ eventId, onSuccess, editGuest, guestForm, onGuest
                 <FormLabel>Email (Optional)</FormLabel>
                 <FormControl>
                   <Input type="email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="seat_number"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Seat Number</FormLabel>
+                <FormControl>
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

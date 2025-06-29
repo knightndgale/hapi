@@ -19,6 +19,7 @@ export const GuestSchema = z.object({
   images: z.array(z.string()).optional(),
   status: z.enum(Status.options as [string, ...string[]]),
   attendance_status: GuestAttendanceStatusSchema.optional().default("not_admitted"),
+  seat_number: z.string().optional(),
 });
 
 export type GuestResponse = z.infer<typeof GuestResponseSchema>;
