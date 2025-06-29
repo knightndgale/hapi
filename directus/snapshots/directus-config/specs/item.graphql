@@ -153,12 +153,12 @@ type Subscription {
   directus_dashboards_mutated(event: EventEnum): directus_dashboards_mutated
   directus_operations_mutated(event: EventEnum): directus_operations_mutated
   directus_translations_mutated(event: EventEnum): directus_translations_mutated
-  guests_mutated(event: EventEnum): guests_mutated
   directus_policies_mutated(event: EventEnum): directus_policies_mutated
   directus_access_mutated(event: EventEnum): directus_access_mutated
   directus_comments_mutated(event: EventEnum): directus_comments_mutated
   directus_versions_mutated(event: EventEnum): directus_versions_mutated
   directus_settings_mutated(event: EventEnum): directus_settings_mutated
+  guests_mutated(event: EventEnum): guests_mutated
   speakers_mutated(event: EventEnum): speakers_mutated
   programs_mutated(event: EventEnum): programs_mutated
   events_sections_mutated(event: EventEnum): events_sections_mutated
@@ -1014,6 +1014,7 @@ type guests {
   message: String
   token: String
   attendance_status: String
+  seat_number: String
   images(filter: guests_directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): [guests_directus_files]
   images_func: count_functions
 }
@@ -1048,6 +1049,7 @@ type guests_aggregated_count {
   message: Int
   token: Int
   attendance_status: Int
+  seat_number: Int
   images: Int
 }
 
@@ -1417,6 +1419,7 @@ type version_guests {
   message: String
   token: String
   attendance_status: String
+  seat_number: String
   images: JSON
 }
 
@@ -1705,6 +1708,7 @@ input create_guests_input {
   message: String
   token: String
   attendance_status: String
+  seat_number: String
   images: [create_guests_directus_files_input]
 }
 
@@ -2174,6 +2178,7 @@ input guests_filter {
   message: string_filter_operators
   token: string_filter_operators
   attendance_status: string_filter_operators
+  seat_number: string_filter_operators
   images: guests_directus_files_filter
   images_func: count_function_filter_operators
   _and: [guests_filter]
@@ -2497,6 +2502,7 @@ input update_guests_input {
   message: String
   token: String
   attendance_status: String
+  seat_number: String
   images: [update_guests_directus_files_input]
 }
 

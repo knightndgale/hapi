@@ -20,10 +20,17 @@ function AttendanceDataFetcherContent({ eventId }: { eventId: string }) {
   const [qrScannerOpen, setQrScannerOpen] = useState(false);
   const [guestToAdmit, setGuestToAdmit] = useState<Guest | null>(null);
   const [admitDialogOpen, setAdmitDialogOpen] = useState(false);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [admittedGuest, setAdmittedGuest] = useState<Guest | null>(null);
 
   const handleAdmitGuest = async (guestId: string) => {
     try {
       await actions.updateAttendanceStatus(guestId, "admitted");
+      const guest = filteredGuests.find((g) => g.id === guestId);
+      if (guest) {
+        setAdmittedGuest(guest);
+        setSuccessDialogOpen(true);
+      }
       toast.success("Guest admitted successfully");
       setGuestToAdmit(null);
       setAdmitDialogOpen(false);
@@ -35,6 +42,8 @@ function AttendanceDataFetcherContent({ eventId }: { eventId: string }) {
   const handleGuestFound = async (guest: Guest) => {
     try {
       await actions.updateAttendanceStatus(guest.id, "admitted");
+      setAdmittedGuest(guest);
+      setSuccessDialogOpen(true);
       toast.success(`${guest.first_name} ${guest.last_name} admitted successfully`);
     } catch (error) {
       toast.error("Failed to admit guest");
@@ -121,6 +130,14 @@ function AttendanceDataFetcherContent({ eventId }: { eventId: string }) {
             <DialogTitle>Admit Guest</DialogTitle>
             <DialogDescription>
               Are you sure you want to admit {guestToAdmit?.first_name} {guestToAdmit?.last_name} to the reception?
+              {guestToAdmit?.seat_number && (
+                <div className="mt-2 p-3 bg-blue-50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-blue-900">Seat Number:</span>
+                    <span className="text-blue-700 font-semibold">{guestToAdmit.seat_number}</span>
+                  </div>
+                </div>
+              )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end">
@@ -136,6 +153,41 @@ function AttendanceDataFetcherContent({ eventId }: { eventId: string }) {
 
       <QRScanner isOpen={qrScannerOpen} onClose={() => setQrScannerOpen(false)} onGuestFound={handleGuestFound} />
 
+      {/* Success Dialog */}
+      <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <CheckCircle2 className="h-5 w-5" />
+              Guest Admitted Successfully
+            </DialogTitle>
+            <DialogDescription>
+              <div className="space-y-3">
+                <div className="text-center">
+                  <div className="text-lg font-semibold text-gray-900">
+                    {admittedGuest?.first_name} {admittedGuest?.last_name}
+                  </div>
+                  <div className="text-sm text-gray-600">has been admitted to the reception</div>
+                </div>
+                {admittedGuest?.seat_number && (
+                  <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <span className="font-medium text-blue-900 text-sm">Seat Number:</span>
+                      <span className="text-blue-700 font-bold text-3xl tracking-wide">{admittedGuest.seat_number}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="default" onClick={() => setSuccessDialogOpen(false)} className="w-full">
+              Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Guest List */}
       <div className="space-y-4">
         {/* Desktop Table View */}
@@ -145,6 +197,7 @@ function AttendanceDataFetcherContent({ eventId }: { eventId: string }) {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Seat Number</TableHead>
                 <TableHead>Response</TableHead>
                 <TableHead>Attendance Status</TableHead>
                 <TableHead className="text-center">Actions</TableHead>
@@ -157,6 +210,7 @@ function AttendanceDataFetcherContent({ eventId }: { eventId: string }) {
                     {guest?.first_name} {guest?.last_name}
                   </TableCell>
                   <TableCell>{guest?.email}</TableCell>
+                  <TableCell>{guest?.seat_number || "-"}</TableCell>
                   <TableCell>
                     <span className={getResponseColor(guest?.response || "pending")}>{guest?.response ? guest?.response.charAt(0).toUpperCase() + guest?.response.slice(1) : "Pending"}</span>
                   </TableCell>
@@ -204,6 +258,12 @@ function AttendanceDataFetcherContent({ eventId }: { eventId: string }) {
                       <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
                         <Mail className="h-3 w-3" />
                         {guest.email}
+                      </div>
+                    )}
+                    {guest?.seat_number && (
+                      <div className="flex items-center gap-2 text-sm text-blue-600 mt-1">
+                        <span className="font-medium">Seat:</span>
+                        <span className="font-semibold">{guest.seat_number}</span>
                       </div>
                     )}
                   </div>
